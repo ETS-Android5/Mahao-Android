@@ -59,4 +59,24 @@
     <string name="search_location">Search Location</string>
     <string name="add_your_location">Add your Location</string>
     <string name="add_location">Add Location</string>
+    <string name="amenity">Amenity</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="no_properties">No Properties Found</string>
+    <string name="users">Users</string>
+    <string name="categories">Categories</string>
+    <string name="log_out">Log Out</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="share">Share</string>
+    <string name="rate">Rate</string>
+    <string name="no_images">No Images</string>
+    <string name="no_amenities">No Amenites</string>
+    <string name="no_users">No Users</string>
+    <string name="add_user">Add User</string>
+    <string name="background">background</string>
+    <string name="icon">icon</string>
+    <string name="no_categories">No Categories</string>
+    <string name="add_category">Add Category</string>
+    <string name="add_amenity">Add Amenity</string>
 </resources>

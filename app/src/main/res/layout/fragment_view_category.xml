@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.profile.categories.single.ViewCategoryFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/imageView_viewCategory_icon"
+            android:layout_width="@dimen/size_128"
+            android:layout_height="@dimen/size_128"
+            android:layout_marginTop="@dimen/size_16"
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/category" />
+        <TextView
+            android:id="@+id/textView_viewCategory_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            tools:text="Some Category"
+            android:textAppearance="?android:textAppearanceLarge"/>
+    </LinearLayout>
+
+</ScrollView>

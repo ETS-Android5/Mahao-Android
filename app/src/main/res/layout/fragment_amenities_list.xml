@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.profile.users.UsersListFragment">
+    tools:context=".ui.profile.amenities.AmenitiesListFragment">
 
     <include
         android:id="@+id/layout_toolbar"
@@ -14,11 +13,13 @@
         android:layout_width="match_parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_usersList"
+        android:id="@+id/recyclerView_amenitiesList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="?actionBarSize"
-        tools:listitem="@layout/item_user"
+        tools:listitem="@layout/item_amenity"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <FrameLayout
@@ -28,7 +29,7 @@
         android:layout_gravity="center">
 
         <LinearLayout
-            android:id="@+id/linearLayout_usersList_empty"
+            android:id="@+id/linearLayout_amenitiesList_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +41,7 @@
             android:gravity="center"
             android:visibility="gone">
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationView_users_empty"
+                android:id="@+id/animationView_amenities_empty"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_256"
                 android:layout_margin="@dimen/size_16"
@@ -52,12 +53,12 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textStyle="bold"
-                android:text="@string/no_users"
+                android:text="@string/no_amenities"
                 android:layout_gravity="center"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout_usersList_loading"
+            android:id="@+id/linearLayout_amenitiesList_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -69,7 +70,7 @@
             android:gravity="center"
             android:visibility="gone">
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationView_users_loading"
+                android:id="@+id/animationView_amenities_loading"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_256"
                 android:layout_margin="@dimen/size_16"
@@ -81,14 +82,13 @@
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton_usersList_add"
+        android:id="@+id/floatingActionButton_amenitiesList_add"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_add_24"
         android:layout_margin="@dimen/size_16"
         android:layout_gravity="bottom|end"
-        android:contentDescription="@string/add_user"
-        android:visibility="gone"/>
+        android:contentDescription="@string/add_amenity" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

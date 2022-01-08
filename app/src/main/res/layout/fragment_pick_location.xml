@@ -7,10 +7,11 @@
     android:orientation="vertical"
     tools:context=".ui.properties.single.PickLocationFragment">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/layout_toolbar"
+        layout="@layout/layout_toolbar"
         android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/ic_baseline_arrow_back_24"/>
+        android:layout_width="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

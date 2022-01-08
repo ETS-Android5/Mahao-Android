@@ -18,4 +18,14 @@
         <item name="android:foreground">@drawable/round_background</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
+
+    <style name="Theme.Mahao.MoreText" parent="Widget.AppCompat.TextView">
+        <item name="android:paddingTop">@dimen/size_16</item>
+        <item name="android:paddingBottom">@dimen/size_16</item>
+        <item name="android:paddingStart">@dimen/size_16</item>
+        <item name="android:paddingEnd">@dimen/size_16</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">?selectableItemBackground</item>
+    </style>
 </resources>
