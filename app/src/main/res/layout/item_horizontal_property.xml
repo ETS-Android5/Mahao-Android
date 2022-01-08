@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/size_8"
+    app:cardCornerRadius="@dimen/size_8"
+    android:foreground="?selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_height="@dimen/size_200"
+                tools:srcCompat="@tools:sample/avatars"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/size_120"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_16"
+                android:background="@drawable/round_edittext_background"
+                android:padding="@dimen/size_4"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_marginStart="@dimen/size_8"
+                    android:layout_width="@dimen/size_8"
+                    android:layout_height="@dimen/size_8"
+                    android:src="@drawable/ic_baseline_location_on_24"
+                    android:contentDescription="@string/location" />
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/size_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Nairobi" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_8"
+                android:background="@android:color/transparent"
+                app:cardBackgroundColor="@color/color_background_gray_transparentish"
+                android:layout_gravity="end" >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="@dimen/size_32"
+                        android:layout_height="@dimen/size_32"
+                        android:layout_margin="@dimen/size_2"
+                        android:layout_marginEnd="@dimen/size_2"
+                        app:lottie_rawRes="@raw/loading_hand"
+                        app:lottie_loop="true"
+                        app:lottie_autoPlay="true"
+                        android:visibility="gone"/>
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="@dimen/size_32"
+                        android:layout_height="@dimen/size_32"
+                        android:layout_margin="@dimen/size_2"
+                        app:lottie_rawRes="@raw/like"
+                        app:lottie_loop="false"
+                        app:lottie_autoPlay="false" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_8"
+                android:src="@drawable/ic_baseline_verified_24"
+                app:tint="?colorPrimaryVariant"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16"
+            android:layout_marginEnd="@dimen/size_16"
+            android:layout_marginTop="@dimen/size_8"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="?colorOnSurface"
+            tools:text="Title of the house that was provided by the owner"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16"
+            android:layout_marginEnd="@dimen/size_16"
+            android:layout_marginTop="@dimen/size_8"
+            android:layout_marginBottom="@dimen/size_16"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Kes. 5000/month"
+                app:drawableStartCompat="@drawable/ic_baseline_attach_money_24"
+                app:drawableTint="?colorOnSurface"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold"
+                android:textColor="?colorPrimary"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="3 beds"
+                    app:drawableStartCompat="@drawable/ic_baseline_king_bed_24"
+                    app:drawableTint="?colorOnSurface"
+                    android:drawablePadding="@dimen/size_16"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="2 baths"
+                    app:drawableStartCompat="@drawable/ic_baseline_bathtub_24"
+                    app:drawableTint="?colorOnSurface"
+                    android:drawablePadding="@dimen/size_16"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

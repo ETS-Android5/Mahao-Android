@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/size_4"
+    app:cardCornerRadius="@dimen/size_8"
+    app:cardUseCompatPadding="false"
+    app:elevation="@dimen/size_16"
+    android:foreground="?selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="@dimen/size_100"
+            android:layout_margin="@dimen/size_8"
+            android:layout_height="@dimen/size_100">
+            <ImageView
+                android:layout_width="@dimen/size_100"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitXY"
+                tools:src="@tools:sample/avatars"/>
+
+            <LinearLayout
+                android:layout_width="@dimen/size_100"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_drawable" />
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/size_8"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="?colorOnSurface"
+                    tools:text="Title of the house that was provided by the owner"/>
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="@dimen/size_24"
+                    android:layout_height="@dimen/size_24"
+                    android:layout_margin="@dimen/size_4"
+                    app:lottie_rawRes="@raw/like"
+                    app:lottie_loop="false"
+                    app:lottie_autoPlay="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="@dimen/size_4"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_marginStart="@dimen/size_8"
+                    android:layout_width="@dimen/size_16"
+                    android:layout_height="@dimen/size_16"
+                    android:src="@drawable/ic_baseline_location_on_24"
+                    android:contentDescription="@string/location" />
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/size_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="Nairobi" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Kes. 5000"
+                    app:drawableTint="?colorOnSurface"
+                    android:gravity="end"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:textColor="?colorPrimary"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.2dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginTop="@dimen/size_8"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/size_8"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="3 beds"
+                    app:drawableStartCompat="@drawable/ic_baseline_king_bed_24"
+                    app:drawableTint="?colorOnSurface"
+                    android:drawablePadding="@dimen/size_4"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="2 baths"
+                    app:drawableStartCompat="@drawable/ic_baseline_bathtub_24"
+                    app:drawableTint="?colorOnSurface"
+                    android:drawablePadding="@dimen/size_4"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="4 amen"
+                    app:drawableStartCompat="@drawable/ic_baseline_local_laundry_service_24"
+                    app:drawableTint="?colorOnSurface"
+                    android:drawablePadding="@dimen/size_4"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_8"
+        android:src="@drawable/ic_baseline_verified_24"
+        app:tint="?colorPrimaryVariant"
+        android:visibility="gone"/>
+</com.google.android.material.card.MaterialCardView>
+

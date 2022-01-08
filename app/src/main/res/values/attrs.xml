@@ -1,0 +1,9 @@
+<resources>
+
+    <declare-styleable name="OtpComponent">
+        <attr name="length" format="integer"/>
+        <attr name="otp" format="string"/>
+        <attr name="android:textSize"/>
+    </declare-styleable>
+
+</resources>

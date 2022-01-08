@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.profile.users.single.ViewUserFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/size_8"
+            android:layout_marginEnd="@dimen/size_8">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16"
+                android:layout_marginEnd="@dimen/size_16"
+                android:layout_marginTop="@dimen/size_16"
+                app:layout_constraintTop_toBottomOf="@id/imageView_student">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8"
+                    android:layout_marginBottom="@dimen/size_8"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:id="@+id/textView_student_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textStyle="bold"
+                        tools:text="John Doe"/>
+                    <TextView
+                        android:id="@+id/textView_student_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="email@email.com"
+                        android:autoLink="email"
+                        android:textIsSelectable="true"/>
+                    <TextView
+                        android:id="@+id/textView_student_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="0712345678"
+                        android:autoLink="phone"
+                        android:textIsSelectable="true"
+                        android:visibility="visible"/>
+                    <TextView
+                        android:id="@+id/textView_student_disability"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="ADHD" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <ImageView
+                android:id="@+id/imageView_student"
+                android:layout_width="@dimen/size_128"
+                android:layout_height="@dimen/size_128"
+                android:layout_marginTop="@dimen/size_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</LinearLayout>

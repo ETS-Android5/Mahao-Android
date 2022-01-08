@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home"
+        android:checkable="true"
+        android:checked="true"/>
+
+    <item
+        android:id="@+id/navigation_properties"
+        android:icon="@drawable/ic_baseline_location_city_24"
+        android:title="@string/title_properties"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/placeholder"
+        android:title=""
+        android:checkable="false"
+        android:enabled="false"/>
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/title_profile"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/navigation_about"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="@string/title_about"
+        android:checkable="true"/>
+</menu>

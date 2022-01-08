@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Mahao.FormTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">@dimen/size_8</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/size_8</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/size_8</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/size_8</item>
+        <item name="boxBackgroundColor">@color/color_background_gray</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+    </style>
+
+    <style name="Theme.Mahao.FormButton" parent="Widget.AppCompat.Button">
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:paddingTop">@dimen/size_8</item>
+        <item name="android:paddingBottom">@dimen/size_8</item>
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:foreground">@drawable/round_background</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+</resources>

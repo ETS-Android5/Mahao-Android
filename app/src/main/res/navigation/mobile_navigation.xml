@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_main">
+
+    <fragment
+        android:id="@+id/navigation_splash"
+        android:name="ke.co.tonyoa.mahao.ui.SplashFragment"
+        tools:layout="@layout/fragment_splash" />
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="ke.co.tonyoa.mahao.ui.auth.login.LoginFragment"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/navigation_register"
+        android:name="ke.co.tonyoa.mahao.ui.auth.register.RegisterFragment"
+        tools:layout="@layout/fragment_register" />
+
+    <fragment
+        android:id="@+id/navigation_forgot"
+        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password" />
+
+    <fragment
+        android:id="@+id/navigation_verification"
+        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.VerificationCodeFragment"
+        tools:layout="@layout/fragment_verification_code" />
+
+    <fragment
+        android:id="@+id/navigation_new_password"
+        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.NewPasswordFragment"
+        tools:layout="@layout/fragment_new_password" />
+
+    <fragment
+        android:id="@+id/navigation_main"
+        android:name="ke.co.tonyoa.mahao.ui.home.MainFragment"
+        tools:layout="@layout/fragment_main" />
+</navigation>
