@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentMainBinding = FragmentMainBinding.inflate(inflater, container, false);
-        mFragmentMainBinding.bottomNav.setBackground(null);
+        mFragmentMainBinding.bottomNavigationMain.setBackground(null);
         return mFragmentMainBinding.getRoot();
     }
 }
