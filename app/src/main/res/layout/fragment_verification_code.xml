@@ -39,6 +39,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/verification_code_sent_to"/>
                 <TextView
+                    android:id="@+id/textView_verificationCode_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="?colorPrimary"
@@ -46,7 +47,7 @@
             </LinearLayout>
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animation_view"
+                android:id="@+id/animationView_verificationCode"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_200"
                 android:layout_margin="@dimen/size_16"
@@ -55,6 +56,7 @@
                 app:lottie_autoPlay="true" />
 
             <ke.co.tonyoa.mahao.app.utils.views.OtpComponent
+                android:id="@+id/otpComponent_verificationCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_24"
@@ -62,6 +64,7 @@
                 tools:otp="1234"/>
 
             <Button
+                android:id="@+id/button_VerificationCode_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_24"
@@ -75,6 +78,7 @@
                 android:layout_marginTop="@dimen/size_16"
                 android:layout_gravity="center_horizontal">
                 <TextView
+                    android:id="@+id/textView_verificationCode_countdown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -84,6 +88,7 @@
                     android:layout_width="@dimen/size_8"
                     android:layout_height="match_parent"/>
                 <TextView
+                    android:id="@+id/textView_verificationCode_resend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/resend_confirmation_code"

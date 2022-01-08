@@ -35,7 +35,7 @@
                 app:titleEnabled="false">
 
                 <ImageView
-                    android:id="@+id/imageView_viewProperty"
+                    android:id="@+id/imageView_viewProperty_feature"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fitsSystemWindows="true"
@@ -79,7 +79,7 @@
                             tools:text="@string/location"
                             android:singleLine="true"
                             android:textAppearance="?android:textAppearanceMedium"
-                            android:textColor="@color/white"/>
+                            android:textColor="@color/white" />
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/linearLayout_viewProperty_title"
@@ -124,6 +124,7 @@
                         android:background="@android:color/transparent"
                         app:cardBackgroundColor="@color/color_background_gray_transparentish">
                         <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_like"
                             android:layout_width="@dimen/size_32"
                             android:layout_height="@dimen/size_32"
                             android:layout_margin="@dimen/size_2"
@@ -140,6 +141,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
                         <ImageView
+                            android:id="@+id/imageView_viewProperty_verified"
                             android:layout_width="@dimen/size_24"
                             android:layout_height="@dimen/size_24"
                             android:layout_marginEnd="@dimen/size_8"
@@ -149,6 +151,7 @@
                             android:contentDescription="@string/verified" />
 
                         <ImageView
+                            android:id="@+id/imageView_viewProperty_enabled"
                             android:layout_width="@dimen/size_24"
                             android:layout_height="@dimen/size_24"
                             android:layout_marginEnd="@dimen/size_8"
@@ -179,6 +182,7 @@
                     android:orientation="horizontal"
                     android:layout_margin="@dimen/size_8">
                     <TextView
+                        android:id="@+id/textView_viewProperty_city"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="city"
@@ -188,6 +192,7 @@
                         android:gravity="center"
                         android:background="@drawable/round_background_primary"/>
                     <TextView
+                        android:id="@+id/textView_viewProperty_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/size_8"
@@ -199,6 +204,7 @@
                         android:paddingRight="@dimen/size_8"
                         android:background="@drawable/round_background_primary"/>
                     <TextView
+                        android:id="@+id/textView_viewProperty_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/size_8"
@@ -220,12 +226,14 @@
                     android:gravity="center_vertical">
 
                     <ImageView
+                        android:id="@+id/imageView_viewProperty_owner"
                         android:layout_width="@dimen/size_56"
                         android:layout_height="@dimen/size_56"
                         tools:srcCompat="@tools:sample/avatars"
                         android:contentDescription="@string/user" />
 
                     <TextView
+                        android:id="@+id/textView_viewProperty_ownerName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -243,6 +251,7 @@
                         android:layout_marginRight="@dimen/size_8"
                         android:gravity="center">
                         <ImageButton
+                            android:id="@+id/imageButton_viewProperty_text"
                             android:layout_width="@dimen/size_32"
                             android:layout_height="@dimen/size_32"
                             android:layout_marginEnd="@dimen/size_8"
@@ -251,6 +260,7 @@
                             app:tint="@android:color/holo_green_dark"
                             android:contentDescription="@string/message" />
                         <ImageButton
+                            android:id="@+id/imageButton_viewProperty_call"
                             android:layout_width="@dimen/size_32"
                             android:layout_height="@dimen/size_32"
                             android:src="@drawable/ic_baseline_phone_24"
@@ -274,6 +284,7 @@
                     android:layout_marginLeft="@dimen/size_8"
                     android:orientation="horizontal">
                         <TextView
+                            android:id="@+id/textView_viewProperty_beds"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -284,6 +295,7 @@
                             android:gravity="center_vertical"/>
 
                         <TextView
+                            android:id="@+id/textView_viewProperty_baths"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -294,6 +306,7 @@
                             android:gravity="center_vertical"/>
 
                         <TextView
+                            android:id="@+id/textView_viewProperty_amenities"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -325,39 +338,12 @@
                     android:background="?colorSecondary" />
 
                 <WebView
+                    android:id="@+id/webView_viewProperty_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/size_8"
                     tools:ignore="WebViewLayout" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.2dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_margin="@dimen/size_8"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_8"
-                    android:layout_marginEnd="@dimen/size_8"
-                    android:text="@string/gallery"
-                    android:textAppearance="?android:textAppearanceLarge" />
-
-                <View
-                    android:layout_width="@dimen/size_40"
-                    android:layout_height="@dimen/size_2"
-                    android:layout_marginTop="@dimen/size_4"
-                    android:layout_marginStart="@dimen/size_8"
-                    android:background="?colorSecondary" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/size_8"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/item_gallery"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -380,15 +366,182 @@
                     android:layout_marginStart="@dimen/size_8"
                     android:background="?colorSecondary" />
 
-                <androidx.recyclerview.widget.RecyclerView
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_viewProperty_amenities"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/size_8"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/item_category"/>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_emptyAmenities"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_emptyAmenities"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_256"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:textStyle="bold"
+                            android:text="@string/no_amenities"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_loadingAmenities"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_loadingAmenities"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/button_viewProperty_editAmenities"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/size_8"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/item_category"/>
+                    android:layout_marginTop="@dimen/size_8"
+                    android:layout_marginStart="@dimen/size_32"
+                    android:layout_marginEnd="@dimen/size_32"
+                    android:text="@string/edit_amenities"
+                    android:visibility="gone"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.2dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_margin="@dimen/size_8"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_8"
+                    android:layout_marginEnd="@dimen/size_8"
+                    android:text="@string/gallery"
+                    android:textAppearance="?android:textAppearanceLarge" />
+
+                <View
+                    android:layout_width="@dimen/size_40"
+                    android:layout_height="@dimen/size_2"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_marginStart="@dimen/size_8"
+                    android:background="?colorSecondary" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_viewProperty_gallery"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/size_8"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/item_gallery"/>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_emptyGallery"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_emptyGallery"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_256"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:textStyle="bold"
+                            android:text="@string/no_images"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_loadingGallery"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_loadingGallery"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/button_viewProperty_addImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8"
+                    android:layout_marginStart="@dimen/size_32"
+                    android:layout_marginEnd="@dimen/size_32"
+                    android:text="@string/add_gallery_image"
+                    android:visibility="gone"/>
 
                 <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView_viewProperty"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_200"
                     android:layout_margin="@dimen/size_8"/>
@@ -408,15 +561,74 @@
                     android:layout_marginStart="@dimen/size_8"
                     android:background="?colorSecondary" />
 
-                <androidx.recyclerview.widget.RecyclerView
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/size_8"
-                    android:layout_marginTop="@dimen/size_8"
-                    android:layout_marginRight="@dimen/size_8"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/item_horizontal_property"/>
+                    android:layout_height="wrap_content">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_viewProperty_related"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_8"
+                        android:layout_marginTop="@dimen/size_8"
+                        android:layout_marginRight="@dimen/size_8"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/item_horizontal_property"/>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_emptyRelated"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_emptyRelated"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_256"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:textStyle="bold"
+                            android:text="@string/no_properties"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_loadingRelated"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_200"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_loadingRelated"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+                </FrameLayout>
 
             </LinearLayout>
 
@@ -424,6 +636,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton_viewProperty_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"

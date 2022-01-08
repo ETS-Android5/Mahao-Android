@@ -27,16 +27,16 @@
             android:text="@string/welcome_back"/>
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation_view"
+            android:id="@+id/animationView_login"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_200"
             android:layout_margin="@dimen/size_16"
             app:lottie_rawRes="@raw/home_logo"
             app:lottie_loop="true"
-            app:lottie_autoPlay="true"
-            />
+            app:lottie_autoPlay="true" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_login_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -44,6 +44,7 @@
             style="@style/Theme.Mahao.FormTextInputLayout"
             app:startIconDrawable="@drawable/ic_baseline_email_24">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_login_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Some text"
@@ -51,6 +52,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -59,6 +61,7 @@
             app:startIconDrawable="@drawable/ic_baseline_lock_24"
             app:passwordToggleEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_login_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Some text"
@@ -66,6 +69,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/textView_login_forgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_8"
@@ -74,6 +78,7 @@
             android:background="?android:attr/selectableItemBackground"/>
 
         <Button
+            android:id="@+id/button_login_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_24"
@@ -109,6 +114,7 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/button_login_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_24"

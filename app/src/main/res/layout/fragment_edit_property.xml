@@ -12,6 +12,7 @@
         android:layout_margin="@dimen/size_16"
         android:orientation="vertical">
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_editProperty_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -19,6 +20,7 @@
             style="@style/Theme.Mahao.FormTextInputLayout"
             app:startIconDrawable="@drawable/ic_baseline_location_city_24">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_editProperty_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Some property name"
@@ -26,12 +28,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_editProperty_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
             style="@style/Theme.Mahao.FormTextInputLayout"
             app:startIconDrawable="@drawable/ic_baseline_filter_alt_24">
             <AutoCompleteTextView
+                android:id="@+id/autoCompleteTextView_editProperty_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Bedsitters"
@@ -40,6 +44,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_editProperty_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -47,10 +52,11 @@
             style="@style/Theme.Mahao.FormTextInputLayout"
             app:startIconDrawable="@drawable/ic_baseline_location_on_24">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_editProperty_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="The location and coordinates"
-                android:inputType="text|textCapWords"/>
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -59,6 +65,7 @@
             android:orientation="horizontal"
             android:baselineAligned="false">
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_editProperty_beds"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -68,6 +75,7 @@
                 style="@style/Theme.Mahao.FormTextInputLayout"
                 app:startIconDrawable="@drawable/ic_baseline_king_bed_24">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditText_editProperty_beds"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="3"
@@ -75,6 +83,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_editProperty_baths"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -84,6 +93,7 @@
                 style="@style/Theme.Mahao.FormTextInputLayout"
                 app:startIconDrawable="@drawable/ic_baseline_bathtub_24">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditText_editProperty_baths"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="1"
@@ -92,6 +102,7 @@
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_editProperty_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -99,6 +110,7 @@
             style="@style/Theme.Mahao.FormTextInputLayout"
             app:startIconDrawable="@drawable/ic_baseline_attach_money_24">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_editProperty_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="5000"
@@ -106,12 +118,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_editProperty_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
             android:hint="@string/description"
             style="@style/Theme.Mahao.FormTextInputLayout">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_editProperty_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Some property name"
@@ -121,6 +135,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView_editProperty_featureImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16"
@@ -128,12 +143,14 @@
             app:cardBackgroundColor="?colorPrimaryVariant"
             android:foreground="?selectableItemBackground">
             <ImageView
+                android:id="@+id/imageView_editProperty_featureImage"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_200"
-                android:background="?selectableItemBackground"/>
+                android:background="?selectableItemBackground"
+                android:contentDescription="@string/feature_image" />
 
             <TextView
-                android:id="@+id/textView_edictCourse_noThumbnail"
+                android:id="@+id/textView_editProperty_noThumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/feature_image"
@@ -150,15 +167,75 @@
             android:textAppearance="?android:textAppearanceLarge"
             android:text="@string/amenities"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal"
-            tools:listitem="@layout/item_category"/>
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_editProperty_amenities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_category"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayout_editProperty_emptyAmenities"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_200"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_margin="@dimen/size_16"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_editProperty_emptyAmenities"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_256"
+                    android:layout_margin="@dimen/size_16"
+                    app:lottie_rawRes="@raw/home_logo"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:text="@string/no_amenities"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout_editProperty_loadingAmenities"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_200"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_margin="@dimen/size_16"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_editProperty_loadingAmenities"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/size_16"
+                    app:lottie_rawRes="@raw/home_logo"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </FrameLayout>
 
         <Button
+            android:id="@+id/button_editProperty_editAmenities"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_8"
@@ -173,15 +250,75 @@
             android:textAppearance="?android:textAppearanceLarge"
             android:text="@string/gallery"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal"
-            tools:listitem="@layout/item_gallery"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_editProperty_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_8"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_gallery"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayout_editProperty_emptyGallery"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_200"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_margin="@dimen/size_16"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_editProperty_emptyGallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_256"
+                    android:layout_margin="@dimen/size_16"
+                    app:lottie_rawRes="@raw/home_logo"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:text="@string/no_images"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout_editProperty_loadingGallery"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_200"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_margin="@dimen/size_16"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_editProperty_loadingGallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/size_16"
+                    app:lottie_rawRes="@raw/home_logo"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+        </FrameLayout>
 
         <Button
+            android:id="@+id/button_editProperty_addGalleryImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_8"
@@ -189,7 +326,8 @@
             android:layout_marginEnd="@dimen/size_32"
             android:text="@string/add_gallery_image"/>
 
-        <TextView
+        <Button
+            android:id="@+id/button_editProperty_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_24"

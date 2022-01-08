@@ -3,17 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_main">
+    app:startDestination="@+id/navigation_splash">
 
     <fragment
         android:id="@+id/navigation_splash"
         android:name="ke.co.tonyoa.mahao.ui.SplashFragment"
-        tools:layout="@layout/fragment_splash" />
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_main"
+            app:destination="@id/navigation_main"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_login"
         android:name="ke.co.tonyoa.mahao.ui.auth.login.LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_forgot"
+            app:destination="@id/navigation_forgot"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_register"
+            app:destination="@id/navigation_register"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_register"
@@ -23,12 +48,30 @@
     <fragment
         android:id="@+id/navigation_forgot"
         android:name="ke.co.tonyoa.mahao.ui.auth.forgot.ForgotPasswordFragment"
-        tools:layout="@layout/fragment_forgot_password" />
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_navigation_forgot_to_navigation_verification"
+            app:destination="@id/navigation_verification"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_verification"
         android:name="ke.co.tonyoa.mahao.ui.auth.forgot.VerificationCodeFragment"
-        tools:layout="@layout/fragment_verification_code" />
+        tools:layout="@layout/fragment_verification_code" >
+        <action
+            android:id="@+id/action_navigation_verification_to_navigation_new_password"
+            app:destination="@id/navigation_new_password"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/navigation_login"
+            app:popUpToInclusive="false"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_new_password"
@@ -38,5 +81,153 @@
     <fragment
         android:id="@+id/navigation_main"
         android:name="ke.co.tonyoa.mahao.ui.home.MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_login"
+            app:destination="@id/navigation_login"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_singlePropertyFragment"
+            app:destination="@id/singlePropertyFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_usersListFragment"
+            app:destination="@id/usersListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_categoriesListFragment"
+            app:destination="@id/categoriesListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_amenitiesListFragment"
+            app:destination="@id/amenitiesListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_policyFragment"
+            app:destination="@id/policyFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/singlePropertyFragment"
+        android:name="ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyFragment"
+        android:label="fragment_single_property"
+        tools:layout="@layout/fragment_single_property" >
+        <action
+            android:id="@+id/action_singlePropertyFragment_self"
+            app:destination="@id/singlePropertyFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_singlePropertyFragment_to_propertyMapFragment"
+            app:destination="@id/propertyMapFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_singlePropertyFragment_to_pickLocationFragment"
+            app:destination="@id/pickLocationFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/propertyMapFragment"
+        android:name="ke.co.tonyoa.mahao.ui.properties.single.PropertyMapFragment"
+        android:label="fragment_property_map"
+        tools:layout="@layout/fragment_property_map" >
+        <action
+            android:id="@+id/action_propertyMapFragment_to_singlePropertyFragment"
+            app:destination="@id/singlePropertyFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/pickLocationFragment"
+        android:name="ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment"
+        android:label="fragment_pick_location"
+        tools:layout="@layout/fragment_pick_location" />
+    <fragment
+        android:id="@+id/usersListFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.users.UsersListFragment"
+        android:label="fragment_users_list"
+        tools:layout="@layout/fragment_users_list" >
+        <action
+            android:id="@+id/action_usersListFragment_to_viewUserFragment"
+            app:destination="@id/viewUserFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/viewUserFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.users.single.ViewUserFragment"
+        android:label="fragment_view_user"
+        tools:layout="@layout/fragment_view_user" />
+    <fragment
+        android:id="@+id/singleCategoryFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryFragment"
+        android:label="fragment_single_category"
+        tools:layout="@layout/fragment_single_category" />
+    <fragment
+        android:id="@+id/categoriesListFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListFragment"
+        android:label="fragment_categories_list"
+        tools:layout="@layout/fragment_categories_list" >
+        <action
+            android:id="@+id/action_categoriesListFragment_to_singleCategoryFragment"
+            app:destination="@id/singleCategoryFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/amenitiesListFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.amenities.AmenitiesListFragment"
+        android:label="fragment_amenities_list"
+        tools:layout="@layout/fragment_amenities_list" >
+        <action
+            android:id="@+id/action_amenitiesListFragment_to_singleAmenityFragment"
+            app:destination="@id/singleAmenityFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/singleAmenityFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityFragment"
+        android:label="fragment_single_amenity"
+        tools:layout="@layout/fragment_single_amenity" />
+    <fragment
+        android:id="@+id/policyFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.categories.policy.PolicyFragment"
+        android:label="fragment_policy"
+        tools:layout="@layout/fragment_policy" />
 </navigation>
