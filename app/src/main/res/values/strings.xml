@@ -79,4 +79,8 @@
     <string name="no_categories">No Categories</string>
     <string name="add_category">Add Category</string>
     <string name="add_amenity">Add Amenity</string>
+    <string name="server_error">Apologies, but something went wrong on our end. Please try again later</string>
+    <string name="authentication_error">You need to be logged in to perform this action</string>
+    <string name="authorization_error">You are not authorized to perform this action</string>
+    <string name="validation_error">Some of the fields you submitted were invalid</string>
 </resources>
