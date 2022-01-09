@@ -2,65 +2,181 @@ package ke.co.tonyoa.mahao.ui.profile.categories.single;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.Arrays;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
+import ke.co.tonyoa.mahao.app.interfaces.OnSaveListener;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.DialogUtils;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentSingleCategoryBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SingleCategoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SingleCategoryFragment extends Fragment {
+public class SingleCategoryFragment extends BaseFragment implements OnSaveListener<PropertyCategory> {
+    public static final String PROPERTY_CATEGORY_EXTRA = "PROPERTY_CATEGORY";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private PropertyCategory mPropertyCategory;
+    private FragmentSingleCategoryBinding mFragmentSingleCategoryBinding;
+    private SingleCategoryViewModel mSingleCategoryViewModel;
+    private SingleCategoryAdapter mSingleCategoryAdapter;
 
     public SingleCategoryFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SingleCategoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SingleCategoryFragment newInstance(String param1, String param2) {
-        SingleCategoryFragment fragment = new SingleCategoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mPropertyCategory = SingleCategoryFragmentArgs.fromBundle(getArguments()).getCategory();
+        }
+        mSingleCategoryViewModel = new ViewModelProvider(this).get(SingleCategoryViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mFragmentSingleCategoryBinding = FragmentSingleCategoryBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentSingleCategoryBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        if (mPropertyCategory==null){
+            setTitle("New Category");
+        }
+        else {
+            setTitle(mPropertyCategory.getTitle());
+        }
+
+        mFragmentSingleCategoryBinding.viewPagerSingleCategory.setUserInputEnabled(false);
+        mSingleCategoryAdapter = new SingleCategoryAdapter(this);
+        mFragmentSingleCategoryBinding.viewPagerSingleCategory.setAdapter(mSingleCategoryAdapter);
+
+        mSingleCategoryViewModel.getSelectedPosition().observe(getViewLifecycleOwner(), integer->{
+            mFragmentSingleCategoryBinding.viewPagerSingleCategory.setCurrentItem(integer);
+        });
+        mFragmentSingleCategoryBinding.viewPagerSingleCategory.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                requireActivity().invalidateOptionsMenu();
+            }
+        });
+
+        return mFragmentSingleCategoryBinding.getRoot();
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.edit_delete, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        int currentItem = mFragmentSingleCategoryBinding.viewPagerSingleCategory.getCurrentItem();
+        if (mSingleCategoryAdapter.getItemCount() <= 1 || currentItem != 0) {
+            menu.clear();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_single_category, container, false);
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            if (mSingleCategoryViewModel.getSelectedPosition().getValue() != 0) {
+                mSingleCategoryViewModel.setSelectedPosition(0);
+            } else {
+                navigateUp();
+            }
+            return true;
+        }
+        else if (itemId == R.id.action_editDoneDelete_edit) {//Move to the edit fragment
+            mSingleCategoryViewModel.setSelectedPosition(1);
+            return true;
+        }
+        else if (itemId == R.id.action_editDoneDelete_delete){
+            if (mPropertyCategory!=null){
+                DialogUtils.showDialog(requireContext(), requireContext().getString(R.string.delete_s, "Category"),
+                        requireContext().getString(R.string.delete_prompt_text, "Category"),
+                        "Cancel", "Delete", (dialog, which) -> {
+                            ViewUtils.load(mFragmentSingleCategoryBinding.linearLayoutSingleCategoryLoading,
+                                    Arrays.asList(mFragmentSingleCategoryBinding.layoutToolbar.materialToolbarLayoutToolbar),
+                                    true);
+                            mSingleCategoryViewModel.deletePropertyCategory(mPropertyCategory.getId()).observe(getViewLifecycleOwner(), propertyCategoryAPIResponse -> {
+                                ViewUtils.load(mFragmentSingleCategoryBinding.linearLayoutSingleCategoryLoading,
+                                        Arrays.asList(mFragmentSingleCategoryBinding.layoutToolbar.materialToolbarLayoutToolbar),
+                                        false);
+                                if (propertyCategoryAPIResponse!=null && propertyCategoryAPIResponse.isSuccessful()){
+                                    Toast.makeText(requireContext(),  getString(R.string.successfully_deleted_s, "Category"), Toast.LENGTH_SHORT).show();
+                                    navigateUp();
+                                }
+                                else {
+                                    Toast.makeText(requireContext(),
+                                            (propertyCategoryAPIResponse==null||propertyCategoryAPIResponse.errorMessage(requireContext())==null)?
+                                                    getString(R.string.unknown_error):
+                                                    propertyCategoryAPIResponse.errorMessage(requireContext()),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                    });
+                });
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSave(PropertyCategory propertyCategory) {
+        mPropertyCategory = propertyCategory;
+        setTitle(mPropertyCategory.getTitle());
+        mSingleCategoryAdapter=new SingleCategoryAdapter(this);
+        mFragmentSingleCategoryBinding.viewPagerSingleCategory.setAdapter(mSingleCategoryAdapter);
+
+        mSingleCategoryViewModel.setSelectedPosition(0);
+    }
+
+    class SingleCategoryAdapter extends FragmentStateAdapter{
+
+        public SingleCategoryAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if (mPropertyCategory==null){
+                return EditCategoryFragment.newInstance(mPropertyCategory);
+            }
+            else {
+                switch (position) {
+                    case 0:
+                        return ViewCategoryFragment.newInstance(mPropertyCategory);
+                    case 1:
+                        return EditCategoryFragment.newInstance(mPropertyCategory);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public int getItemCount() {
+            return mPropertyCategory==null ? 1 : 2;
+        }
     }
 }

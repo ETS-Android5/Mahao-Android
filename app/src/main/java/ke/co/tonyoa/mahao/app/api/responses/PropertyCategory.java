@@ -4,10 +4,11 @@ package ke.co.tonyoa.mahao.app.api.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class PropertyCategory {
+public class PropertyCategory implements Serializable {
 
     @SerializedName("title")
     @Expose

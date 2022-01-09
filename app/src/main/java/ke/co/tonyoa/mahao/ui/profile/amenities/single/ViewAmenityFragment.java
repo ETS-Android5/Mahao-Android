@@ -1,5 +1,7 @@
 package ke.co.tonyoa.mahao.ui.profile.amenities.single;
 
+import static ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityFragment.AMENITY_EXTRA;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,42 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ke.co.tonyoa.mahao.R;
+import com.bumptech.glide.Glide;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewAmenityFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.Amenity;
+import ke.co.tonyoa.mahao.databinding.FragmentViewAmenityBinding;
+
 public class ViewAmenityFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Amenity mAmenity;
+    private FragmentViewAmenityBinding mFragmentViewAmenityBinding;
 
     public ViewAmenityFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ViewAmenityFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ViewAmenityFragment newInstance(String param1, String param2) {
+    public static ViewAmenityFragment newInstance(Amenity amenity) {
         ViewAmenityFragment fragment = new ViewAmenityFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(AMENITY_EXTRA, amenity);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,8 +37,7 @@ public class ViewAmenityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mAmenity = (Amenity) getArguments().getSerializable(AMENITY_EXTRA);
         }
     }
 
@@ -61,6 +45,17 @@ public class ViewAmenityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_amenity, container, false);
+        mFragmentViewAmenityBinding = FragmentViewAmenityBinding.inflate(inflater, container, false);
+
+        if (mAmenity != null) {
+            Glide.with(requireContext())
+                    .load(mAmenity.getIcon())
+                    .placeholder(R.drawable.ic_home_black_24dp)
+                    .error(R.drawable.ic_home_black_24dp)
+                    .into(mFragmentViewAmenityBinding.imageViewViewAmenityIcon);
+            mFragmentViewAmenityBinding.textViewViewAmenityAmenity.setText(mAmenity.getTitle());
+        }
+
+        return mFragmentViewAmenityBinding.getRoot();
     }
 }

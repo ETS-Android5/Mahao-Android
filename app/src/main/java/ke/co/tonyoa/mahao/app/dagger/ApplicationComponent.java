@@ -9,6 +9,10 @@ import ke.co.tonyoa.mahao.ui.auth.register.RegisterViewModel;
 import ke.co.tonyoa.mahao.ui.home.HomeViewModel;
 import ke.co.tonyoa.mahao.ui.main.MainViewModel;
 import ke.co.tonyoa.mahao.ui.profile.ProfileViewModel;
+import ke.co.tonyoa.mahao.ui.profile.amenities.AmenitiesViewModel;
+import ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityViewModel;
+import ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListViewModel;
+import ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesListViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesViewModel;
 
@@ -30,4 +34,12 @@ public interface ApplicationComponent {
     void inject(PropertiesViewModel propertiesViewModel);
 
     void inject(ProfileViewModel profileViewModel);
+
+    void inject(CategoriesListViewModel categoriesListViewModel);
+
+    void inject(SingleCategoryViewModel singleCategoryViewModel);
+
+    void inject(AmenitiesViewModel amenitiesViewModel);
+
+    void inject(SingleAmenityViewModel singleAmenityViewModel);
 }

@@ -3,7 +3,9 @@ package ke.co.tonyoa.mahao.app.api.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Feedback {
+import java.io.Serializable;
+
+public class Feedback implements Serializable {
 
     @SerializedName("feedback_type")
     @Expose

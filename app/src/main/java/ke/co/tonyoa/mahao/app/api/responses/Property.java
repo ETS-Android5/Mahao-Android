@@ -1,5 +1,6 @@
 package ke.co.tonyoa.mahao.app.api.responses;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Property {
+public class Property implements Serializable {
 
     @SerializedName("property_category_id")
     @Expose

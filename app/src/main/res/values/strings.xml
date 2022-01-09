@@ -102,4 +102,10 @@
     <string name="popular">Popular</string>
     <string name="favorite">Favorite</string>
     <string name="personal">Personal</string>
+    <string name="edit">Edit</string>
+    <string name="delete_s">Delete %1$s</string>
+    <string name="delete_prompt_text">Are you sure you want to delete this %1$s? This action cannot be undone!</string>
+    <string name="successfully_deleted_s">Successfully deleted %1$s</string>
+    <string name="category_created_successfully">Category created successfully</string>
+    <string name="amenity_created_successfully">Amenity created successfully</string>
 </resources>

@@ -13,11 +13,15 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 
+import java.util.Arrays;
+
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.databinding.FragmentProfileBinding;
 import ke.co.tonyoa.mahao.databinding.FragmentViewUserBinding;
+import ke.co.tonyoa.mahao.ui.main.MainFragmentDirections;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment {
 
     private FragmentProfileBinding mFragmentProfileBinding;
     private ProfileViewModel mProfileViewModel;
@@ -65,14 +69,19 @@ public class ProfileFragment extends Fragment {
 
         });
 
+        boolean isAdmin = mProfileViewModel.isAdmin();
+        for (View view: Arrays.asList(mFragmentProfileBinding.linearLayoutProfileUsers, mFragmentProfileBinding.linearLayoutProfileCategories,
+                mFragmentProfileBinding.linearLayoutProfileAmenities)){
+            view.setVisibility(isAdmin?View.VISIBLE:View.GONE);
+        }
         mFragmentProfileBinding.linearLayoutProfileUsers.setOnClickListener(v->{
             //TODO: Navigate to users
         });
         mFragmentProfileBinding.linearLayoutProfileCategories.setOnClickListener(v->{
-            //TODO: Navigate to categories
+            navigate(MainFragmentDirections.actionNavigationMainToCategoriesListFragment());
         });
         mFragmentProfileBinding.linearLayoutProfileAmenities.setOnClickListener(v->{
-            //TODO: Navigate to amenities
+            navigate(MainFragmentDirections.actionNavigationMainToAmenitiesListFragment());
         });
         mFragmentProfileBinding.buttonProfileLogout.setOnClickListener(v->{
             mProfileViewModel.logOut();
