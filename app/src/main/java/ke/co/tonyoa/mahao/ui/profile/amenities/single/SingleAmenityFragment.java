@@ -2,65 +2,180 @@ package ke.co.tonyoa.mahao.ui.profile.amenities.single;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.Arrays;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.Amenity;
+import ke.co.tonyoa.mahao.app.interfaces.OnSaveListener;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.DialogUtils;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentSingleAmenityBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SingleAmenityFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SingleAmenityFragment extends Fragment {
+public class SingleAmenityFragment extends BaseFragment implements OnSaveListener<Amenity> {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String AMENITY_EXTRA = "AMENITY";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Amenity mAmenity;
+    private FragmentSingleAmenityBinding mFragmentSingleAmenityBinding;
+    private SingleAmenityViewModel mSingleAmenityViewModel;
+    private SingleAmenityAdapter mSingleAmenityAdapter;
 
     public SingleAmenityFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SingleAmenityFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SingleAmenityFragment newInstance(String param1, String param2) {
-        SingleAmenityFragment fragment = new SingleAmenityFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mAmenity = SingleAmenityFragmentArgs.fromBundle(getArguments()).getAmenity();
+        }
+        mSingleAmenityViewModel = new ViewModelProvider(this).get(SingleAmenityViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mFragmentSingleAmenityBinding = FragmentSingleAmenityBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentSingleAmenityBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        if (mAmenity==null){
+            setTitle("New Amenity");
+        }
+        else {
+            setTitle(mAmenity.getTitle());
+        }
+
+        mFragmentSingleAmenityBinding.viewPagerSingleAmenity.setUserInputEnabled(false);
+        mSingleAmenityAdapter = new SingleAmenityFragment.SingleAmenityAdapter(this);
+        mFragmentSingleAmenityBinding.viewPagerSingleAmenity.setAdapter(mSingleAmenityAdapter);
+
+        mSingleAmenityViewModel.getSelectedPosition().observe(getViewLifecycleOwner(), integer->{
+            mFragmentSingleAmenityBinding.viewPagerSingleAmenity.setCurrentItem(integer);
+        });
+        mFragmentSingleAmenityBinding.viewPagerSingleAmenity.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                requireActivity().invalidateOptionsMenu();
+            }
+        });
+
+        return mFragmentSingleAmenityBinding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.edit_delete, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        int currentItem = mFragmentSingleAmenityBinding.viewPagerSingleAmenity.getCurrentItem();
+        if (mSingleAmenityAdapter.getItemCount() <= 1 || currentItem != 0) {
+            menu.clear();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_single_amenity, container, false);
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            if (mSingleAmenityViewModel.getSelectedPosition().getValue() != 0) {
+                mSingleAmenityViewModel.setSelectedPosition(0);
+            } else {
+                navigateUp();
+            }
+            return true;
+        }
+        else if (itemId == R.id.action_editDoneDelete_edit) {//Move to the edit fragment
+            mSingleAmenityViewModel.setSelectedPosition(1);
+            return true;
+        }
+        else if (itemId == R.id.action_editDoneDelete_delete){
+            if (mAmenity!=null){
+                DialogUtils.showDialog(requireContext(), requireContext().getString(R.string.delete_s, "Amenity"),
+                        requireContext().getString(R.string.delete_prompt_text, "Amenity"),
+                        "Cancel", "Delete", (dialog, which) -> {
+                            ViewUtils.load(mFragmentSingleAmenityBinding.linearLayoutSingleAmenityLoading,
+                                    Arrays.asList(mFragmentSingleAmenityBinding.layoutToolbar.materialToolbarLayoutToolbar),
+                                    true);
+                            mSingleAmenityViewModel.deleteAmenity(mAmenity.getId()).observe(getViewLifecycleOwner(), amenityAPIResponse -> {
+                                ViewUtils.load(mFragmentSingleAmenityBinding.linearLayoutSingleAmenityLoading,
+                                        Arrays.asList(mFragmentSingleAmenityBinding.layoutToolbar.materialToolbarLayoutToolbar),
+                                        false);
+                                if (amenityAPIResponse!=null && amenityAPIResponse.isSuccessful()){
+                                    Toast.makeText(requireContext(),  getString(R.string.successfully_deleted_s, "Amenity"), Toast.LENGTH_SHORT).show();
+                                    navigateUp();
+                                }
+                                else {
+                                    Toast.makeText(requireContext(),
+                                            (amenityAPIResponse==null||amenityAPIResponse.errorMessage(requireContext())==null)?
+                                                    getString(R.string.unknown_error):
+                                                    amenityAPIResponse.errorMessage(requireContext()),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        });
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSave(Amenity amenity) {
+        mAmenity = amenity;
+        setTitle(mAmenity.getTitle());
+        mSingleAmenityAdapter=new SingleAmenityFragment.SingleAmenityAdapter(this);
+        mFragmentSingleAmenityBinding.viewPagerSingleAmenity.setAdapter(mSingleAmenityAdapter);
+        mSingleAmenityViewModel.setSelectedPosition(0);
+    }
+
+    class SingleAmenityAdapter extends FragmentStateAdapter {
+
+        public SingleAmenityAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if (mAmenity==null){
+                return EditAmenityFragment.newInstance(mAmenity);
+            }
+            else {
+                switch (position) {
+                    case 0:
+                        return ViewAmenityFragment.newInstance(mAmenity);
+                    case 1:
+                        return EditAmenityFragment.newInstance(mAmenity);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public int getItemCount() {
+            return mAmenity==null ? 1 : 2;
+        }
     }
 }

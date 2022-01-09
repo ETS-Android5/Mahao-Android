@@ -3,7 +3,9 @@ package ke.co.tonyoa.mahao.app.api.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PasswordRecoveryResponse {
+import java.io.Serializable;
+
+public class PasswordRecoveryResponse implements Serializable {
 
     @SerializedName("msg")
     @Expose

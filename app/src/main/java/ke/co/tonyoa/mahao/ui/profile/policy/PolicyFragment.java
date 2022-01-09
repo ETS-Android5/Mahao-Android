@@ -1,4 +1,4 @@
-package ke.co.tonyoa.mahao.ui.profile.categories.policy;
+package ke.co.tonyoa.mahao.ui.profile.policy;
 
 import android.os.Bundle;
 

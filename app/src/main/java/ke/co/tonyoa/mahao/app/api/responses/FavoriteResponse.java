@@ -3,7 +3,9 @@ package ke.co.tonyoa.mahao.app.api.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FavoriteResponse {
+import java.io.Serializable;
+
+public class FavoriteResponse implements Serializable {
 
     @SerializedName("property_id")
     @Expose

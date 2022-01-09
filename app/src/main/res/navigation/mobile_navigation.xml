@@ -193,7 +193,13 @@
         android:id="@+id/singleCategoryFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryFragment"
         android:label="fragment_single_category"
-        tools:layout="@layout/fragment_single_category" />
+        tools:layout="@layout/fragment_single_category">
+
+        <argument
+            android:name="category"
+            app:argType="ke.co.tonyoa.mahao.app.api.responses.PropertyCategory"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/categoriesListFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListFragment"
@@ -224,10 +230,15 @@
         android:id="@+id/singleAmenityFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityFragment"
         android:label="fragment_single_amenity"
-        tools:layout="@layout/fragment_single_amenity" />
+        tools:layout="@layout/fragment_single_amenity" >
+        <argument
+            android:name="amenity"
+            app:argType="ke.co.tonyoa.mahao.app.api.responses.Amenity"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/policyFragment"
-        android:name="ke.co.tonyoa.mahao.ui.profile.categories.policy.PolicyFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.policy.PolicyFragment"
         android:label="fragment_policy"
         tools:layout="@layout/fragment_policy" />
 </navigation>

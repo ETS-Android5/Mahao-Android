@@ -3,9 +3,10 @@ package ke.co.tonyoa.mahao.app.api.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ModifyAmenitiesResponse {
+public class ModifyAmenitiesResponse implements Serializable {
 
     @SerializedName("property_id")
     @Expose

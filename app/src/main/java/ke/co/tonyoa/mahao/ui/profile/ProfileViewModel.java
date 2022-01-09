@@ -73,4 +73,8 @@ public class ProfileViewModel extends AndroidViewModel {
         mAuthRepository.logout();
     }
 
+    public boolean isAdmin(){
+        return mSharedPrefs.isAdmin();
+    }
+
 }
