@@ -60,6 +60,18 @@ public class AuthRepository {
         ApiManager.execute(() -> {
             try {
                 APIResponse<User> response = apiManager.getUserProfile();
+                if (response!=null && response.isSuccessful()){
+                    User user = response.body();
+                    mSharedPrefs.saveAdmin(user.getIsSuperuser());
+                    mSharedPrefs.saveEmail(user.getEmail());
+                    mSharedPrefs.savePhone(user.getPhone());
+                    mSharedPrefs.saveNames(user.getFirstName(), user.getLastName());
+                    mSharedPrefs.saveProfilePicture(user.getProfilePicture());
+                    mSharedPrefs.saveUserId(user.getId()+"");
+                }
+                else if (response!=null && !response.isSuccessful()){
+                    logout();
+                }
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -73,7 +85,9 @@ public class AuthRepository {
         mSharedPrefs.saveToken(null);
         mSharedPrefs.saveAdmin(false);
         mSharedPrefs.saveEmail(null);
+        mSharedPrefs.savePhone(null);
         mSharedPrefs.saveNames(null, null);
+        mSharedPrefs.saveProfilePicture(null);
         mSharedPrefs.saveUserId(null);
     }
 
@@ -113,7 +127,7 @@ public class AuthRepository {
         ApiManager.execute(() -> {
             try {
                 APIResponse<User> response;
-                if (mSharedPrefs.isAdmin()) {
+                if (mSharedPrefs.getToken()!=null && mSharedPrefs.isAdmin()) {
                     response = apiManager.createUser(firstName, lastName, email, phone,
                             location, isVerified, isActive, isSuperUser, password);
                 }

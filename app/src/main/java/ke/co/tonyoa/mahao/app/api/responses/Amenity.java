@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Amenity {
 
@@ -64,4 +65,18 @@ public class Amenity {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Amenity amenity = (Amenity) o;
+        return Objects.equals(title, amenity.title) && Objects.equals(description, amenity.description) &&
+                Objects.equals(id, amenity.id) && Objects.equals(icon, amenity.icon) &&
+                Objects.equals(createdAt, amenity.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, description, id, icon, createdAt);
+    }
 }

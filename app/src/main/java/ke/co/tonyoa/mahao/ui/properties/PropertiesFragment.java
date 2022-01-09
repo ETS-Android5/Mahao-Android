@@ -2,66 +2,131 @@ package ke.co.tonyoa.mahao.ui.properties;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.google.android.material.tabs.TabLayoutMediator;
+
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.databinding.FragmentPropertiesBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PropertiesFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class PropertiesFragment extends Fragment {
+public class PropertiesFragment extends BaseFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FragmentPropertiesBinding mFragmentPropertiesBinding;
+    private PropertiesViewModel mPropertiesViewModel;
 
     public PropertiesFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PropertiesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PropertiesFragment newInstance(String param1, String param2) {
-        PropertiesFragment fragment = new PropertiesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mPropertiesViewModel = new ViewModelProvider(this).get(PropertiesViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_properties, container, false);
+        mFragmentPropertiesBinding = FragmentPropertiesBinding.inflate(inflater, container, false);
+
+        mFragmentPropertiesBinding.viewPagerProperties.setUserInputEnabled(false);
+        PropertiesFragmentAdapter propertiesFragmentAdapter = new PropertiesFragmentAdapter(this);
+        mFragmentPropertiesBinding.viewPagerProperties.setAdapter(propertiesFragmentAdapter);
+        mPropertiesViewModel.getSelectedPosition().observe(getViewLifecycleOwner(),position->{
+            mFragmentPropertiesBinding.viewPagerProperties.setCurrentItem(position);
+            propertiesFragmentAdapter.notifyDataSetChanged();
+        });
+        new TabLayoutMediator(mFragmentPropertiesBinding.tabLayoutProperties, mFragmentPropertiesBinding.viewPagerProperties,
+                (tab, position) -> {
+                    String title = "All";
+                    int icon = R.drawable.ic_home_black_24dp;
+                    switch (position){
+                        case 0:
+                            title = "All";
+                            icon = R.drawable.ic_home_black_24dp;
+                            break;
+                        case 1:
+                            title = "Recommended";
+                            icon = R.drawable.ic_baseline_thumb_up_24;
+                            break;
+                        case 2:
+                            title = "Nearby";
+                            icon = R.drawable.ic_baseline_location_on_24;
+                            break;
+                        case 3:
+                            title = "Latest";
+                            icon = R.drawable.ic_baseline_access_time_24;
+                            break;
+                        case 4:
+                            title = "Popular";
+                            icon = R.drawable.ic_baseline_trending_up_24;
+                            break;
+                        case 5:
+                            title = "Favorite";
+                            icon = R.drawable.ic_baseline_favorite_24;
+                            break;
+                        case 6:
+                            title = "Mine";
+                            icon = R.drawable.ic_baseline_person_24;
+                            break;
+
+                    }
+                    tab.setText(title);
+                    tab.setIcon(icon);
+                }).attach();
+
+        return mFragmentPropertiesBinding.getRoot();
+    }
+
+    static class PropertiesFragmentAdapter extends FragmentStateAdapter {
+
+        public PropertiesFragmentAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            PropertiesListFragment.PropertyListType propertyListType;
+            switch (position){
+                case 1:
+                    propertyListType = PropertiesListFragment.PropertyListType.RECOMMENDED;
+                    break;
+                case 2:
+                    propertyListType = PropertiesListFragment.PropertyListType.NEARBY;
+                    break;
+                case 3:
+                    propertyListType = PropertiesListFragment.PropertyListType.LATEST;
+                    break;
+                case 4:
+                    propertyListType = PropertiesListFragment.PropertyListType.POPULAR;
+                    break;
+                case 5:
+                    propertyListType = PropertiesListFragment.PropertyListType.FAVORITE;
+                    break;
+                case 6:
+                    propertyListType = PropertiesListFragment.PropertyListType.PERSONAL;
+                    break;
+                case 0:
+                default:
+                    propertyListType = PropertiesListFragment.PropertyListType.ALL;
+                    break;
+            }
+            return PropertiesListFragment.newInstance(propertyListType);
+        }
+
+        @Override
+        public int getItemCount() {
+            return 7;
+        }
     }
 }

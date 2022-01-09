@@ -44,6 +44,7 @@
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/layout_some_houses.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/layout_toolbar.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/menu/bottom_nav_menu.xml" value="0.22447916666666667" />
+        <entry key="app/src/main/res/drawable/gradient_drawable.xml" value="0.4025641025641026" />
         <entry key="app/src/main/res/layout/fragment_amenities_list.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_categories_list.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_edit_amenity.xml" value="0.35572916666666665" />
@@ -74,8 +75,11 @@
         <entry key="app/src/main/res/layout/item_amenity.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/item_category.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/item_gallery.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/item_horizontal_property.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/item_user.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/item_vertical_property.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/layout_bottomsheet_map.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/layout_some_houses.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/layout_toolbar.xml" value="0.35572916666666665" />
       </map>
     </option>

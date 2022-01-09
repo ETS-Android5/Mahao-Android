@@ -16,6 +16,8 @@ public class SharedPrefs {
     public static final String KEY_EMAIL="KEY_EMAIL";
     public static final String KEY_USERID="KEY_USERID";
     public static final String KEY_ADMIN="KEY_ADMIN";
+    public static final String KEY_PROFILE_PICTURE = "KEY_PROFILE_PICTURE";
+    public static final String KEY_PHONE = "KEY_PHONE";
 
     private final Context mContext;
     private final SharedPreferences mSharedPreferences;
@@ -77,12 +79,28 @@ public class SharedPrefs {
         return getString(KEY_EMAIL, null);
     }
 
+    public void savePhone(String phone){
+        saveString(KEY_PHONE, phone);
+    }
+
+    public String getPhone(){
+        return getString(KEY_PHONE, null);
+    }
+
     public void saveUserId(String userId){
         saveString(KEY_USERID, userId);
     }
 
     public String getUserId(){
         return getString(KEY_USERID, null);
+    }
+
+    public void saveProfilePicture(String profilePicture){
+        saveString(KEY_PROFILE_PICTURE, profilePicture);
+    }
+
+    public String getProfilePicture(){
+        return getString(KEY_PROFILE_PICTURE, null);
     }
 
     public void saveAdmin(boolean isAdmin){

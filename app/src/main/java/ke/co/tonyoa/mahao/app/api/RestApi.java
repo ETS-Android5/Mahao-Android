@@ -43,6 +43,7 @@ public interface RestApi {
      * @param password
      * @return
      */
+    @Multipart
     @POST("/api/v1/login/access-token")
     @Headers({"Accept: application/json"})
     Call<LoginResponse> login(@Part("username") RequestBody username,
@@ -113,7 +114,7 @@ public interface RestApi {
      * @param createUserRequest
      * @return
      */
-    @POST("/api/v1/users/")
+    @POST("/api/v1/users/open")
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     Call<User> register(@Body CreateUserRequest createUserRequest);
 
@@ -143,7 +144,7 @@ public interface RestApi {
      * @param minPrice Minimum price of a property
      * @param maxPrice Maximum price of a property
      * @param coordinates Coordinates to filter with for nearby houses in the
-     *                    form lat, long, radius in metres e.g. 41.5, 20.4, 10
+     *                    form lat, long, radius in kilometres e.g. 41.5, 20.4, 2
      * @param isVerified Whether to filter only houses that are verified or not
      * @param isEnabled Whether tp filter only houses that are enabled or not
      * @param categories Category IDs to use when filtering houses separated by commas e.g 4, 7, 12
