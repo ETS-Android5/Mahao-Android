@@ -2,6 +2,8 @@ package ke.co.tonyoa.mahao.app.api.responses;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -27,10 +29,10 @@ public class Property {
     private String locationName;
     @SerializedName("price")
     @Expose
-    private Integer price;
+    private Float price;
     @SerializedName("location")
     @Expose
-    private List<String> location = null;
+    private List<Float> location = null;
     @SerializedName("is_enabled")
     @Expose
     private Boolean isEnabled;
@@ -113,19 +115,19 @@ public class Property {
         this.locationName = locationName;
     }
 
-    public Integer getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
-    public List<String> getLocation() {
+    public List<Float> getLocation() {
         return location;
     }
 
-    public void setLocation(List<String> location) {
+    public void setLocation(List<Float> location) {
         this.location = location;
     }
 
@@ -217,4 +219,27 @@ public class Property {
         this.propertyPhotos = propertyPhotos;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Property property = (Property) o;
+        return Objects.equals(propertyCategoryId, property.propertyCategoryId) &&
+                Objects.equals(title, property.title) && Objects.equals(description, property.description) &&
+                Objects.equals(numBed, property.numBed) && Objects.equals(numBath, property.numBath) &&
+                Objects.equals(locationName, property.locationName) && Objects.equals(price, property.price) &&
+                Objects.equals(location, property.location) && Objects.equals(isEnabled, property.isEnabled) &&
+                Objects.equals(isVerified, property.isVerified) && Objects.equals(id, property.id) &&
+                Objects.equals(ownerId, property.ownerId) && Objects.equals(featureImage, property.featureImage) &&
+                Objects.equals(createdAt, property.createdAt) && Objects.equals(isFavorite, property.isFavorite) &&
+                Objects.equals(owner, property.owner) && Objects.equals(propertyCategory, property.propertyCategory) &&
+                Objects.equals(propertyAmenities, property.propertyAmenities) && Objects.equals(propertyPhotos, property.propertyPhotos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(propertyCategoryId, title, description, numBed, numBath, locationName,
+                price, location, isEnabled, isVerified, id, ownerId, featureImage, createdAt, isFavorite,
+                owner, propertyCategory, propertyAmenities, propertyPhotos);
+    }
 }

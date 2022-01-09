@@ -14,6 +14,7 @@
             android:layout_height="match_parent"
             android:background="?colorSecondary"/>
         <TextView
+            android:id="@+id/textView_someHouses_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -23,6 +24,7 @@
             android:textStyle="bold"
             tools:text="Nearby" />
         <TextView
+            android:id="@+id/textView_someHouses_showMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -32,11 +34,28 @@
             android:textColor="?colorSecondary"
             android:background="?selectableItemBackground"/>
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="horizontal"
-        tools:listitem="@layout/item_horizontal_property"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_someHouses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            tools:listitem="@layout/item_horizontal_property"/>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView_someHouses_loading"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_256"
+            android:layout_margin="@dimen/size_16"
+            app:lottie_rawRes="@raw/loading_normal"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+    </FrameLayout>
+
 </LinearLayout>

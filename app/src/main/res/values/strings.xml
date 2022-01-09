@@ -83,4 +83,23 @@
     <string name="authentication_error">You need to be logged in to perform this action</string>
     <string name="authorization_error">You are not authorized to perform this action</string>
     <string name="validation_error">Some of the fields you submitted were invalid</string>
+    <string name="please_enter_valid_email">Please enter a valid email address</string>
+    <string name="please_enter_valid_password">Please enter a password with at least 6 characters</string>
+    <string name="unknown_error">An unknown error occurred. Please try again later</string>
+    <string name="register">Register</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+    <string name="passwords_need_to_match">Passwords do not match</string>
+    <string name="account_created_successfully">Account created successfully</string>
+    <string name="enter_valid_phone">Enter a valid Kenyan phone number</string>
+    <string name="recover_password">Recover Password</string>
+    <string name="d_beds">%1$d beds</string>
+    <string name="d_baths">%1$d baths</string>
+    <string name="d_amens">%1$d amens</string>
+    <string name="kes_f_month">KES. %1$.0f/month</string>
+    <string name="recommended">Recommended</string>
+    <string name="nearby">Nearby</string>
+    <string name="latest">Latest</string>
+    <string name="popular">Popular</string>
+    <string name="favorite">Favorite</string>
+    <string name="personal">Personal</string>
 </resources>

@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class PropertyCategory {
 
@@ -64,4 +65,18 @@ public class PropertyCategory {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PropertyCategory that = (PropertyCategory) o;
+        return Objects.equals(title, that.title) && Objects.equals(description, that.description) &&
+                Objects.equals(id, that.id) && Objects.equals(icon, that.icon) &&
+                Objects.equals(createdAt, that.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, description, id, icon, createdAt);
+    }
 }

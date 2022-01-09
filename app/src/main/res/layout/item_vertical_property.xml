@@ -20,6 +20,7 @@
             android:layout_margin="@dimen/size_8"
             android:layout_height="@dimen/size_100">
             <ImageView
+                android:id="@+id/imageView_itemVerticalProperty_feature"
                 android:layout_width="@dimen/size_100"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -45,10 +46,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginTop="@dimen/size_8"
+                    android:layout_marginBottom="@dimen/size_4"
+                    android:paddingTop="@dimen/size_4"
+                    android:paddingBottom="@dimen/size_4"
+                    android:layout_gravity="center_vertical"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:textStyle="bold"
@@ -56,13 +62,31 @@
                     android:textColor="?colorOnSurface"
                     tools:text="Title of the house that was provided by the owner"/>
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:layout_width="@dimen/size_24"
-                    android:layout_height="@dimen/size_24"
-                    android:layout_margin="@dimen/size_4"
-                    app:lottie_rawRes="@raw/like"
-                    app:lottie_loop="false"
-                    app:lottie_autoPlay="false" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animationView_itemVerticalProperty_like"
+                        android:layout_width="@dimen/size_24"
+                        android:layout_height="@dimen/size_24"
+                        android:layout_margin="@dimen/size_4"
+                        app:lottie_rawRes="@raw/like"
+                        app:lottie_loop="false"
+                        app:lottie_autoPlay="false"
+                        android:background="?selectableItemBackground"/>
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animationView_itemVerticalProperty_loading"
+                        android:layout_width="@dimen/size_24"
+                        android:layout_height="@dimen/size_24"
+                        android:layout_margin="@dimen/size_2"
+                        android:layout_marginEnd="@dimen/size_2"
+                        app:lottie_rawRes="@raw/loading_hand"
+                        app:lottie_loop="true"
+                        app:lottie_autoPlay="false"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -80,6 +104,7 @@
                     android:contentDescription="@string/location" />
 
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_location"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/size_4"
                     android:layout_width="wrap_content"
@@ -88,6 +113,7 @@
                     tools:text="Nairobi" />
 
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_price"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -110,9 +136,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/size_8"
+                android:layout_marginBottom="@dimen/size_8"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_beds"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -123,6 +151,7 @@
                     android:gravity="center_vertical"/>
 
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_baths"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -133,6 +162,7 @@
                     android:gravity="center_vertical"/>
 
                 <TextView
+                    android:id="@+id/textView_itemVerticalProperty_amenities"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -146,6 +176,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/imageView_itemVerticalProperty_verified"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_8"

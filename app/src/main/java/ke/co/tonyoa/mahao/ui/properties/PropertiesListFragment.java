@@ -1,67 +1,155 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
+import android.animation.Animator;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
+
+import java.util.Arrays;
+import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.Property;
+import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentPropertiesListBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PropertiesListFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
 public class PropertiesListFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String PROPERTY_LIST_ARG = "property_list";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public enum PropertyListType {
+        ALL,
+        RECOMMENDED,
+        NEARBY,
+        LATEST,
+        POPULAR,
+        FAVORITE,
+        PERSONAL
+    }
+
+    private FragmentPropertiesListBinding mFragmentPropertiesListBinding;
+    private PropertiesListViewModel mPropertiesListViewModel;
+    private PropertyListType mPropertyListType;
+    private PropertyAdapter mPropertyAdapter;
+
+    public static PropertiesListFragment newInstance(PropertyListType propertyListType){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(PROPERTY_LIST_ARG, propertyListType);
+        PropertiesListFragment propertiesListFragment = new PropertiesListFragment();
+        propertiesListFragment.setArguments(bundle);
+        return propertiesListFragment;
+    }
 
     public PropertiesListFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PropertiesListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PropertiesListFragment newInstance(String param1, String param2) {
-        PropertiesListFragment fragment = new PropertiesListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if (getArguments()!=null){
+            mPropertyListType = (PropertyListType) getArguments().getSerializable(PROPERTY_LIST_ARG);
         }
+        mPropertiesListViewModel = new ViewModelProvider(this).get(PropertiesListViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_properties_list, container, false);
+        mFragmentPropertiesListBinding = FragmentPropertiesListBinding.inflate(inflater, container, false);
+
+        mPropertiesListViewModel.setPropertyList(mPropertyListType);
+        mPropertyAdapter = new PropertyAdapter(PropertyAdapter.ListType.VERTICAL_PROPERTY,
+                mFragmentPropertiesListBinding.recyclerViewPropertiesList.getWidth(), requireContext(),
+                (property, position) -> {
+                    //TODO: Navigate to single property fragment
+                    //TODO:
+                }, (property, position) -> {
+                    if (property.getIsFavorite()) {
+                        mPropertiesListViewModel.addFavorite(property.getId()).observe(getViewLifecycleOwner(), favoriteResponseAPIResponse -> {
+                            if (favoriteResponseAPIResponse != null && favoriteResponseAPIResponse.isSuccessful()) {
+                                property.setIsFavorite(true);
+                            } else {
+                                Toast.makeText(requireContext(),
+                                        (favoriteResponseAPIResponse == null || favoriteResponseAPIResponse.errorMessage(requireContext()) == null) ?
+                                                getString(R.string.unknown_error) :
+                                                favoriteResponseAPIResponse.errorMessage(requireContext()),
+                                        Toast.LENGTH_SHORT).show();
+                                property.setIsFavorite(false);
+                            }
+                            mPropertyAdapter.notifyItemChanged(position, Arrays.asList("like"));
+                        });
+                    }
+                    else {
+                        mPropertiesListViewModel.removeFavorite(property.getId()).observe(getViewLifecycleOwner(), favoriteResponseAPIResponse -> {
+                            if (favoriteResponseAPIResponse != null && favoriteResponseAPIResponse.isSuccessful()) {
+                                property.setIsFavorite(false);
+                            } else {
+                                Toast.makeText(requireContext(),
+                                        (favoriteResponseAPIResponse == null || favoriteResponseAPIResponse.errorMessage(requireContext()) == null) ?
+                                                getString(R.string.unknown_error) :
+                                                favoriteResponseAPIResponse.errorMessage(requireContext()),
+                                        Toast.LENGTH_SHORT).show();
+                                property.setIsFavorite(true);
+                            }
+                            mPropertyAdapter.notifyItemChanged(position, Arrays.asList("like"));
+                        });
+                    }
+                });
+        mFragmentPropertiesListBinding.recyclerViewPropertiesList.setLayoutManager(new LinearLayoutManager(requireContext(),
+                LinearLayoutManager.VERTICAL, false));
+        mFragmentPropertiesListBinding.recyclerViewPropertiesList.setAdapter(mPropertyAdapter);
+        fetchData();
+        mFragmentPropertiesListBinding.getRoot().setOnRefreshListener(this::fetchData);
+
+        return mFragmentPropertiesListBinding.getRoot();
+    }
+
+    private void fetchData(){
+        LinearLayout loadingView = mFragmentPropertiesListBinding.linearLayoutPropertiesListLoading;
+        List<RecyclerView> enabledViews = Arrays.asList(mFragmentPropertiesListBinding.recyclerViewPropertiesList);
+        ViewUtils.load(loadingView, enabledViews, true);
+        mPropertiesListViewModel.getPropertiesLiveData().observe(getViewLifecycleOwner(), listAPIResponse -> {
+            ViewUtils.load(loadingView, enabledViews, false);
+            int propertyCount = 0;
+            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
+                List<Property> properties = listAPIResponse.body();
+                mPropertyAdapter.submitList(properties);
+                if (properties!=null)
+                    propertyCount = properties.size();
+            }
+            else {
+                Toast.makeText(requireContext(),
+                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
+                                getString(R.string.unknown_error):
+                                listAPIResponse.errorMessage(requireContext()),
+                        Toast.LENGTH_SHORT).show();
+                propertyCount = mPropertyAdapter.getItemCount();
+            }
+
+            if (propertyCount>0){
+                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.GONE);
+                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.VISIBLE);
+            }
+            else {
+                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.VISIBLE);
+                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.GONE);
+            }
+            mFragmentPropertiesListBinding.getRoot().setRefreshing(false);
+        });
     }
 }

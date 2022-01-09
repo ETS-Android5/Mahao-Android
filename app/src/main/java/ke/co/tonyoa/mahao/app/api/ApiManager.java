@@ -78,7 +78,7 @@ public class ApiManager {
                 .build();
 
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -174,9 +174,9 @@ public class ApiManager {
                                                      LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
                                                      Boolean isEnabled, List<Integer> categories, List<Integer> amenities) throws IOException {
         return new APIResponse<>(api.getProperties(getToken(), skip, limit, sortBy==null?null:sortBy.getApiValue(),
-                latLngSort.latitude, latLngSort.longitude, query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,
-                (latLngFilter!=null && filterRadius!=null)?
-                        (latLngFilter.latitude+", "+latLngFilter.longitude+", "+filterRadius):null,
+                latLngSort==null?null:latLngSort.latitude, latLngSort==null?null:latLngSort.longitude,
+                query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,
+                (latLngFilter!=null && filterRadius!=null)? (latLngFilter.latitude+", "+latLngFilter.longitude+", "+filterRadius):null,
                 isVerified, isEnabled, categories==null?null:categories.toString().replace("[", "").replace("]", ""),
                 amenities==null?null:amenities.toString().replace("[", "").replace("]", "")).execute());
     }

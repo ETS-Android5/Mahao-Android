@@ -38,7 +38,7 @@ public class PropertiesRepository {
         mContext = context;
     }
 
-    public LiveData<APIResponse<List<Property>>> getProperties(SortBy sortBy, LatLng latLngSort,
+    public LiveData<APIResponse<List<Property>>> getProperties(int skip, int limit, SortBy sortBy, LatLng latLngSort,
                                                                String query, Integer minBed, Integer maxBed, Integer minBath,
                                                                Integer maxBath, Float minPrice, Float maxPrice,
                                                                LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
@@ -46,7 +46,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getProperties(0, 5000,
+                APIResponse<List<Property>> response = apiManager.getProperties(skip, limit,
                         sortBy, latLngSort, query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,
                         latLngFilter, filterRadius, isVerified, isEnabled, categories, amenities);
                 liveData.postValue(response);
@@ -58,11 +58,11 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getUserProperties() {
+    public LiveData<APIResponse<List<Property>>> getUserProperties(int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getUserProperties(0, 5000);
+                APIResponse<List<Property>> response = apiManager.getUserProperties(skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -72,11 +72,11 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getFavoriteProperties() {
+    public LiveData<APIResponse<List<Property>>> getFavoriteProperties(int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getFavoriteProperties(0, 5000);
+                APIResponse<List<Property>> response = apiManager.getFavoriteProperties(skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -86,11 +86,11 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getLatestProperties(Integer category) {
+    public LiveData<APIResponse<List<Property>>> getLatestProperties(Integer category, int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getLatestProperties(category, 0, 5000);
+                APIResponse<List<Property>> response = apiManager.getLatestProperties(category, skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -100,11 +100,11 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getPopularProperties(Integer category) {
+    public LiveData<APIResponse<List<Property>>> getPopularProperties(Integer category, int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getPopularProperties(category, 0, 5000);
+                APIResponse<List<Property>> response = apiManager.getPopularProperties(category, skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,11 +114,11 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getRecommendedProperties(Integer category) {
+    public LiveData<APIResponse<List<Property>>> getRecommendedProperties(Integer category, int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getRecommendedProperties(category, 0, 5000);
+                APIResponse<List<Property>> response = apiManager.getRecommendedProperties(category, skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -128,12 +128,13 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<List<Property>>> getSimilarProperties(int propertyId, Integer category) {
+    public LiveData<APIResponse<List<Property>>> getSimilarProperties(int propertyId, Integer category,
+                                                                      int skip, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
                 APIResponse<List<Property>> response = apiManager.getSimilarProperties(propertyId,
-                        category, 0, 5000);
+                        category, skip, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

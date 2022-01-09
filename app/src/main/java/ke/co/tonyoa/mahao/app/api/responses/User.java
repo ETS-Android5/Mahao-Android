@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class User {
 
@@ -129,4 +130,22 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) &&
+                Objects.equals(email, user.email) && Objects.equals(phone, user.phone) &&
+                Objects.equals(location, user.location) && Objects.equals(isVerified, user.isVerified) &&
+                Objects.equals(isActive, user.isActive) && Objects.equals(isSuperuser, user.isSuperuser) &&
+                Objects.equals(id, user.id) && Objects.equals(profilePicture, user.profilePicture) &&
+                Objects.equals(createdAt, user.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email, phone, location, isVerified, isActive,
+                isSuperuser, id, profilePicture, createdAt);
+    }
 }

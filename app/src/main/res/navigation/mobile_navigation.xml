@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_splash"
-        android:name="ke.co.tonyoa.mahao.ui.SplashFragment"
+        android:name="ke.co.tonyoa.mahao.ui.main.SplashFragment"
         tools:layout="@layout/fragment_splash" >
         <action
             android:id="@+id/action_navigation_splash_to_navigation_main"
@@ -80,7 +80,7 @@
 
     <fragment
         android:id="@+id/navigation_main"
-        android:name="ke.co.tonyoa.mahao.ui.home.MainFragment"
+        android:name="ke.co.tonyoa.mahao.ui.main.MainFragment"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_navigation_main_to_navigation_login"

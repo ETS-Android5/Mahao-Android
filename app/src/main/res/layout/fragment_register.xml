@@ -13,197 +13,222 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="match_parent">
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_16"
-            android:layout_marginEnd="@dimen/size_16"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="@string/create_an_account"
-                android:textSize="@dimen/text_32"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/and_find_the_house_you_are_looking_for"/>
-
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout_register_firstName"
-                    android:layout_width="0dp"
+                android:layout_marginStart="@dimen/size_16"
+                android:layout_marginEnd="@dimen/size_16"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:text="@string/create_an_account"
+                    android:textSize="@dimen/text_32"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/and_find_the_house_you_are_looking_for"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_register_firstName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/size_16"
+                        android:layout_marginEnd="@dimen/size_8"
+                        android:hint="@string/first_name"
+                        style="@style/Theme.Mahao.FormTextInputLayout"
+                        app:startIconDrawable="@drawable/ic_baseline_person_24">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_register_firstName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Some"
+                            android:inputType="textPersonName|textCapWords"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_register_lastName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/size_16"
+                        android:layout_marginStart="@dimen/size_8"
+                        android:hint="@string/last_name"
+                        style="@style/Theme.Mahao.FormTextInputLayout"
+                        app:startIconDrawable="@drawable/ic_baseline_person_24">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_register_lastName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Name"
+                            android:inputType="textPersonName|textCapWords"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_register_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16"
-                    android:layout_marginEnd="@dimen/size_8"
-                    android:hint="@string/first_name"
+                    android:hint="@string/email_address"
                     style="@style/Theme.Mahao.FormTextInputLayout"
-                    app:startIconDrawable="@drawable/ic_baseline_person_24">
+                    app:startIconDrawable="@drawable/ic_baseline_email_24">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText_register_firstName"
+                        android:id="@+id/textInputEditText_register_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:text="Some"
-                        android:inputType="textPersonName|textCapWords"/>
+                        tools:text="Some text"
+                        android:inputType="textEmailAddress"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout_register_lastName"
-                    android:layout_width="0dp"
+                    android:id="@+id/textInputLayout_register_phone"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginTop="@dimen/size_16"
-                    android:layout_marginStart="@dimen/size_8"
-                    android:hint="@string/last_name"
+                    android:hint="@string/phone_number"
                     style="@style/Theme.Mahao.FormTextInputLayout"
-                    app:startIconDrawable="@drawable/ic_baseline_person_24">
+                    app:startIconDrawable="@drawable/ic_baseline_phone_24">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText_register_lastName"
+                        android:id="@+id/textInputEditText_register_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:text="Name"
-                        android:inputType="textPersonName|textCapWords"/>
+                        tools:text="+254721212121"
+                        android:inputType="phone"/>
                 </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_register_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:hint="@string/email_address"
-                style="@style/Theme.Mahao.FormTextInputLayout"
-                app:startIconDrawable="@drawable/ic_baseline_email_24">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText_register_email"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_register_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Some text"
-                    android:inputType="textEmailAddress"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/size_16"
+                    android:hint="@string/location"
+                    style="@style/Theme.Mahao.FormTextInputLayout"
+                    app:startIconDrawable="@drawable/ic_baseline_location_on_24">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_register_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Nairobi"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_register_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:hint="@string/phone_number"
-                style="@style/Theme.Mahao.FormTextInputLayout"
-                app:startIconDrawable="@drawable/ic_baseline_phone_24">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText_register_phone"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_register_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="+254721212121"
-                    android:inputType="phone"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/size_16"
+                    android:hint="@string/password"
+                    style="@style/Theme.Mahao.FormTextInputLayout"
+                    app:startIconDrawable="@drawable/ic_baseline_lock_24"
+                    app:passwordToggleEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_register_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Some text"
+                        android:inputType="textPassword"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_register_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:hint="@string/location"
-                style="@style/Theme.Mahao.FormTextInputLayout"
-                app:startIconDrawable="@drawable/ic_baseline_location_on_24">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText_register_location"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_register_confirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Nairobi"
-                    android:inputType="textCapWords"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/size_16"
+                    android:hint="@string/confirm_password"
+                    style="@style/Theme.Mahao.FormTextInputLayout"
+                    app:startIconDrawable="@drawable/ic_baseline_lock_24"
+                    app:passwordToggleEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_register_confirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Some text"
+                        android:inputType="textPassword"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_register_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:hint="@string/password"
-                style="@style/Theme.Mahao.FormTextInputLayout"
-                app:startIconDrawable="@drawable/ic_baseline_lock_24"
-                app:passwordToggleEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText_register_password"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Some text"
-                    android:inputType="textPassword"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/size_16"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <CheckBox
+                        android:id="@+id/checkbox_register_terms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/i_agree_to_the" />
+                    <TextView
+                        android:id="@+id/textView_register_terms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/terms_of_service"
+                        android:background="?selectableItemBackground"/>
+                </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_register_confirmPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:hint="@string/confirm_password"
-                style="@style/Theme.Mahao.FormTextInputLayout"
-                app:startIconDrawable="@drawable/ic_baseline_lock_24"
-                app:passwordToggleEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText_register_confirmPassword"
+                <Button
+                    android:id="@+id/button_register_create"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Some text"
-                    android:inputType="textPassword"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/size_24"
+                    android:text="@string/create_an_account"
+                    style="@style/Theme.Mahao.FormButton"
+                    android:enabled="false"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                <CheckBox
-                    android:id="@+id/checkbox_register_terms"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/i_agree_to_the" />
-                <TextView
-                    android:id="@+id/textView_register_terms"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/terms_of_service"
-                    android:background="?selectableItemBackground"/>
+                    android:layout_marginTop="@dimen/size_24"
+                    android:layout_marginBottom="@dimen/size_24"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/already_have_an_account" />
+                    <TextView
+                        android:id="@+id/textView_register_login"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sign_in"
+                        android:background="?selectableItemBackground"/>
+                </LinearLayout>
             </LinearLayout>
+        </ScrollView>
 
-            <Button
-                android:id="@+id/button_register_create"
+        <LinearLayout
+            android:id="@+id/linearLayout_register_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/size_16"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView_register_loading"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_24"
-                android:text="@string/create_an_account"
-                style="@style/Theme.Mahao.FormButton"
-                android:enabled="false"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_24"
-                android:layout_marginBottom="@dimen/size_24"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/already_have_an_account" />
-                <TextView
-                    android:id="@+id/textView_register_login"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sign_in"
-                    android:background="?selectableItemBackground"/>
-            </LinearLayout>
+                android:layout_height="@dimen/size_256"
+                android:layout_margin="@dimen/size_16"
+                app:lottie_rawRes="@raw/loading_normal"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                android:layout_gravity="center"/>
         </LinearLayout>
-    </ScrollView>
+
+    </FrameLayout>
+
 </LinearLayout>

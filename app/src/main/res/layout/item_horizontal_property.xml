@@ -19,10 +19,16 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/imageView_itemHorizontalProperty_feature"
                 android:layout_width="match_parent"
                 android:scaleType="centerCrop"
                 android:layout_height="@dimen/size_200"
                 tools:srcCompat="@tools:sample/avatars"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_200"
+                android:background="@drawable/gradient_drawable" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -43,6 +49,7 @@
                     android:contentDescription="@string/location" />
 
                 <TextView
+                    android:id="@+id/textView_itemHorizontalProperty_location"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/size_4"
                     android:layout_width="match_parent"
@@ -50,37 +57,35 @@
                     tools:text="Nairobi" />
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/size_8"
-                android:background="@android:color/transparent"
-                app:cardBackgroundColor="@color/color_background_gray_transparentish"
-                android:layout_gravity="end" >
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:layout_width="@dimen/size_32"
-                        android:layout_height="@dimen/size_32"
-                        android:layout_margin="@dimen/size_2"
-                        android:layout_marginEnd="@dimen/size_2"
-                        app:lottie_rawRes="@raw/loading_hand"
-                        app:lottie_loop="true"
-                        app:lottie_autoPlay="true"
-                        android:visibility="gone"/>
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:layout_width="@dimen/size_32"
-                        android:layout_height="@dimen/size_32"
-                        android:layout_margin="@dimen/size_2"
-                        app:lottie_rawRes="@raw/like"
-                        app:lottie_loop="false"
-                        app:lottie_autoPlay="false" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_gravity="end"
+                android:orientation="horizontal">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_itemHorizontalProperty_loading"
+                    android:layout_width="@dimen/size_32"
+                    android:layout_height="@dimen/size_32"
+                    android:layout_margin="@dimen/size_2"
+                    android:layout_marginEnd="@dimen/size_2"
+                    app:lottie_rawRes="@raw/loading_hand"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="false"
+                    android:visibility="gone"/>
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView_itemHorizontalProperty_like"
+                    android:layout_width="@dimen/size_32"
+                    android:layout_height="@dimen/size_32"
+                    android:layout_margin="@dimen/size_2"
+                    app:lottie_rawRes="@raw/like"
+                    app:lottie_loop="false"
+                    app:lottie_autoPlay="false"
+                    android:background="?selectableItemBackground"/>
+            </LinearLayout>
 
             <ImageView
+                android:id="@+id/imageView_itemHorizontalProperty_verified"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/size_8"
@@ -91,6 +96,7 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/textView_itemHorizontalProperty_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16"
@@ -113,6 +119,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/textView_itemHorizontalProperty_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Kes. 5000/month"
@@ -130,6 +137,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
+                    android:id="@+id/textView_itemHorizontalProperty_beds"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="3 beds"
@@ -139,6 +147,7 @@
                     android:gravity="center_vertical"/>
 
                 <TextView
+                    android:id="@+id/textView_itemHorizontalProperty_baths"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="2 baths"
