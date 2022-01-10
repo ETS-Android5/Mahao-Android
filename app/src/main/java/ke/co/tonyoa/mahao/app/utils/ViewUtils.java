@@ -112,7 +112,8 @@ public class ViewUtils {
     }
 
     public static <T extends View> void load(View loadingView, List<T> enabledViews, boolean isLoading){
-        loadingView.setVisibility(isLoading?View.VISIBLE:View.GONE);
+        if (loadingView!=null)
+            loadingView.setVisibility(isLoading?View.VISIBLE:View.GONE);
         for (View view:enabledViews){
             view.setEnabled(!isLoading);
         }

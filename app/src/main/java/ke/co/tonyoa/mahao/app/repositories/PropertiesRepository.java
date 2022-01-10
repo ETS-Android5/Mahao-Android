@@ -210,13 +210,13 @@ public class PropertiesRepository {
         return liveData;
     }
 
-    public LiveData<APIResponse<ModifyAmenitiesResponse>> modifyPropertyAmenities(int propertyId,
+    public LiveData<APIResponse<List<ModifyAmenitiesResponse>>> modifyPropertyAmenities(int propertyId,
                                                                                   List<Integer> added,
                                                                                   List<Integer> removed){
-        MutableLiveData<APIResponse<ModifyAmenitiesResponse>> liveData = new MutableLiveData<>();
+        MutableLiveData<APIResponse<List<ModifyAmenitiesResponse>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<ModifyAmenitiesResponse> response = apiManager.modifyPropertyAmenities(propertyId,
+                APIResponse<List<ModifyAmenitiesResponse>> response = apiManager.modifyPropertyAmenities(propertyId,
                         added, removed);
                 liveData.postValue(response);
             } catch (IOException e) {

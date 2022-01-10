@@ -20,7 +20,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout_viewProperty"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_300"
+            android:layout_height="@dimen/size_356"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -52,6 +52,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/size_56"
                     android:layout_marginBottom="@dimen/size_20">
 
                     <LinearLayout
@@ -162,6 +163,13 @@
                     </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <include
+                    android:id="@+id/layout_toolbar"
+                    layout="@layout/layout_toolbar"
+                    android:layout_height="?actionBarSize"
+                    android:layout_width="match_parent"
+                    app:layout_collapseMode="pin"/>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -190,7 +198,8 @@
                         android:paddingLeft="@dimen/size_8"
                         android:paddingRight="@dimen/size_8"
                         android:gravity="center"
-                        android:background="@drawable/round_background_primary"/>
+                        android:background="@drawable/round_background_primary"
+                        android:visibility="gone"/>
                     <TextView
                         android:id="@+id/textView_viewProperty_category"
                         android:layout_width="wrap_content"
@@ -214,7 +223,8 @@
                         android:textColor="?colorOnPrimary"
                         android:paddingLeft="@dimen/size_8"
                         android:paddingRight="@dimen/size_8"
-                        android:background="@drawable/round_background_primary"/>
+                        android:background="@drawable/round_background_primary"
+                        android:visibility="gone"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -395,7 +405,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/size_256"
                             android:layout_margin="@dimen/size_16"
-                            app:lottie_rawRes="@raw/home_logo"
+                            app:lottie_rawRes="@raw/no_results"
                             app:lottie_loop="true"
                             app:lottie_autoPlay="true" />
                         <TextView
@@ -440,7 +450,7 @@
                     android:layout_marginStart="@dimen/size_32"
                     android:layout_marginEnd="@dimen/size_32"
                     android:text="@string/edit_amenities"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -546,88 +556,15 @@
                     android:layout_height="@dimen/size_200"
                     android:layout_margin="@dimen/size_8"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_8"
-                    android:layout_marginEnd="@dimen/size_8"
-                    android:text="@string/related"
-                    android:textAppearance="?android:textAppearanceLarge" />
-
-                <View
-                    android:layout_width="@dimen/size_40"
-                    android:layout_height="@dimen/size_2"
-                    android:layout_marginTop="@dimen/size_4"
-                    android:layout_marginStart="@dimen/size_8"
-                    android:background="?colorSecondary" />
-
-
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView_viewProperty_related"
-                        android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8">
+                    <include
+                        android:id="@+id/layoutSomeHouses_recommended"
+                        layout="@layout/layout_some_houses"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/size_8"
-                        android:layout_marginTop="@dimen/size_8"
-                        android:layout_marginRight="@dimen/size_8"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:orientation="horizontal"
-                        tools:listitem="@layout/item_horizontal_property"/>
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout_viewProperty_emptyRelated"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:layout_margin="@dimen/size_16"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:visibility="gone">
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/animationView_viewProperty_emptyRelated"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/size_256"
-                            android:layout_margin="@dimen/size_16"
-                            app:lottie_rawRes="@raw/home_logo"
-                            app:lottie_loop="true"
-                            app:lottie_autoPlay="true" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceLarge"
-                            android:textStyle="bold"
-                            android:text="@string/no_properties"
-                            android:layout_gravity="center"/>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout_viewProperty_loadingRelated"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:layout_margin="@dimen/size_16"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:visibility="gone">
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/animationView_viewProperty_loadingRelated"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="@dimen/size_16"
-                            app:lottie_rawRes="@raw/home_logo"
-                            app:lottie_loop="true"
-                            app:lottie_autoPlay="true"
-                            android:layout_gravity="center"/>
-                    </LinearLayout>
+                        android:layout_width="match_parent"/>
                 </FrameLayout>
 
             </LinearLayout>
@@ -652,7 +589,7 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <FrameLayout
-        android:id="@+id/progress"
+        android:id="@+id/frameLayout_viewProperty_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -662,11 +599,16 @@
         android:background="?colorSurface"
         android:visibility="gone">
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView_viewProperty_loading"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_256"
+            android:layout_margin="@dimen/size_16"
+            app:lottie_rawRes="@raw/loading_normal"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

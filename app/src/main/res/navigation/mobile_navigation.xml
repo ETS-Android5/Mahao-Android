@@ -131,6 +131,10 @@
         android:name="ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyFragment"
         android:label="fragment_single_property"
         tools:layout="@layout/fragment_single_property" >
+        <argument
+            android:name="property"
+            app:argType="ke.co.tonyoa.mahao.app.api.responses.Property"
+            app:nullable="true" />
         <action
             android:id="@+id/action_singlePropertyFragment_self"
             app:destination="@id/singlePropertyFragment"

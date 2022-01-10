@@ -80,4 +80,9 @@ public class PropertyCategory implements Serializable {
     public int hashCode() {
         return Objects.hash(title, description, id, icon, createdAt);
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

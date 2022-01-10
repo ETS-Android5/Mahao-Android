@@ -30,6 +30,7 @@ import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentHomeBinding;
 import ke.co.tonyoa.mahao.databinding.LayoutSomeHousesBinding;
+import ke.co.tonyoa.mahao.ui.main.MainFragmentDirections;
 import ke.co.tonyoa.mahao.ui.main.MainViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertyAdapter;
 
@@ -46,8 +47,7 @@ public class HomeFragment extends BaseFragment {
     private PropertyAdapter mPropertyAdapterFavorite;
     private PropertyAdapter mPropertyAdapterPersonal;
     private final OnItemClickListener<Property> mPropertyOnItemClickListener = (property, position) -> {
-        //TODO: Navigate to single property fragment
-        //TODO:
+        navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(property));
     };
 
 

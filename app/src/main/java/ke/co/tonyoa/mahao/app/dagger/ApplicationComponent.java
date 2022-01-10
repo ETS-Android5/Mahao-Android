@@ -15,6 +15,9 @@ import ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListViewModel;
 import ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesListViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesViewModel;
+import ke.co.tonyoa.mahao.ui.properties.single.EditPropertyViewModel;
+import ke.co.tonyoa.mahao.ui.properties.single.PropertyAmenitySelectViewModel;
+import ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyViewModel;
 
 @Singleton
 @Component(modules = {ApplicationModule.class})
@@ -42,4 +45,10 @@ public interface ApplicationComponent {
     void inject(AmenitiesViewModel amenitiesViewModel);
 
     void inject(SingleAmenityViewModel singleAmenityViewModel);
+
+    void inject(SinglePropertyViewModel singlePropertyViewModel);
+
+    void inject(EditPropertyViewModel editPropertyViewModel);
+
+    void inject(PropertyAmenitySelectViewModel propertyAmenitySelectViewModel);
 }

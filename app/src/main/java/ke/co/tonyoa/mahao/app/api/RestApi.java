@@ -361,7 +361,7 @@ public interface RestApi {
      */
     @POST("/api/v1/properties/{id}/modify_property_amenities")
     @Headers({"Content-Type: application/json", "Accept: application/json"})
-    Call<ModifyAmenitiesResponse> modifyPropertyAmenities(@Header("Authorization") String token, @Path("id") int propertyId,
+    Call<List<ModifyAmenitiesResponse>> modifyPropertyAmenities(@Header("Authorization") String token, @Path("id") int propertyId,
                                            @Body ModifyAmenitiesRequest modifyAmenitiesRequest);
 
     /**
