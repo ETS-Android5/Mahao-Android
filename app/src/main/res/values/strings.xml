@@ -108,4 +108,10 @@
     <string name="successfully_deleted_s">Successfully deleted %1$s</string>
     <string name="category_created_successfully">Category created successfully</string>
     <string name="amenity_created_successfully">Amenity created successfully</string>
+    <string name="disable">Disable</string>
+    <string name="verify">Verify</string>
+    <string name="unverify">Unverify</string>
+    <string name="enable">Enable</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
 </resources>

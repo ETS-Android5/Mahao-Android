@@ -233,7 +233,7 @@ public class ApiManager {
         return new APIResponse<>(api.deletePropertyById(getToken(), propertyId).execute());
     }
 
-    public APIResponse<ModifyAmenitiesResponse> modifyPropertyAmenities(int propertyId, List<Integer> added,
+    public APIResponse<List<ModifyAmenitiesResponse>> modifyPropertyAmenities(int propertyId, List<Integer> added,
                                                                         List<Integer> removed) throws IOException {
         return new APIResponse<>(api.modifyPropertyAmenities(getToken(), propertyId,
                 new ModifyAmenitiesRequest(added, removed)).execute());

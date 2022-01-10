@@ -94,7 +94,9 @@ public class MainFragment extends BaseFragment {
                 requireActivity().invalidateOptionsMenu();
             }
         });
-
+        mFragmentMainBinding.floatingActionButtonMain.setOnClickListener(v->{
+            navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(null));
+        });
 
         return mFragmentMainBinding.getRoot();
     }

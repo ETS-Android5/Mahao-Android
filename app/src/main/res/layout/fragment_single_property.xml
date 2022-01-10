@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.properties.single.SinglePropertyFragment">
 
@@ -10,12 +11,37 @@
         android:id="@+id/layout_toolbar"
         layout="@layout/layout_toolbar"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
-
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager_singleProperty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:visibility="gone"/>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager_singleProperty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_singleProperty_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/size_16"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView_singleProperty_loading"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_256"
+                android:layout_margin="@dimen/size_16"
+                app:lottie_rawRes="@raw/loading_normal"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </FrameLayout>
+
 
 </LinearLayout>

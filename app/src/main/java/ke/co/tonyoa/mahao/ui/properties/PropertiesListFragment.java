@@ -1,6 +1,5 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
-import android.animation.Animator;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,18 +14,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.Arrays;
 import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
-import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentPropertiesListBinding;
+import ke.co.tonyoa.mahao.ui.main.MainFragmentDirections;
 
-public class PropertiesListFragment extends Fragment {
+public class PropertiesListFragment extends BaseFragment {
 
     private static final String PROPERTY_LIST_ARG = "property_list";
 
@@ -76,8 +75,7 @@ public class PropertiesListFragment extends Fragment {
         mPropertyAdapter = new PropertyAdapter(PropertyAdapter.ListType.VERTICAL_PROPERTY,
                 mFragmentPropertiesListBinding.recyclerViewPropertiesList.getWidth(), requireContext(),
                 (property, position) -> {
-                    //TODO: Navigate to single property fragment
-                    //TODO:
+                    navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(property));
                 }, (property, position) -> {
                     if (property.getIsFavorite()) {
                         mPropertiesListViewModel.addFavorite(property.getId()).observe(getViewLifecycleOwner(), favoriteResponseAPIResponse -> {

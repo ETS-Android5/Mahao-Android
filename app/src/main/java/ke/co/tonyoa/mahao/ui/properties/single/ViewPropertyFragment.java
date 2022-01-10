@@ -1,50 +1,64 @@
 package ke.co.tonyoa.mahao.ui.properties.single;
 
+import static ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyFragment.PROPERTY_EXTRA;
+
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.APIResponse;
+import ke.co.tonyoa.mahao.app.api.responses.Amenity;
+import ke.co.tonyoa.mahao.app.api.responses.Property;
+import ke.co.tonyoa.mahao.app.api.responses.PropertyAmenity;
+import ke.co.tonyoa.mahao.app.api.responses.User;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentViewPropertyBinding;
+import ke.co.tonyoa.mahao.databinding.LayoutSomeHousesBinding;
+import ke.co.tonyoa.mahao.ui.profile.amenities.AmenityAdapter;
+import ke.co.tonyoa.mahao.ui.properties.PropertyAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewPropertyFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class ViewPropertyFragment extends Fragment {
+public class ViewPropertyFragment extends BaseFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Property mProperty;
+    private FragmentViewPropertyBinding mFragmentViewPropertyBinding;
+    private SinglePropertyViewModel mSinglePropertyViewModel;
+    private AmenityAdapter mAmenityAdapter;
+    private PropertyAdapter mPropertyAdapterRecommended;
 
     public ViewPropertyFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ViewPropertyFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ViewPropertyFragment newInstance(String param1, String param2) {
+    public static ViewPropertyFragment newInstance(Property property) {
         ViewPropertyFragment fragment = new ViewPropertyFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(PROPERTY_EXTRA, property);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,16 +66,246 @@ public class ViewPropertyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProperty = (Property) getArguments().getSerializable(PROPERTY_EXTRA);
+        }
+        mSinglePropertyViewModel = new ViewModelProvider(requireParentFragment()).get(SinglePropertyViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mFragmentViewPropertyBinding = FragmentViewPropertyBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentViewPropertyBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        if (mProperty==null){
+            setTitle("New Property");
+        }
+        else {
+            setTitle(mProperty.getTitle());
+        }
+
+        if (mProperty != null) {
+            Glide.with(requireContext())
+                    .load(mProperty.getFeatureImage())
+                    .placeholder(R.drawable.ic_home_black_24dp)
+                    .error(R.drawable.ic_home_black_24dp)
+                    .into(mFragmentViewPropertyBinding.imageViewViewPropertyFeature);
+
+            mFragmentViewPropertyBinding.textViewViewPropertyAddress.setText(mProperty.getLocationName());
+            mFragmentViewPropertyBinding.textViewViewPropertyTitle.setText(mProperty.getTitle());
+            mFragmentViewPropertyBinding.textViewViewPropertyPrice.setText(getString(R.string.kes_f_month, mProperty.getPrice()));
+            displayFavorite(false);
+            mFragmentViewPropertyBinding.imageViewViewPropertyVerified.setVisibility(mProperty.getIsVerified()?View.VISIBLE:View.GONE);
+            mFragmentViewPropertyBinding.imageViewViewPropertyEnabled.setImageTintList(ColorStateList.valueOf(mProperty.getIsEnabled()?
+                    Color.GREEN:Color.RED));
+            mFragmentViewPropertyBinding.textViewViewPropertyCategory.setText(mProperty.getPropertyCategory().getTitle());
+
+            User owner = mProperty.getOwner();
+            Glide.with(requireContext())
+                    .load(owner.getProfilePicture())
+                    .placeholder(R.drawable.ic_baseline_person_24)
+                    .error(R.drawable.ic_baseline_person_24)
+                    .into(mFragmentViewPropertyBinding.imageViewViewPropertyOwner);
+            mFragmentViewPropertyBinding.textViewViewPropertyOwnerName.setText(String.format("%s %s",
+                    owner.getFirstName(), owner.getLastName()));
+            mFragmentViewPropertyBinding.imageButtonViewPropertyText.setOnClickListener(v->{
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey, saw one of your posts on Mahao that I like, "+
+                        mProperty.getTitle());
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
+            });
+            mFragmentViewPropertyBinding.imageButtonViewPropertyCall.setOnClickListener(v->{
+                Uri phoneUri = Uri.parse("tel:" + mProperty.getOwner().getPhone());
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, phoneUri);
+                try {
+                    // Launch the Phone app's dialer with a phone number
+                    startActivity(phoneIntent);
+                }
+                catch (SecurityException s) {
+                    Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_LONG).show();
+                }
+            });
+            mFragmentViewPropertyBinding.textViewViewPropertyBeds.setText(getString(R.string.d_beds,
+                    mProperty.getNumBed()));
+            mFragmentViewPropertyBinding.textViewViewPropertyBaths.setText(getString(R.string.d_baths,
+                    mProperty.getNumBath()));
+            mFragmentViewPropertyBinding.textViewViewPropertyAmenities.setText(getString(R.string.d_amens,
+                    mProperty.getPropertyAmenities().size()));
+
+            String text = "<html><head>"
+                    + "<style type=\"text/css\">@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/custom.ttf\")}body{font-family: MyFont;color: #868686;text-align:left;font-size:14px;margin-left:0px;line-height:1.8}"
+                    + "</style></head>"
+                    + "<body>"
+                    + mProperty.getDescription()
+                    + "</body></html>";
+
+            String mimeType = "text/html";
+            String encoding = "utf-8";
+            mFragmentViewPropertyBinding.webViewViewPropertyDescription.loadDataWithBaseURL(null, text,
+                    mimeType, encoding, null);
+
+            mAmenityAdapter = new AmenityAdapter(requireContext(), null);
+            mFragmentViewPropertyBinding.recyclerViewViewPropertyAmenities.setLayoutManager(new LinearLayoutManager(requireContext(),
+                    RecyclerView.HORIZONTAL, false));
+            mFragmentViewPropertyBinding.recyclerViewViewPropertyAmenities.setAdapter(mAmenityAdapter);
+            List<Amenity> amenityList = new ArrayList<>();
+            for (PropertyAmenity propertyAmenity:mProperty.getPropertyAmenities()){
+                amenityList.add(propertyAmenity.getAmenity());
+            }
+            mAmenityAdapter.submitList(amenityList);
+            mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyAmenities.setVisibility(amenityList.size()>0?View.GONE:View.VISIBLE);
+
+            //TODO: Create an adapter and display list of gallery images
+            mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setVisibility(View.GONE);
+
+            //TODO: Add functionality to save gallery images
+            mFragmentViewPropertyBinding.buttonViewPropertyAddImage.setOnClickListener(v->{
+
+            });
+
+            // TODO: Add functionality to edit amenities
+            mFragmentViewPropertyBinding.buttonViewPropertyEditAmenities.setOnClickListener(v->{
+                ArrayList<Amenity> amenities  = new ArrayList<>();
+                for (PropertyAmenity propertyAmenity:mProperty.getPropertyAmenities()){
+                    amenities.add(propertyAmenity.getAmenity());
+                }
+                PropertyAmenitySelectFragment.newInstance(mProperty.getId(), amenities).show(getChildFragmentManager(), null);
+            });
+
+            // TODO: Add functionality to display map
+            mFragmentViewPropertyBinding.mapViewViewProperty.setVisibility(View.GONE);
+
+
+            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesShowMore.setVisibility(View.GONE);
+            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesTitle.setText(R.string.recommended);
+            mPropertyAdapterRecommended = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
+                    mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses.getWidth(),
+                    requireContext(), (property, position) -> {
+                        navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentSelf(property));
+                    },  (property, position) -> {
+                        mSinglePropertyViewModel.addFavorite(mProperty.getIsFavorite(), property.getId()).observe(getViewLifecycleOwner(), favoriteResponseAPIResponse -> {
+                            if (favoriteResponseAPIResponse == null || !favoriteResponseAPIResponse.isSuccessful()) {
+                                Toast.makeText(requireContext(),
+                                        (favoriteResponseAPIResponse==null || favoriteResponseAPIResponse.errorMessage(requireContext())==null)?
+                                                getString(R.string.unknown_error):
+                                                favoriteResponseAPIResponse.errorMessage(requireContext()),
+                                        Toast.LENGTH_SHORT).show();
+                                property.setIsFavorite(!property.getIsFavorite());
+                                mPropertyAdapterRecommended.notifyItemChanged(position, Arrays.asList("like"));
+                            }
+                        });
+                    });
+            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses
+                    .setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses.setAdapter(mPropertyAdapterRecommended);
+            new PagerSnapHelper().attachToRecyclerView(mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses);
+            fetchSingleRow(mFragmentViewPropertyBinding.layoutSomeHousesRecommended,
+                    mSinglePropertyViewModel.getSimilarProperties(mProperty.getId()), mPropertyAdapterRecommended);
+
+            //TODO: Navigate to map
+            mFragmentViewPropertyBinding.floatingActionButtonViewPropertyMap.setOnClickListener(v->{
+
+            });
+
+            mFragmentViewPropertyBinding.animationViewViewPropertyLike.setOnClickListener(v->{
+                mProperty.setIsFavorite(!mProperty.getIsFavorite());
+                displayFavorite(true);
+                LottieAnimationView loadingView = null;
+                List<View> enabledViews = Arrays.asList(mFragmentViewPropertyBinding.animationViewViewPropertyLike);
+                ViewUtils.load(loadingView, enabledViews, true);
+                mSinglePropertyViewModel.addFavorite(mProperty.getIsFavorite(), mProperty.getId()).observe(getViewLifecycleOwner(), favoriteResponseAPIResponse -> {
+                    ViewUtils.load(loadingView, enabledViews, false);
+                    if (favoriteResponseAPIResponse == null || !favoriteResponseAPIResponse.isSuccessful()) {
+                        Toast.makeText(requireContext(),
+                                (favoriteResponseAPIResponse==null || favoriteResponseAPIResponse.errorMessage(requireContext())==null)?
+                                        getString(R.string.unknown_error):
+                                        favoriteResponseAPIResponse.errorMessage(requireContext()),
+                                Toast.LENGTH_SHORT).show();
+                        mProperty.setIsFavorite(!mProperty.getIsFavorite());
+                        displayFavorite(true);
+                    }
+                });
+            });
+
+        }
+
+
+        return mFragmentViewPropertyBinding.getRoot();
+    }
+
+    private void fetchSingleRow(LayoutSomeHousesBinding layoutSomeHousesBinding, LiveData<APIResponse<List<Property>>> apiResponseLiveData,
+                                PropertyAdapter propertyAdapter){
+        LottieAnimationView loadingView = layoutSomeHousesBinding.animationViewSomeHousesLoading;
+        List<RecyclerView> enabledViews = Arrays.asList(layoutSomeHousesBinding.recyclerViewSomeHouses);
+        ViewUtils.load(loadingView, enabledViews, true);
+        apiResponseLiveData.observe(getViewLifecycleOwner(), listAPIResponse -> {
+            ViewUtils.load(loadingView, enabledViews, false);
+            int propertyCount = 0;
+            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
+                List<Property> properties = listAPIResponse.body();
+                propertyAdapter.submitList(properties);
+                if (properties!=null)
+                    propertyCount = properties.size();
+            }
+            else {
+                Toast.makeText(requireContext(),
+                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
+                                getString(R.string.unknown_error):
+                                listAPIResponse.errorMessage(requireContext()),
+                        Toast.LENGTH_SHORT).show();
+                propertyCount = propertyAdapter.getItemCount();
+            }
+
+            layoutSomeHousesBinding.getRoot().setVisibility(propertyCount>0?View.VISIBLE:View.GONE);
+        });
+    }
+
+
+    private void displayFavorite(boolean click){
+        if (click) {
+            if (mProperty.getIsFavorite()) {
+                mFragmentViewPropertyBinding.animationViewViewPropertyLike.setProgress(0);
+                mFragmentViewPropertyBinding.animationViewViewPropertyLike.setSpeed(1);
+            } else {
+                mFragmentViewPropertyBinding.animationViewViewPropertyLike.setProgress(1);
+                mFragmentViewPropertyBinding.animationViewViewPropertyLike.setSpeed(-1);
+            }
+            mFragmentViewPropertyBinding.animationViewViewPropertyLike.playAnimation();
+        }
+        else {
+            mFragmentViewPropertyBinding.animationViewViewPropertyLike.setProgress(mProperty.getIsFavorite()?1:0);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_property, container, false);
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.single_property, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // User is not admin and not the owner
+        if ((!mSinglePropertyViewModel.isAdmin() && (mProperty!=null && !mProperty.getOwnerId().equals(Integer.parseInt(mSinglePropertyViewModel.getUserId()))))) {
+            menu.clear();
+        }
+        MenuItem itemVerify = menu.findItem(R.id.action_editDoneDelete_verify);
+        if (!mSinglePropertyViewModel.isAdmin())
+            itemVerify.setVisible(false);
+        if (itemVerify!=null) {
+            itemVerify.setTitle(mProperty.getIsVerified() ? R.string.unverify : R.string.verify);
+        }
+        MenuItem itemEnable = menu.findItem(R.id.action_editDoneDelete_enable);
+        if (itemEnable!=null) {
+            itemEnable.setTitle(mProperty.getIsEnabled() ? R.string.disable : R.string.enable);
+        }
     }
 }

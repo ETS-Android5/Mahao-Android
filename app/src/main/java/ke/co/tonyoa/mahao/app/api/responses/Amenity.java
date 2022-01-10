@@ -1,6 +1,9 @@
 
 package ke.co.tonyoa.mahao.app.api.responses;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class Amenity implements Serializable {
+public class Amenity implements Serializable, Parcelable {
 
     @SerializedName("title")
     @Expose
@@ -25,6 +28,30 @@ public class Amenity implements Serializable {
     @SerializedName("created_at")
     @Expose
     private Date createdAt;
+
+    protected Amenity(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        icon = in.readString();
+        createdAt = in.readLong()==-1?null:new Date(in.readLong());
+    }
+
+    public static final Creator<Amenity> CREATOR = new Creator<Amenity>() {
+        @Override
+        public Amenity createFromParcel(Parcel in) {
+            return new Amenity(in);
+        }
+
+        @Override
+        public Amenity[] newArray(int size) {
+            return new Amenity[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -79,5 +106,24 @@ public class Amenity implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(title, description, id, icon, createdAt);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(id);
+        }
+        dest.writeString(icon);
+        dest.writeLong(createdAt==null?-1:createdAt.getTime());
     }
 }
