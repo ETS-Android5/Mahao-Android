@@ -20,6 +20,7 @@ import ke.co.tonyoa.mahao.app.api.responses.FavoriteResponse;
 import ke.co.tonyoa.mahao.app.api.responses.ModifyAmenitiesResponse;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyPhoto;
+import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
@@ -84,6 +85,10 @@ public class SinglePropertyViewModel extends AndroidViewModel {
 
     public LiveData<APIResponse<List<Property>>> getSimilarProperties(int propertyId){
         return mPropertiesRepository.getSimilarProperties(propertyId, null, 0, 10);
+    }
+
+    public void addFeedback(int propertyId, FeedbackType feedbackType){
+        mPropertiesRepository.addFeedback(propertyId, feedbackType);
     }
 
     public boolean isAdmin(){

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,10 +38,12 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
     private final Context mContext;
     private final OnItemClickListener<Property> mOnPropertyClickListener;
     private final OnItemClickListener<Property> mOnPropertyLikeListener;
+    private OnItemClickListener<Property> mOnPropertyReadListener;
 
     public PropertyAdapter(ListType listType, int recyclerViewWidth, Context context,
                            OnItemClickListener<Property> onPropertyClickListener,
-                              OnItemClickListener<Property> onPropertyLikeListener) {
+                              OnItemClickListener<Property> onPropertyLikeListener,
+                           OnItemClickListener<Property> onPropertyReadListener) {
         super(new DiffUtil.ItemCallback<Property>() {
             @Override
             public boolean areItemsTheSame(@NonNull Property oldItem, @NonNull Property newItem) {
@@ -57,6 +60,7 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
         mContext = context;
         mOnPropertyClickListener = onPropertyClickListener;
         mOnPropertyLikeListener = onPropertyLikeListener;
+        mOnPropertyReadListener = onPropertyReadListener;
     }
 
 
@@ -93,6 +97,34 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
             onBindViewHolder(holder, position);
         }
     }
+
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if(manager instanceof LinearLayoutManager && getItemCount() > 0) {
+            LinearLayoutManager llm = (LinearLayoutManager) manager;
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int visiblePosition = llm.findFirstCompletelyVisibleItemPosition();
+                    if(visiblePosition > -1) {
+                        if (mOnPropertyReadListener!=null){
+                            mOnPropertyReadListener.onItemClick(getItem(visiblePosition), visiblePosition);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 
     abstract static class PropertyViewHolder extends RecyclerView.ViewHolder implements Bindable{
         public PropertyViewHolder(@NonNull View itemView) {
