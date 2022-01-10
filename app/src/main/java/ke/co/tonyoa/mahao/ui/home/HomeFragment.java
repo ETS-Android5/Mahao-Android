@@ -1,7 +1,6 @@
 package ke.co.tonyoa.mahao.ui.home;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import java.util.List;
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
+import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
@@ -47,7 +47,11 @@ public class HomeFragment extends BaseFragment {
     private PropertyAdapter mPropertyAdapterFavorite;
     private PropertyAdapter mPropertyAdapterPersonal;
     private final OnItemClickListener<Property> mPropertyOnItemClickListener = (property, position) -> {
+        mHomeViewModel.addFeedback(property.getId(), FeedbackType.CLICK);
         navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(property));
+    };
+    private final OnItemClickListener<Property> mPropertyOnReadClickListener = (property, position) -> {
+        mHomeViewModel.addFeedback(property.getId(), FeedbackType.READ);
     };
 
 
@@ -143,37 +147,37 @@ public class HomeFragment extends BaseFragment {
         mPropertyAdapterRecommended = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onRecommendedLikeListener);
+                onRecommendedLikeListener, mPropertyOnReadClickListener);
         onRecommendedLikeListener.setPropertyAdapter(mPropertyAdapterRecommended);
         OnFavoriteClickListener onNearbyLikeListener = new OnFavoriteClickListener(mPropertyAdapterNearby);
         mPropertyAdapterNearby = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesNearby.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onNearbyLikeListener);
+                onNearbyLikeListener, mPropertyOnReadClickListener);
         onNearbyLikeListener.setPropertyAdapter(mPropertyAdapterNearby);
         OnFavoriteClickListener onLatestPropertyLikeListener = new OnFavoriteClickListener(mPropertyAdapterLatest);
         mPropertyAdapterLatest = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesLatest.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onLatestPropertyLikeListener);
+                onLatestPropertyLikeListener, mPropertyOnReadClickListener);
         onLatestPropertyLikeListener.setPropertyAdapter(mPropertyAdapterLatest);
         OnFavoriteClickListener onPopularLikeListener = new OnFavoriteClickListener(mPropertyAdapterPopular);
         mPropertyAdapterPopular = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesPopular.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onPopularLikeListener);
+                onPopularLikeListener, mPropertyOnReadClickListener);
         onPopularLikeListener.setPropertyAdapter(mPropertyAdapterPopular);
         OnFavoriteClickListener onFavoriteLikeListener = new OnFavoriteClickListener(mPropertyAdapterFavorite);
         mPropertyAdapterFavorite = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesFavorite.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onFavoriteLikeListener);
+                onFavoriteLikeListener, mPropertyOnReadClickListener);
         onFavoriteLikeListener.setPropertyAdapter(mPropertyAdapterFavorite);
         OnFavoriteClickListener onPersonalLikeListener = new OnFavoriteClickListener(mPropertyAdapterPersonal);
         mPropertyAdapterPersonal = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
                 mFragmentHomeBinding.layoutSomeHousesPersonal.recyclerViewSomeHouses.getWidth(),
                 requireContext(), mPropertyOnItemClickListener,
-                onPersonalLikeListener);
+                onPersonalLikeListener, mPropertyOnReadClickListener);
         onPersonalLikeListener.setPropertyAdapter(mPropertyAdapterPersonal);
     }
 

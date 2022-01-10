@@ -20,6 +20,7 @@ import ke.co.tonyoa.mahao.app.MahaoApplication;
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.responses.FavoriteResponse;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
+import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
 
@@ -75,5 +76,9 @@ public class PropertiesListViewModel extends AndroidViewModel {
 
     public LiveData<APIResponse<FavoriteResponse>> removeFavorite(int propertyId) {
         return mPropertiesRepository.removeFavorite(propertyId);
+    }
+
+    public void addFeedback(int propertyId, FeedbackType feedbackType) {
+        mPropertiesRepository.addFeedback(propertyId, feedbackType);
     }
 }

@@ -36,6 +36,7 @@ import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyAmenity;
 import ke.co.tonyoa.mahao.app.api.responses.User;
+import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentViewPropertyBinding;
@@ -87,6 +88,8 @@ public class ViewPropertyFragment extends BaseFragment {
         }
 
         if (mProperty != null) {
+            mSinglePropertyViewModel.addFeedback(mProperty.getId(), FeedbackType.READ);
+
             Glide.with(requireContext())
                     .load(mProperty.getFeatureImage())
                     .placeholder(R.drawable.ic_home_black_24dp)
@@ -111,6 +114,7 @@ public class ViewPropertyFragment extends BaseFragment {
             mFragmentViewPropertyBinding.textViewViewPropertyOwnerName.setText(String.format("%s %s",
                     owner.getFirstName(), owner.getLastName()));
             mFragmentViewPropertyBinding.imageButtonViewPropertyText.setOnClickListener(v->{
+                mSinglePropertyViewModel.addFeedback(mProperty.getId(), FeedbackType.TEXT);
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey, saw one of your posts on Mahao that I like, "+
@@ -122,6 +126,7 @@ public class ViewPropertyFragment extends BaseFragment {
 
             });
             mFragmentViewPropertyBinding.imageButtonViewPropertyCall.setOnClickListener(v->{
+                mSinglePropertyViewModel.addFeedback(mProperty.getId(), FeedbackType.CALL);
                 Uri phoneUri = Uri.parse("tel:" + mProperty.getOwner().getPhone());
                 Intent phoneIntent = new Intent(Intent.ACTION_DIAL, phoneUri);
                 try {
@@ -201,6 +206,8 @@ public class ViewPropertyFragment extends BaseFragment {
                                 mPropertyAdapterRecommended.notifyItemChanged(position, Arrays.asList("like"));
                             }
                         });
+                    }, (property, position)->{
+                        mSinglePropertyViewModel.addFeedback(property.getId(), FeedbackType.READ);
                     });
             mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses
                     .setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));

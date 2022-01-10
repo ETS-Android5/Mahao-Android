@@ -20,6 +20,8 @@ import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
+import ke.co.tonyoa.mahao.app.enums.FeedbackType;
+import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentPropertiesListBinding;
@@ -72,6 +74,16 @@ public class PropertiesListFragment extends BaseFragment {
         mFragmentPropertiesListBinding = FragmentPropertiesListBinding.inflate(inflater, container, false);
 
         mPropertiesListViewModel.setPropertyList(mPropertyListType);
+
+        OnItemClickListener<Property> onItemReadListener = null;
+        if (mPropertyListType!=PropertyListType.ALL && mPropertyListType!=PropertyListType.PERSONAL){
+            onItemReadListener = new OnItemClickListener<Property>() {
+                @Override
+                public void onItemClick(Property property, int position) {
+                    mPropertiesListViewModel.addFeedback(property.getId(), FeedbackType.READ);
+                }
+            };
+        }
         mPropertyAdapter = new PropertyAdapter(PropertyAdapter.ListType.VERTICAL_PROPERTY,
                 mFragmentPropertiesListBinding.recyclerViewPropertiesList.getWidth(), requireContext(),
                 (property, position) -> {
@@ -107,7 +119,7 @@ public class PropertiesListFragment extends BaseFragment {
                             mPropertyAdapter.notifyItemChanged(position, Arrays.asList("like"));
                         });
                     }
-                });
+                }, onItemReadListener);
         mFragmentPropertiesListBinding.recyclerViewPropertiesList.setLayoutManager(new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.VERTICAL, false));
         mFragmentPropertiesListBinding.recyclerViewPropertiesList.setAdapter(mPropertyAdapter);
