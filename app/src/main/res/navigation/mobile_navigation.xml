@@ -192,7 +192,12 @@
         android:id="@+id/viewUserFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.users.single.ViewUserFragment"
         android:label="fragment_view_user"
-        tools:layout="@layout/fragment_view_user" />
+        tools:layout="@layout/fragment_view_user">
+        <argument
+            android:name="user"
+            app:argType="ke.co.tonyoa.mahao.app.api.responses.User"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/singleCategoryFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryFragment"

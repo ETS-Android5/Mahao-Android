@@ -13,13 +13,20 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_usersList"
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout_users"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="?actionBarSize"
-        tools:listitem="@layout/item_user"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_usersList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?actionBarSize"
+            tools:listitem="@layout/item_user" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -44,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_256"
                 android:layout_margin="@dimen/size_16"
-                app:lottie_rawRes="@raw/home_logo"
+                app:lottie_rawRes="@raw/no_results"
                 app:lottie_loop="true"
                 app:lottie_autoPlay="true" />
             <TextView
@@ -73,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_256"
                 android:layout_margin="@dimen/size_16"
-                app:lottie_rawRes="@raw/home_logo"
+                app:lottie_rawRes="@raw/loading_normal"
                 app:lottie_loop="true"
                 app:lottie_autoPlay="true"
                 android:layout_gravity="center"/>

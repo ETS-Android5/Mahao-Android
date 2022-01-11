@@ -71,11 +71,12 @@ public class ProfileFragment extends BaseFragment {
 
         boolean isAdmin = mProfileViewModel.isAdmin();
         for (View view: Arrays.asList(mFragmentProfileBinding.linearLayoutProfileUsers, mFragmentProfileBinding.linearLayoutProfileCategories,
-                mFragmentProfileBinding.linearLayoutProfileAmenities)){
+                mFragmentProfileBinding.linearLayoutProfileAmenities, mFragmentProfileBinding.linearLayoutProfileDummy,
+                mFragmentProfileBinding.linearLayoutProfileFeedback)){
             view.setVisibility(isAdmin?View.VISIBLE:View.GONE);
         }
         mFragmentProfileBinding.linearLayoutProfileUsers.setOnClickListener(v->{
-            //TODO: Navigate to users
+            navigate(MainFragmentDirections.actionNavigationMainToUsersListFragment());
         });
         mFragmentProfileBinding.linearLayoutProfileCategories.setOnClickListener(v->{
             navigate(MainFragmentDirections.actionNavigationMainToCategoriesListFragment());
@@ -85,6 +86,12 @@ public class ProfileFragment extends BaseFragment {
         });
         mFragmentProfileBinding.buttonProfileLogout.setOnClickListener(v->{
             mProfileViewModel.logOut();
+        });
+        mFragmentProfileBinding.linearLayoutProfileDummy.setOnClickListener(v->{
+            mProfileViewModel.createDummyData();
+        });
+        mFragmentProfileBinding.linearLayoutProfileFeedback.setOnClickListener(v->{
+            mProfileViewModel.createFeedbacks();
         });
 
         return mFragmentProfileBinding.getRoot();

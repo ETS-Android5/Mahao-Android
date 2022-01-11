@@ -95,7 +95,7 @@
     <string name="d_beds">%1$d beds</string>
     <string name="d_baths">%1$d baths</string>
     <string name="d_amens">%1$d amens</string>
-    <string name="kes_f_month">KES. %1$.0f/month</string>
+    <string name="kes_f_month">KES. %1$.0f/m</string>
     <string name="recommended">Recommended</string>
     <string name="nearby">Nearby</string>
     <string name="latest">Latest</string>
@@ -114,4 +114,6 @@
     <string name="enable">Enable</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
+    <string name="create_dummy_data">Create Dummy Data</string>
+    <string name="create_feedbacks">Create Feedbacks</string>
 </resources>

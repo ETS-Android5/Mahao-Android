@@ -13,9 +13,6 @@ import javax.inject.Singleton;
 
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.ApiManager;
-import ke.co.tonyoa.mahao.app.api.responses.LoginResponse;
-import ke.co.tonyoa.mahao.app.api.responses.PasswordRecoveryResponse;
-import ke.co.tonyoa.mahao.app.api.responses.ResetPasswordResponse;
 import ke.co.tonyoa.mahao.app.api.responses.User;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 

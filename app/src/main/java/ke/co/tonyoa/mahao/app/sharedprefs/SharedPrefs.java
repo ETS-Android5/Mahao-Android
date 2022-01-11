@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -109,6 +114,17 @@ public class SharedPrefs {
 
     public boolean isAdmin(){
         return getBoolean(KEY_ADMIN, false);
+    }
+
+    public void addToList(String listName, String value){
+        Set<String> stringSet = mSharedPreferences.getStringSet(listName, new HashSet<>());
+        List<String> values = new ArrayList<>(stringSet);
+        values.add(value);
+        mSharedPreferences.edit().putStringSet(listName, new HashSet<>(values)).apply();
+    }
+
+    public List<String> getList(String listName){
+        return new ArrayList<>(mSharedPreferences.getStringSet(listName, new HashSet<>()));
     }
 
     public void registerOnSharedPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener){

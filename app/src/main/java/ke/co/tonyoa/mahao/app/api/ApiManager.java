@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ke.co.tonyoa.mahao.app.api.requests.CreateFeedbackRequest;
+import ke.co.tonyoa.mahao.app.api.requests.CreatePropertyRequest;
 import ke.co.tonyoa.mahao.app.api.requests.CreateUserRequest;
 import ke.co.tonyoa.mahao.app.api.requests.ModifyAmenitiesRequest;
 import ke.co.tonyoa.mahao.app.api.requests.RemovePropertyPhotoRequest;
@@ -57,7 +58,7 @@ public class ApiManager {
     private static final String AUTH_PREFIX = "Bearer ";
     private static final int NUMBER_OF_THREADS = 6;
     private static final ExecutorService apiExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-    public static final String API_URL = "https://c29b-105-27-239-221.ngrok.io/";
+    public static final String API_URL = "https://2d25-105-27-239-221.ngrok.io";
     private final RestApi api;
     private final Application application;
     private final SharedPrefs mSharedPrefs;
@@ -219,6 +220,10 @@ public class ApiManager {
                 getPart(latLng.longitude+""), getPart(isEnabled+""), getPart(isVerified+"")).execute());
     }
 
+    public APIResponse<Property> createProperty(CreatePropertyRequest createPropertyRequest) throws IOException {
+        return new APIResponse<>(api.createProperty(getToken(), createPropertyRequest).execute());
+    }
+
     public APIResponse<Property> updateProperty(int propertyId, Uri featureImage, int propertyCategoryId, String title,
                                                 String description, int numBed, int numBath, String locationName,
                                                 float price, LatLng latLng, boolean isEnabled, boolean isVerified) throws IOException {
@@ -248,7 +253,11 @@ public class ApiManager {
     }
 
     public APIResponse<Feedback> addFeedback(int propertyId, FeedbackType feedbackType) throws IOException {
-        return new APIResponse<>(api.addFeedback(getToken(), propertyId, new CreateFeedbackRequest(feedbackType.name())).execute());
+        return addFeedback(getToken(), propertyId, feedbackType);
+    }
+
+    public APIResponse<Feedback> addFeedback(String token, int propertyId, FeedbackType feedbackType) throws IOException {
+        return new APIResponse<>(api.addFeedback(token, propertyId, new CreateFeedbackRequest(feedbackType.name())).execute());
     }
 
     public APIResponse<List<PropertyPhoto>> addPropertyPhotos(int propertyId, List<Uri> photos) throws IOException {

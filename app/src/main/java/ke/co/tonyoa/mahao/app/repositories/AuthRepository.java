@@ -51,7 +51,14 @@ public class AuthRepository {
 
     private void saveLoggedInUser(LoginResponse loginResponse) throws IOException {
         if (loginResponse!=null) {
-            mSharedPrefs.saveToken(loginResponse.getAccessToken());
+            mSharedPrefs.saveToken(loginResponse.getToken().getAccessToken());
+            User user = loginResponse.getUser();
+            mSharedPrefs.saveAdmin(user.getIsSuperuser());
+            mSharedPrefs.saveEmail(user.getEmail());
+            mSharedPrefs.savePhone(user.getPhone());
+            mSharedPrefs.saveNames(user.getFirstName(), user.getLastName());
+            mSharedPrefs.saveProfilePicture(user.getProfilePicture());
+            mSharedPrefs.saveUserId(user.getId()+"");
         }
     }
 
@@ -60,16 +67,7 @@ public class AuthRepository {
         ApiManager.execute(() -> {
             try {
                 APIResponse<User> response = apiManager.getUserProfile();
-                if (response!=null && response.isSuccessful()){
-                    User user = response.body();
-                    mSharedPrefs.saveAdmin(user.getIsSuperuser());
-                    mSharedPrefs.saveEmail(user.getEmail());
-                    mSharedPrefs.savePhone(user.getPhone());
-                    mSharedPrefs.saveNames(user.getFirstName(), user.getLastName());
-                    mSharedPrefs.saveProfilePicture(user.getProfilePicture());
-                    mSharedPrefs.saveUserId(user.getId()+"");
-                }
-                else if (response!=null && !response.isSuccessful()){
+                if (response!=null && !response.isSuccessful()){
                     logout();
                 }
                 liveData.postValue(response);
