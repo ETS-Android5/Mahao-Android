@@ -1,33 +1,27 @@
 package ke.co.tonyoa.mahao.app.api.responses;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+public class LoginResponse {
 
-public class LoginResponse implements Serializable {
+    @SerializedName("token_object")
+    private Token mToken;
+    @SerializedName("user")
+    private User mUser;
 
-    @SerializedName("access_token")
-    @Expose
-    private String accessToken;
-    @SerializedName("token_type")
-    @Expose
-    private String tokenType;
-
-    public String getAccessToken() {
-        return accessToken;
+    public Token getToken() {
+        return mToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setToken(Token token) {
+        mToken = token;
     }
 
-    public String getTokenType() {
-        return tokenType;
+    public User getUser() {
+        return mUser;
     }
 
-    public void setTokenType(String tokenType) {
-        this.tokenType = tokenType;
+    public void setUser(User user) {
+        mUser = user;
     }
-
 }

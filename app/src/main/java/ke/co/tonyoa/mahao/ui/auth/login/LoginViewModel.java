@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import ke.co.tonyoa.mahao.app.MahaoApplication;
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.responses.LoginResponse;
+import ke.co.tonyoa.mahao.app.api.responses.Token;
 import ke.co.tonyoa.mahao.app.repositories.AuthRepository;
 
 public class LoginViewModel extends AndroidViewModel {

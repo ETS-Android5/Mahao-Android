@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.ApiManager;
+import ke.co.tonyoa.mahao.app.api.requests.CreatePropertyRequest;
 import ke.co.tonyoa.mahao.app.api.responses.FavoriteResponse;
 import ke.co.tonyoa.mahao.app.api.responses.Feedback;
 import ke.co.tonyoa.mahao.app.api.responses.ModifyAmenitiesResponse;
@@ -167,6 +168,20 @@ public class PropertiesRepository {
                 APIResponse<Property> response = apiManager.createProperty(featureImage, propertyCategoryId,
                         title, description, numBed, numBath, locationName, price, latLng, isEnabled,
                         isVerified);
+                liveData.postValue(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+                liveData.postValue(null);
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<APIResponse<Property>> createProperty(CreatePropertyRequest createPropertyRequest) {
+        MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
+        ApiManager.execute(() -> {
+            try {
+                APIResponse<Property> response = apiManager.createProperty(createPropertyRequest);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

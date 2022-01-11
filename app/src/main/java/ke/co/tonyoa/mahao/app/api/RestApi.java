@@ -4,6 +4,7 @@ package ke.co.tonyoa.mahao.app.api;
 import java.util.List;
 
 import ke.co.tonyoa.mahao.app.api.requests.CreateFeedbackRequest;
+import ke.co.tonyoa.mahao.app.api.requests.CreatePropertyRequest;
 import ke.co.tonyoa.mahao.app.api.requests.CreateUserRequest;
 import ke.co.tonyoa.mahao.app.api.requests.ModifyAmenitiesRequest;
 import ke.co.tonyoa.mahao.app.api.requests.ResetPasswordRequest;
@@ -304,6 +305,12 @@ public interface RestApi {
             @Part("longitude") RequestBody longitude,
             @Part("is_enabled") RequestBody isEnabled,
             @Part("is_verified") RequestBody isVerified);
+
+    @POST("/api/v1/properties/body/")
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    Call<Property> createProperty(
+            @Header("Authorization") String token,
+            @Body CreatePropertyRequest createPropertyRequest);
 
     /**
      * Update a property.

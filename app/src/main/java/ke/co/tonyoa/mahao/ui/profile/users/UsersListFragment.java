@@ -2,66 +2,103 @@ package ke.co.tonyoa.mahao.ui.profile.users;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.User;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentUsersListBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UsersListFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class UsersListFragment extends Fragment {
+public class UsersListFragment extends BaseFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FragmentUsersListBinding mFragmentUsersListBinding;
+    private UsersListViewModel mUsersListViewModel;
+    private UserAdapter mUserAdapter;
 
     public UsersListFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UsersListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UsersListFragment newInstance(String param1, String param2) {
-        UsersListFragment fragment = new UsersListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        setHasOptionsMenu(true);
+        mUsersListViewModel = new ViewModelProvider(this).get(UsersListViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_users_list, container, false);
+        mFragmentUsersListBinding = FragmentUsersListBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentUsersListBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        setTitle(getString(R.string.users));
+
+        mUserAdapter = new UserAdapter(requireContext(), (user, position) -> {
+            navigate(UsersListFragmentDirections.actionUsersListFragmentToViewUserFragment(user));
+        });
+        mFragmentUsersListBinding.recyclerViewUsersList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        mFragmentUsersListBinding.recyclerViewUsersList.setAdapter(mUserAdapter);
+        fetchData();
+        mFragmentUsersListBinding.swipeRefreshLayoutUsers.setOnRefreshListener(this::fetchData);
+
+        return mFragmentUsersListBinding.getRoot();
+    }
+
+    private void fetchData(){
+        LinearLayout loadingView = mFragmentUsersListBinding.linearLayoutUsersListLoading;
+        List<RecyclerView> enabledViews = Arrays.asList(mFragmentUsersListBinding.recyclerViewUsersList);
+        ViewUtils.load(loadingView, enabledViews, true);
+        mUsersListViewModel.getUsers().observe(getViewLifecycleOwner(), listAPIResponse -> {
+            ViewUtils.load(loadingView, enabledViews, false);
+            int usersCount = 0;
+            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
+                List<User> users = listAPIResponse.body();
+                mUserAdapter.submitList(users);
+                if (users!=null)
+                    usersCount = users.size();
+            }
+            else {
+                Toast.makeText(requireContext(),
+                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
+                                getString(R.string.unknown_error):
+                                listAPIResponse.errorMessage(requireContext()),
+                        Toast.LENGTH_SHORT).show();
+                usersCount = mUserAdapter.getItemCount();
+            }
+
+            if (usersCount>0){
+                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.GONE);
+                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.VISIBLE);
+            }
+            else {
+                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.VISIBLE);
+                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.GONE);
+            }
+            mFragmentUsersListBinding.swipeRefreshLayoutUsers.setRefreshing(false);
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==android.R.id.home){
+            navigateUp();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -106,7 +106,9 @@ public class MainFragment extends BaseFragment {
         super.onResume();
         mMainViewModel.getUserProfile().observe(getViewLifecycleOwner(), userAPIResponse->{
             if (userAPIResponse == null || !userAPIResponse.isSuccessful()){
-                navigate(MainFragmentDirections.actionNavigationMainToNavigationLogin());
+                if (isAdded() && isVisible()) {
+                    navigate(MainFragmentDirections.actionNavigationMainToNavigationLogin());
+                }
             }
         });
     }

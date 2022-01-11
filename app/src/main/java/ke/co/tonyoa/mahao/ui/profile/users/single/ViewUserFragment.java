@@ -2,66 +2,71 @@ package ke.co.tonyoa.mahao.ui.profile.users.single;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.api.responses.User;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.databinding.FragmentViewUserBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewUserFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class ViewUserFragment extends Fragment {
+public class ViewUserFragment extends BaseFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private User mUser;
+    private FragmentViewUserBinding mFragmentViewUserBinding;
 
     public ViewUserFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ViewUserFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ViewUserFragment newInstance(String param1, String param2) {
-        ViewUserFragment fragment = new ViewUserFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mUser = ViewUserFragmentArgs.fromBundle(getArguments()).getUser();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_user, container, false);
+        mFragmentViewUserBinding = FragmentViewUserBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentViewUserBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        if (mUser==null){
+            setTitle("New User");
+        }
+        else {
+            setTitle(mUser.getFirstName());
+        }
+
+        if (mUser!=null){
+            Glide.with(requireContext())
+                    .load(mUser.getProfilePicture())
+                    .placeholder(R.drawable.ic_baseline_person_24)
+                    .error(R.drawable.ic_baseline_person_24)
+                    .into(mFragmentViewUserBinding.imageViewUser);
+            mFragmentViewUserBinding.textViewUserName.setText(mUser.getFirstName()+" "+mUser.getLastName());
+            mFragmentViewUserBinding.textViewUserEmail.setText(mUser.getEmail());
+            mFragmentViewUserBinding.textViewUserPhone.setText(mUser.getPhone());
+        }
+
+        return mFragmentViewUserBinding.getRoot();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==android.R.id.home){
+            navigateUp();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

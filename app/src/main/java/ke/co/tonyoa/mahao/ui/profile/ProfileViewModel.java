@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import ke.co.tonyoa.mahao.app.MahaoApplication;
 import ke.co.tonyoa.mahao.app.repositories.AuthRepository;
+import ke.co.tonyoa.mahao.app.repositories.DummyRepository;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
 public class ProfileViewModel extends AndroidViewModel {
@@ -20,6 +21,8 @@ public class ProfileViewModel extends AndroidViewModel {
     SharedPrefs mSharedPrefs;
     @Inject
     AuthRepository mAuthRepository;
+    @Inject
+    DummyRepository mDummyRepository;
     private MutableLiveData<String> mNameLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mProfilePictureLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mPhoneLiveData = new MutableLiveData<>();
@@ -75,6 +78,14 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public boolean isAdmin(){
         return mSharedPrefs.isAdmin();
+    }
+
+    public void createDummyData(){
+        mDummyRepository.createDummyData();
+    }
+
+    public void createFeedbacks(){
+        mDummyRepository.createFeedbacks();
     }
 
 }
