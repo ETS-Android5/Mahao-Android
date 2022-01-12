@@ -2,6 +2,7 @@ package ke.co.tonyoa.mahao.ui.profile;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -50,6 +51,7 @@ public class ProfileViewModel extends AndroidViewModel {
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         MahaoApplication.getInstance(application).getApplicationComponent().inject(this);
+        mSharedPrefs.registerOnSharedPreferencesListener(mOnSharedPreferenceChangeListener);
         mNameLiveData.postValue(mSharedPrefs.getNames());
         mProfilePictureLiveData.postValue(mSharedPrefs.getProfilePicture());
         mEmailLiveData.postValue(mSharedPrefs.getEmail());

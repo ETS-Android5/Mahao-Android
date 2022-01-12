@@ -352,7 +352,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/size_8"
-                    tools:ignore="WebViewLayout" />
+                    tools:ignore="WebViewLayout"
+                    android:background="@android:color/transparent"/>
 
 
                 <View
@@ -392,10 +393,6 @@
                         android:id="@+id/linearLayout_viewProperty_emptyAmenities"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
                         android:layout_margin="@dimen/size_16"
                         android:orientation="vertical"
                         android:gravity="center"
@@ -422,10 +419,6 @@
                         android:id="@+id/linearLayout_viewProperty_loadingAmenities"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
                         android:layout_margin="@dimen/size_16"
                         android:orientation="vertical"
                         android:gravity="center"
@@ -486,13 +479,28 @@
                         tools:listitem="@layout/item_gallery"/>
 
                     <LinearLayout
+                        android:id="@+id/linearLayout_viewProperty_loadingGallery"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/size_16"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_viewProperty_loadingGallery"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_256"
+                            android:layout_margin="@dimen/size_16"
+                            app:lottie_rawRes="@raw/loading_normal"
+                            app:lottie_loop="true"
+                            app:lottie_autoPlay="true"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/linearLayout_viewProperty_emptyGallery"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="@dimen/size_16"
                         android:orientation="vertical"
                         android:gravity="center"
@@ -502,40 +510,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/size_256"
                             android:layout_margin="@dimen/size_16"
-                            app:lottie_rawRes="@raw/home_logo"
+                            android:layout_gravity="center"
+                            app:lottie_rawRes="@raw/no_results"
                             app:lottie_loop="true"
                             app:lottie_autoPlay="true" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:textAppearanceLarge"
-                            android:textStyle="bold"
-                            android:text="@string/no_images"
-                            android:layout_gravity="center"/>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout_viewProperty_loadingGallery"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/size_200"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:layout_margin="@dimen/size_16"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:visibility="gone">
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/animationView_viewProperty_loadingGallery"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="@dimen/size_16"
-                            app:lottie_rawRes="@raw/home_logo"
-                            app:lottie_loop="true"
-                            app:lottie_autoPlay="true"
-                            android:layout_gravity="center"/>
                     </LinearLayout>
 
                 </FrameLayout>
@@ -547,8 +525,7 @@
                     android:layout_marginTop="@dimen/size_8"
                     android:layout_marginStart="@dimen/size_32"
                     android:layout_marginEnd="@dimen/size_32"
-                    android:text="@string/add_gallery_image"
-                    android:visibility="gone"/>
+                    android:text="@string/add_gallery_image" />
 
                 <com.google.android.gms.maps.MapView
                     android:id="@+id/mapView_viewProperty"

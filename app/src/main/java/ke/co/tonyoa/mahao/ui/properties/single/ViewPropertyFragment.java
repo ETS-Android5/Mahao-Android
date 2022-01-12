@@ -9,12 +9,14 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,12 +31,16 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
+import dev.ronnie.github.imagepicker.ImagePicker;
+import dev.ronnie.github.imagepicker.ImageResult;
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyAmenity;
+import ke.co.tonyoa.mahao.app.api.responses.PropertyPhoto;
 import ke.co.tonyoa.mahao.app.api.responses.User;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
@@ -43,14 +49,19 @@ import ke.co.tonyoa.mahao.databinding.FragmentViewPropertyBinding;
 import ke.co.tonyoa.mahao.databinding.LayoutSomeHousesBinding;
 import ke.co.tonyoa.mahao.ui.profile.amenities.AmenityAdapter;
 import ke.co.tonyoa.mahao.ui.properties.PropertyAdapter;
+import ke.co.tonyoa.mahao.ui.properties.PropertyPhotoAdapter;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
-public class ViewPropertyFragment extends BaseFragment {
+public class ViewPropertyFragment extends BaseFragment implements PropertyAmenitySelectFragment.OnPropertyAmenitiesChangedListener {
 
     private Property mProperty;
     private FragmentViewPropertyBinding mFragmentViewPropertyBinding;
     private SinglePropertyViewModel mSinglePropertyViewModel;
     private AmenityAdapter mAmenityAdapter;
     private PropertyAdapter mPropertyAdapterRecommended;
+    private PropertyPhotoAdapter mPropertyPhotoAdapter;
+    private ImagePicker mImagePicker;
 
     public ViewPropertyFragment() {
         // Required empty public constructor
@@ -86,6 +97,7 @@ public class ViewPropertyFragment extends BaseFragment {
         else {
             setTitle(mProperty.getTitle());
         }
+        mImagePicker = new ImagePicker(this);
 
         if (mProperty != null) {
             mSinglePropertyViewModel.addFeedback(mProperty.getId(), FeedbackType.READ);
@@ -167,21 +179,54 @@ public class ViewPropertyFragment extends BaseFragment {
             mAmenityAdapter.submitList(amenityList);
             mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyAmenities.setVisibility(amenityList.size()>0?View.GONE:View.VISIBLE);
 
-            //TODO: Create an adapter and display list of gallery images
-            mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setVisibility(View.GONE);
+            mPropertyPhotoAdapter = new PropertyPhotoAdapter(requireContext(), (propertyPhoto, position) -> {
+                List<String> propertyPhotos = new ArrayList<>();
+                for (PropertyPhoto single:mPropertyPhotoAdapter.getCurrentList()){
+                    propertyPhotos.add(single.getPhoto());
+                }
+                navigate(SinglePropertyFragmentDirections
+                        .actionSinglePropertyFragmentToFullPhotoFragment(propertyPhotos.toArray(new String[0]), propertyPhoto.getPhoto()));
+            }, (propertyPhoto, position) -> {
+                List<View> enabledViews = Arrays.asList(mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery,
+                        mFragmentViewPropertyBinding.buttonViewPropertyAddImage);
+                ViewUtils.load(mFragmentViewPropertyBinding.linearLayoutViewPropertyLoadingGallery,
+                        enabledViews, true);
+                mSinglePropertyViewModel.removePropertyPhoto(mProperty.getId(), propertyPhoto.getId()).observe(getViewLifecycleOwner(), propertyPhotoAPIResponse -> {
+                    ViewUtils.load(mFragmentViewPropertyBinding.linearLayoutViewPropertyLoadingGallery,
+                            enabledViews, false);
+                    if (propertyPhotoAPIResponse!=null && propertyPhotoAPIResponse.isSuccessful()){
+                        List<PropertyPhoto> currentPropertyPhotos = mPropertyPhotoAdapter.getCurrentList();
+                        List<PropertyPhoto> newPropertyPhotos = new ArrayList<>(currentPropertyPhotos);
+                        newPropertyPhotos.remove(propertyPhotoAPIResponse.body());
+                        mPropertyPhotoAdapter.submitList(newPropertyPhotos);
+                        Log.e("Property photos", "Property photos are "+newPropertyPhotos.size());
+                        mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(newPropertyPhotos.size()>0?View.GONE:View.VISIBLE);
+                    }
+                    else {
+                        Toast.makeText(requireContext(),
+                                (propertyPhotoAPIResponse==null || propertyPhotoAPIResponse.errorMessage(requireContext())==null)?
+                                        getString(R.string.unknown_error):
+                                        propertyPhotoAPIResponse.errorMessage(requireContext()),
+                                Toast.LENGTH_SHORT).show();
+                    }
 
-            //TODO: Add functionality to save gallery images
+                });
+            },  Objects.equals(mSinglePropertyViewModel.getUserId(), mProperty.getOwnerId()+""));
+
+            mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setLayoutManager(new LinearLayoutManager(requireContext(),
+                    RecyclerView.HORIZONTAL, false));
+            mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setAdapter(mPropertyPhotoAdapter);
+            mPropertyPhotoAdapter.submitList(mProperty.getPropertyPhotos());
+            mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(mProperty.getPropertyPhotos().size()>0?View.GONE:View.VISIBLE);
+
             mFragmentViewPropertyBinding.buttonViewPropertyAddImage.setOnClickListener(v->{
-
+                pickOrTakeImage();
             });
 
-            // TODO: Add functionality to edit amenities
             mFragmentViewPropertyBinding.buttonViewPropertyEditAmenities.setOnClickListener(v->{
-                ArrayList<Amenity> amenities  = new ArrayList<>();
-                for (PropertyAmenity propertyAmenity:mProperty.getPropertyAmenities()){
-                    amenities.add(propertyAmenity.getAmenity());
-                }
-                PropertyAmenitySelectFragment.newInstance(mProperty.getId(), amenities).show(getChildFragmentManager(), null);
+                PropertyAmenitySelectFragment.show(getChildFragmentManager(), mProperty.getId(),
+                        new ArrayList<>(mAmenityAdapter.getCurrentList()),
+                        this);
             });
 
             // TODO: Add functionality to display map
@@ -240,7 +285,15 @@ public class ViewPropertyFragment extends BaseFragment {
                     }
                 });
             });
+        }
 
+        if ((!mSinglePropertyViewModel.isAdmin() && (mProperty!=null && !mProperty.getOwnerId().equals(Integer.parseInt(mSinglePropertyViewModel.getUserId()))))) {
+            mFragmentViewPropertyBinding.buttonViewPropertyEditAmenities.setVisibility(View.GONE);
+            mFragmentViewPropertyBinding.buttonViewPropertyAddImage.setVisibility(View.GONE);
+        }
+        else {
+            mFragmentViewPropertyBinding.buttonViewPropertyEditAmenities.setVisibility(View.VISIBLE);
+            mFragmentViewPropertyBinding.buttonViewPropertyAddImage.setVisibility(View.VISIBLE);
         }
 
 
@@ -291,6 +344,54 @@ public class ViewPropertyFragment extends BaseFragment {
         }
     }
 
+    private void pickOrTakeImage(){
+        Function1<ImageResult<? extends Uri>, Unit> imageCallback = imageResult -> {
+            if (imageResult instanceof ImageResult.Success) {
+                Uri uri = ((ImageResult.Success<Uri>) imageResult).getValue();
+                List<View> enabledViews = Arrays.asList(mFragmentViewPropertyBinding.buttonViewPropertyAddImage,
+                        mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery);
+                ViewUtils.load(mFragmentViewPropertyBinding.linearLayoutViewPropertyLoadingGallery,
+                        enabledViews, true);
+                mSinglePropertyViewModel.addPropertyPhotos(mProperty.getId(), Arrays.asList(uri)).observe(getViewLifecycleOwner(), listAPIResponse -> {
+                    ViewUtils.load(mFragmentViewPropertyBinding.linearLayoutViewPropertyLoadingGallery,
+                            enabledViews, false);
+                    if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
+                        List<PropertyPhoto> currentPropertyPhotos = mPropertyPhotoAdapter.getCurrentList();
+                        List<PropertyPhoto> newPropertyPhotos = new ArrayList<>(currentPropertyPhotos);
+                        newPropertyPhotos.addAll(listAPIResponse.body());
+                        mPropertyPhotoAdapter.submitList(newPropertyPhotos);
+                        mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery
+                                .setVisibility(newPropertyPhotos.size()>0?View.GONE:View.VISIBLE);
+                    }
+                    else {
+                        Toast.makeText(requireContext(),
+                                (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
+                                        getString(R.string.unknown_error):
+                                        listAPIResponse.errorMessage(requireContext()),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                String errorString = ((ImageResult.Failure) imageResult).getErrorString();
+                Toast.makeText(requireContext(), errorString, Toast.LENGTH_LONG).show();
+            }
+            return null;
+        };
+
+
+        new AlertDialog.Builder(requireContext())
+                .setItems(new String[]{"Gallery", "Camera"}, (dialog, which) -> {
+                    if (which==0){
+                        mImagePicker.pickFromStorage(imageCallback);
+                    }
+                    else {
+                        mImagePicker.takeFromCamera(imageCallback);
+                    }
+                }).setTitle("Image Source")
+                .create()
+                .show();
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -305,14 +406,24 @@ public class ViewPropertyFragment extends BaseFragment {
             menu.clear();
         }
         MenuItem itemVerify = menu.findItem(R.id.action_editDoneDelete_verify);
-        if (!mSinglePropertyViewModel.isAdmin())
-            itemVerify.setVisible(false);
         if (itemVerify!=null) {
+            if (!mSinglePropertyViewModel.isAdmin())
+                itemVerify.setVisible(false);
             itemVerify.setTitle(mProperty.getIsVerified() ? R.string.unverify : R.string.verify);
         }
         MenuItem itemEnable = menu.findItem(R.id.action_editDoneDelete_enable);
         if (itemEnable!=null) {
             itemEnable.setTitle(mProperty.getIsEnabled() ? R.string.disable : R.string.enable);
         }
+    }
+
+    @Override
+    public void onPropertyAmenitiesChanged(List<Amenity> added, List<Amenity> removed) {
+        List<Amenity> currentList = mAmenityAdapter.getCurrentList();
+        List<Amenity> newAmenities = new ArrayList<>(currentList);
+        newAmenities.addAll(added);
+        newAmenities.removeAll(removed);
+        mAmenityAdapter.submitList(newAmenities);
+        mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyAmenities.setVisibility(newAmenities.size()>0?View.GONE:View.VISIBLE);
     }
 }
