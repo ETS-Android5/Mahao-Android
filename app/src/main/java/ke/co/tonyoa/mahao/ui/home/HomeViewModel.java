@@ -2,11 +2,14 @@ package ke.co.tonyoa.mahao.ui.home;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.location.LocationListener;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -22,6 +25,7 @@ import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
+import ke.co.tonyoa.mahao.app.utils.LocationUpdateListener;
 
 public class HomeViewModel extends AndroidViewModel {
 
@@ -32,8 +36,12 @@ public class HomeViewModel extends AndroidViewModel {
     PropertiesRepository mPropertiesRepository;
     @Inject
     SharedPrefs mSharedPrefs;
+    @Inject
+    LocationUpdateListener mLocationUpdateListener;
     private MutableLiveData<String> mNameLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mProfilePictureLiveData = new MutableLiveData<>();
+    private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
+    private LiveData<APIResponse<List<Property>>> mNearbyProperties;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
@@ -46,6 +54,9 @@ public class HomeViewModel extends AndroidViewModel {
             else if (key.equals(SharedPrefs.KEY_PROFILE_PICTURE)){
                 mProfilePictureLiveData.postValue(mSharedPrefs.getProfilePicture());
             }
+            else if (key.equals(SharedPrefs.KEY_LAST_COORDINATES)){
+                mLatLngMutableLiveData.postValue(mSharedPrefs.getLastLocation());
+            }
         }
     };
 
@@ -55,6 +66,15 @@ public class HomeViewModel extends AndroidViewModel {
         mSharedPrefs.registerOnSharedPreferencesListener(mOnSharedPreferenceChangeListener);
         mNameLiveData.postValue(mSharedPrefs.getNames());
         mProfilePictureLiveData.postValue(mSharedPrefs.getProfilePicture());
+        mLatLngMutableLiveData.postValue(mSharedPrefs.getLastLocation());
+        mNearbyProperties = Transformations.switchMap(mLatLngMutableLiveData, new Function<LatLng, LiveData<APIResponse<List<Property>>>>() {
+            @Override
+            public LiveData<APIResponse<List<Property>>> apply(LatLng input) {
+                return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, input, null, null,
+                        null, null, null, null, null, input,
+                        5, null, null, null, null);
+            }
+        });
     }
 
 
@@ -63,9 +83,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<APIResponse<List<Property>>> getNearbyProperties() {
-        return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, DEFAULT_COORDINATES, null, null,
-                null, null, null, null, null, DEFAULT_COORDINATES,
-                20, null, null, null, null);
+        return mNearbyProperties;
     }
 
     public LiveData<APIResponse<List<Property>>> getLatestProperties() {
@@ -102,6 +120,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void addFeedback(int propertyId, FeedbackType feedbackType){
         mPropertiesRepository.addFeedback(propertyId, feedbackType);
+    }
+
+    public void listenToLocationUpdates(LocationListener locationListener, long updateTime, long updateDistance){
+        mLocationUpdateListener.startListening(locationListener, updateTime, updateDistance);
     }
 
 }

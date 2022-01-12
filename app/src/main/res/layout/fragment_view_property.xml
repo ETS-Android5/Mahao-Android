@@ -527,12 +527,6 @@
                     android:layout_marginEnd="@dimen/size_32"
                     android:text="@string/add_gallery_image" />
 
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/mapView_viewProperty"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_200"
-                    android:layout_margin="@dimen/size_8"/>
-
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

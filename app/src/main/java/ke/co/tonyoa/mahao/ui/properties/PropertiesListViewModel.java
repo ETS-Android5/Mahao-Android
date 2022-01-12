@@ -1,16 +1,17 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
-import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
 import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_LIMIT;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -23,13 +24,26 @@ import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
+import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
 public class PropertiesListViewModel extends AndroidViewModel {
 
     @Inject
     PropertiesRepository mPropertiesRepository;
+    @Inject
+    SharedPrefs mSharedPrefs;
     private MutableLiveData<PropertiesListFragment.PropertyListType> mPropertyListMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
     private LiveData<APIResponse<List<Property>>> mPropertiesLiveData;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(SharedPrefs.KEY_LAST_COORDINATES)){
+                mLatLngMutableLiveData.postValue(mSharedPrefs.getLastLocation());
+            }
+        }
+    };
 
     public PropertiesListViewModel(@NonNull Application application) {
         super(application);
@@ -45,9 +59,10 @@ public class PropertiesListViewModel extends AndroidViewModel {
                 case LATEST:
                     return mPropertiesRepository.getLatestProperties(null, 0, 2000);
                 case NEARBY:
-                    return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, DEFAULT_COORDINATES, null, null,
-                            null, null, null, null, null, DEFAULT_COORDINATES,
-                            20, null, null, null, null);
+                    LatLng value = mLatLngMutableLiveData.getValue();
+                    return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, value, null, null,
+                            null, null, null, null, null, value,
+                            5, null, null, null, null);
                 case POPULAR:
                     return mPropertiesRepository.getPopularProperties(null, 0, 2000);
                 case FAVORITE:

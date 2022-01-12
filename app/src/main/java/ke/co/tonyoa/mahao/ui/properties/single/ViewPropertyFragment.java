@@ -229,9 +229,6 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                         this);
             });
 
-            // TODO: Add functionality to display map
-            mFragmentViewPropertyBinding.mapViewViewProperty.setVisibility(View.GONE);
-
 
             mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesShowMore.setVisibility(View.GONE);
             mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesTitle.setText(R.string.recommended);
@@ -261,9 +258,9 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             fetchSingleRow(mFragmentViewPropertyBinding.layoutSomeHousesRecommended,
                     mSinglePropertyViewModel.getSimilarProperties(mProperty.getId()), mPropertyAdapterRecommended);
 
-            //TODO: Navigate to map
             mFragmentViewPropertyBinding.floatingActionButtonViewPropertyMap.setOnClickListener(v->{
-
+                navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentToPropertyMapFragment(new float[]{mProperty.getLocation().get(0),
+                    mProperty.getLocation().get(1), 10}));
             });
 
             mFragmentViewPropertyBinding.animationViewViewPropertyLike.setOnClickListener(v->{
