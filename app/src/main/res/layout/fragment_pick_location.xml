@@ -18,7 +18,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/locationPicker_maps"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
@@ -54,40 +54,18 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout_locationPicker_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorSurface"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/round_background_light"
-            android:backgroundTint="@color/color_background_gray_transparentish"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="@dimen/size_20"
-                android:layout_height="@dimen/size_20"
-                android:layout_marginStart="@dimen/size_8"
-                android:src="@drawable/ic_baseline_search_24"
-                android:contentDescription="@string/search" />
-
-            <AutoCompleteTextView
-                android:id="@+id/locationPicker_autoCompleteText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_background_light"
-                android:backgroundTint="@color/color_background_gray_transparentish"
-                android:hint="@string/search_location"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:padding="@dimen/size_8"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:visibility="visible" />
-        </LinearLayout>
+            android:layout_margin="@dimen/size_8"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,7 +82,7 @@
                 android:contentDescription="@string/location" />
 
             <TextView
-                android:id="@+id/locationPicker_currentAddress"
+                android:id="@+id/textView_locationPicker_currentAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

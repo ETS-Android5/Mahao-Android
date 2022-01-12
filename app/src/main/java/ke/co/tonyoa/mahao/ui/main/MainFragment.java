@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.Serializable;
+
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.databinding.FragmentMainBinding;
@@ -23,11 +25,11 @@ import ke.co.tonyoa.mahao.ui.more.MoreFragment;
 import ke.co.tonyoa.mahao.ui.profile.ProfileFragment;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesFragment;
 
-public class MainFragment extends BaseFragment {
+public class MainFragment extends BaseFragment implements Serializable {
 
-    private FragmentMainBinding mFragmentMainBinding;
-    private MainViewModel mMainViewModel;
-    private HomeFragment.OnShowMoreClickListener mOnShowMoreClickListener = new HomeFragment.OnShowMoreClickListener() {
+    private transient FragmentMainBinding mFragmentMainBinding;
+    private transient MainViewModel mMainViewModel;
+    private transient HomeFragment.OnShowMoreClickListener mOnShowMoreClickListener = new HomeFragment.OnShowMoreClickListener() {
         @Override
         public void onShowMore(int position) {
             Fragment fragmentByTag = getChildFragmentManager().findFragmentByTag("f1");

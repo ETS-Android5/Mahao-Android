@@ -1,6 +1,7 @@
 package ke.co.tonyoa.mahao.ui.properties.single;
 
 import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
+
 import static ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyFragment.PROPERTY_EXTRA;
 
 import android.content.Context;
@@ -9,11 +10,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +32,13 @@ import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
 import ke.co.tonyoa.mahao.app.interfaces.OnSaveListener;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentEditPropertyBinding;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class EditPropertyFragment extends Fragment {
+public class EditPropertyFragment extends BaseFragment {
 
     private Property mProperty;
     private FragmentEditPropertyBinding mFragmentEditPropertyBinding;
@@ -66,7 +66,9 @@ public class EditPropertyFragment extends Fragment {
         if (getArguments() != null) {
             mProperty = (Property) getArguments().getSerializable(PROPERTY_EXTRA);
         }
-        mEditPropertyViewModel = new ViewModelProvider(this).get(EditPropertyViewModel.class);
+        EditPropertyViewModelFactory editPropertyViewModelFactory = new EditPropertyViewModelFactory(requireActivity().getApplication(),
+                mProperty);
+        mEditPropertyViewModel = new ViewModelProvider(this, editPropertyViewModelFactory).get(EditPropertyViewModel.class);
         mSinglePropertyViewModel = new ViewModelProvider(requireParentFragment()).get(SinglePropertyViewModel.class);
     }
 
@@ -85,43 +87,42 @@ public class EditPropertyFragment extends Fragment {
         mFragmentEditPropertyBinding = FragmentEditPropertyBinding.inflate(inflater, container, false);
         mImagePicker = new ImagePicker(this);
 
-        if (mProperty != null) {
-            Glide.with(requireContext())
-                    .load(mProperty.getFeatureImage())
-                    .placeholder(R.drawable.ic_home_black_24dp)
-                    .error(R.drawable.ic_home_black_24dp)
-                    .into(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage);
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyName.setText(mProperty.getTitle());
-            mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(mProperty.getPropertyCategory().getTitle());
-            mEditPropertyViewModel.setSelectedPropertyCategory(mProperty.getPropertyCategory());
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(mProperty.getLocationName());
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyBeds.setText(mProperty.getNumBed()+"");
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyBaths.setText(mProperty.getNumBath()+"");
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyPrice.setText(mProperty.getPrice()+"");
-            mFragmentEditPropertyBinding.textInputEditTextEditPropertyDescription.setText(mProperty.getDescription());
-        }
+        mEditPropertyViewModel.getProperty().observe(getViewLifecycleOwner(), property -> {
+            if (property!=null){
+                Glide.with(requireContext())
+                        .load(property.getFeatureImage())
+                        .placeholder(R.drawable.ic_home_black_24dp)
+                        .error(R.drawable.ic_home_black_24dp)
+                        .into(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage);
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyName.setText(property.getTitle());
+                PropertyCategory propertyCategory = property.getPropertyCategory();
+                if (propertyCategory!=null) {
+                    mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(propertyCategory.getTitle());
+                }
+                mEditPropertyViewModel.setSelectedPropertyCategory(propertyCategory);
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(property.getLocationName());
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyBeds.setText(property.getNumBed()==null?null:property.getNumBed()+"");
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyBaths.setText(property.getNumBath()==null?null:property.getNumBath()+"");
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyPrice.setText(property.getPrice()==null?null:property.getPrice()+"");
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyDescription.setText(property.getDescription());
+            }
+        });
 
         mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setInputType(InputType.TYPE_NULL);
         mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnClickListener(v->{
             mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText("");
             mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.showDropDown();
         });
-        mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position>=0) {
-                    mEditPropertyViewModel.setSelectedPropertyCategory(mPropertyCategoryArrayAdapter.getItem(position));
-                }
+        mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnItemClickListener((parent, view, position, id) -> {
+            if (position>=0) {
+                mEditPropertyViewModel.setSelectedPropertyCategory(mPropertyCategoryArrayAdapter.getItem(position));
             }
         });
 
-        mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory().getValue();
-                if (propertyCategory!=null) {
-                    mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(propertyCategory.getTitle());
-                }
+        mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnDismissListener(() -> {
+            PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory().getValue();
+            if (propertyCategory!=null) {
+                mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(propertyCategory.getTitle());
             }
         });
         mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnFocusChangeListener((v, isFocused)->{
@@ -151,8 +152,8 @@ public class EditPropertyFragment extends Fragment {
             PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory().getValue();
             if (mProperty!=null)
                 url = mProperty.getFeatureImage();
+            Property currentProperty = mEditPropertyViewModel.getProperty().getValue();
 
-            Log.e("Property Category", "Selected property category is null "+(propertyCategory==null));
             if (ViewUtils.isEmptyAndRequired(mFragmentEditPropertyBinding.textInputEditTextEditPropertyName)){
                 return;
             }
@@ -180,6 +181,19 @@ public class EditPropertyFragment extends Fragment {
                 return;
             }
 
+            String locationName = null;
+            float lat = 0, lng = 0;
+            if (currentProperty!=null){
+                locationName = currentProperty.getLocationName();
+                lat = currentProperty.getLocation().get(0);
+                lng = currentProperty.getLocation().get(1);
+            }
+            else if (mProperty!=null){
+                locationName = mProperty.getLocationName();
+                lat = mProperty.getLocation().get(0);
+                lng = mProperty.getLocation().get(1);
+            }
+
             List<View> enabledViews = Arrays.asList(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage,
                     mFragmentEditPropertyBinding.textInputEditTextEditPropertyName, mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory,
                     mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation, mFragmentEditPropertyBinding.textInputEditTextEditPropertyBeds,
@@ -188,9 +202,8 @@ public class EditPropertyFragment extends Fragment {
             ViewUtils.load(mFragmentEditPropertyBinding.linearLayoutEditPropertyLoading, enabledViews, true);
             mSinglePropertyViewModel.saveProperty(mProperty==null?null:mProperty.getId(),
                     mEditPropertyViewModel.getThumbnailUri().getValue(), propertyCategory.getId(),
-                    title, description, Integer.parseInt(bed), Integer.parseInt(bath), location, Float.parseFloat(price),
-                    (float) DEFAULT_COORDINATES.latitude, (float) DEFAULT_COORDINATES.longitude,
-                    mProperty == null || mProperty.getIsEnabled(),
+                    title, description, Integer.parseInt(bed), Integer.parseInt(bath), locationName, Float.parseFloat(price),
+                    lat, lng, mProperty == null || mProperty.getIsEnabled(),
                     mProperty==null || mProperty.getIsVerified()).observe(getViewLifecycleOwner(), propertyAPIResponse -> {
                 ViewUtils.load(mFragmentEditPropertyBinding.linearLayoutEditPropertyLoading, enabledViews, false);
                 if (propertyAPIResponse!=null && propertyAPIResponse.isSuccessful()){
@@ -211,6 +224,20 @@ public class EditPropertyFragment extends Fragment {
 
         mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage.setOnClickListener(v->{
             pickOrTakeImage();
+        });
+
+        mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setInputType(InputType.TYPE_NULL);
+        mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setOnClickListener(v->{
+            navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentToPickLocationFragment(mProperty==null?null:mProperty.getLocationName(),
+                    mProperty==null?null: new float[]{mProperty.getLocation().get(0), mProperty.getLocation().get(1)},
+                    (selectedAddress, selectedLocation)->{
+                        mEditPropertyViewModel.setLocation(selectedAddress, selectedLocation);
+                    }));
+        });
+        mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus){
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.performClick();
+            }
         });
 
         return mFragmentEditPropertyBinding.getRoot();

@@ -25,7 +25,7 @@ import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    public static final LatLng DEFAULT_COORDINATES = new LatLng(1.0912, 37.0117);
+    public static final LatLng DEFAULT_COORDINATES = new LatLng( -1.091079, 37.011459 );
     public static final int DEFAULT_LIMIT = 14;
 
     @Inject
