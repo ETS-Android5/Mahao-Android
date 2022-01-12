@@ -18,6 +18,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import ke.co.tonyoa.mahao.ui.properties.PropertyAdapter;
 
 public class HomeFragment extends BaseFragment {
 
+    public static final String LISTENER = "LISTENER";
     private FragmentHomeBinding mFragmentHomeBinding;
     private HomeViewModel mHomeViewModel;
     private MainViewModel mMainViewModel;
@@ -53,12 +55,23 @@ public class HomeFragment extends BaseFragment {
     private final OnItemClickListener<Property> mPropertyOnReadClickListener = (property, position) -> {
         mHomeViewModel.addFeedback(property.getId(), FeedbackType.READ);
     };
+    private OnShowMoreClickListener mOnShowMoreClickListener;
 
+    public static HomeFragment newInstance(OnShowMoreClickListener onShowMoreClickListener){
+        HomeFragment homeFragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LISTENER, onShowMoreClickListener);
+        homeFragment.setArguments(bundle);
+        return homeFragment;
+    }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments()!=null){
+            mOnShowMoreClickListener = (OnShowMoreClickListener) getArguments().getSerializable(LISTENER);
+        }
         mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         mMainViewModel = new ViewModelProvider(requireParentFragment()).get(MainViewModel.class);
     }
@@ -90,6 +103,37 @@ public class HomeFragment extends BaseFragment {
         mFragmentHomeBinding.layoutSomeHousesPopular.textViewSomeHousesTitle.setText(R.string.popular);
         mFragmentHomeBinding.layoutSomeHousesFavorite.textViewSomeHousesTitle.setText(R.string.favorite);
         mFragmentHomeBinding.layoutSomeHousesPersonal.textViewSomeHousesTitle.setText(R.string.personal);
+
+        mFragmentHomeBinding.layoutSomeHousesRecommended.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(1);
+            }
+        });
+        mFragmentHomeBinding.layoutSomeHousesNearby.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(2);
+            }
+        });
+        mFragmentHomeBinding.layoutSomeHousesLatest.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(3);
+            }
+        });
+        mFragmentHomeBinding.layoutSomeHousesPopular.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(4);
+            }
+        });
+        mFragmentHomeBinding.layoutSomeHousesFavorite.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(5);
+            }
+        });
+        mFragmentHomeBinding.layoutSomeHousesPersonal.textViewSomeHousesShowMore.setOnClickListener(v->{
+            if (mOnShowMoreClickListener!=null){
+                mOnShowMoreClickListener.onShowMore(6);
+            }
+        });
 
         setupAdapters();
         setupRecyclerViews();
@@ -243,5 +287,9 @@ public class HomeFragment extends BaseFragment {
         public void setPropertyAdapter(PropertyAdapter propertyAdapter) {
             mPropertyAdapter = propertyAdapter;
         }
+    }
+
+    public interface OnShowMoreClickListener extends Serializable {
+        void onShowMore(int position);
     }
 }

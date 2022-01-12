@@ -156,6 +156,13 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_singlePropertyFragment_to_fullPhotoFragment"
+            app:destination="@id/fullPhotoFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/propertyMapFragment"
@@ -250,4 +257,16 @@
         android:name="ke.co.tonyoa.mahao.ui.profile.policy.PolicyFragment"
         android:label="fragment_policy"
         tools:layout="@layout/fragment_policy" />
+    <fragment
+        android:id="@+id/fullPhotoFragment"
+        android:name="ke.co.tonyoa.mahao.ui.properties.single.FullPhotoFragment"
+        android:label="fragment_full_photo"
+        tools:layout="@layout/fragment_full_photo" >
+        <argument
+            android:name="photos"
+            app:argType="string[]" />
+        <argument
+            android:name="selected"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -26,8 +26,8 @@ public class PropertyAmenityAdapter extends ListAdapter<Amenity, PropertyAmenity
     private Context mContext;
     private OnItemClickListener<Amenity> mOnItemClickListener;
     private List<Amenity> mPropertyAmenities;
-    private List<Integer> mAddedAmenities = new ArrayList<>();
-    private List<Integer> mRemovedAmenities = new ArrayList<>();
+    private List<Amenity> mAddedAmenities = new ArrayList<>();
+    private List<Amenity> mRemovedAmenities = new ArrayList<>();
 
     public PropertyAmenityAdapter(Context context, OnItemClickListener<Amenity> onItemClickListener,
                                   List<Amenity> propertyAmenities) {
@@ -58,19 +58,19 @@ public class PropertyAmenityAdapter extends ListAdapter<Amenity, PropertyAmenity
         holder.bind(position);
     }
 
-    public List<Integer> getAddedAmenities() {
+    public List<Amenity> getAddedAmenities() {
         return mAddedAmenities;
     }
 
-    public void setAddedAmenities(List<Integer> addedAmenities) {
+    public void setAddedAmenities(List<Amenity> addedAmenities) {
         mAddedAmenities = addedAmenities;
     }
 
-    public List<Integer> getRemovedAmenities() {
+    public List<Amenity> getRemovedAmenities() {
         return mRemovedAmenities;
     }
 
-    public void setRemovedAmenities(List<Integer> removedAmenities) {
+    public void setRemovedAmenities(List<Amenity> removedAmenities) {
         mRemovedAmenities = removedAmenities;
     }
 
@@ -94,11 +94,11 @@ public class PropertyAmenityAdapter extends ListAdapter<Amenity, PropertyAmenity
                 boolean isChecked = mItemAmenityBinding.imageViewItemAmenityAddRemove.getVisibility()==View.VISIBLE;
                 if (isChecked){
                     mPropertyAmenities.remove(amenity);
-                    mRemovedAmenities.add(amenity.getId());
+                    mRemovedAmenities.add(amenity);
                 }
                 else {
                     mPropertyAmenities.add(amenity);
-                    mAddedAmenities.add(amenity.getId());
+                    mAddedAmenities.add(amenity);
                 }
                 notifyItemChanged(getAdapterPosition());
                 if (mOnItemClickListener!=null){

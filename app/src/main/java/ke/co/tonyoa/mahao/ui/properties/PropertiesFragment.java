@@ -87,6 +87,10 @@ public class PropertiesFragment extends BaseFragment {
         return mFragmentPropertiesBinding.getRoot();
     }
 
+    public void setCurrentItem(int currentItem){
+        mPropertiesViewModel.setSelectedPosition(currentItem);
+    }
+
     static class PropertiesFragmentAdapter extends FragmentStateAdapter {
 
         public PropertiesFragmentAdapter(@NonNull Fragment fragment) {

@@ -27,6 +27,23 @@ public class MainFragment extends BaseFragment {
 
     private FragmentMainBinding mFragmentMainBinding;
     private MainViewModel mMainViewModel;
+    private HomeFragment.OnShowMoreClickListener mOnShowMoreClickListener = new HomeFragment.OnShowMoreClickListener() {
+        @Override
+        public void onShowMore(int position) {
+            Fragment fragmentByTag = getChildFragmentManager().findFragmentByTag("f1");
+            mMainViewModel.setSelectedPosition(1);
+            mFragmentMainBinding.bottomNavigationMain.getMenu().findItem(R.id.navigation_properties).setChecked(true);
+            if (fragmentByTag instanceof PropertiesFragment){
+                ((PropertiesFragment)fragmentByTag).setCurrentItem(position);
+            }
+            //If fragment is yet to be created wait for one second before trying again
+            else if (fragmentByTag == null){
+                mFragmentMainBinding.viewpagerMain.postDelayed(()->{
+                    onShowMore(position);
+                }, 1000);
+            }
+        }
+    };
 
     public MainFragment() {
         // Required empty public constructor
@@ -113,7 +130,7 @@ public class MainFragment extends BaseFragment {
         });
     }
 
-    static class MainFragmentAdapter extends FragmentStateAdapter {
+    class MainFragmentAdapter extends FragmentStateAdapter {
 
         public MainFragmentAdapter(@NonNull Fragment fragment) {
             super(fragment);
@@ -124,7 +141,7 @@ public class MainFragment extends BaseFragment {
         public Fragment createFragment(int position) {
             switch (position){
                 case 0:
-                    return new HomeFragment();
+                    return HomeFragment.newInstance(mOnShowMoreClickListener);
                 case 1:
                     return new PropertiesFragment();
                 case 2:
