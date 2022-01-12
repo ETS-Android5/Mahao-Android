@@ -181,7 +181,20 @@
         android:id="@+id/pickLocationFragment"
         android:name="ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment"
         android:label="fragment_pick_location"
-        tools:layout="@layout/fragment_pick_location" />
+        tools:layout="@layout/fragment_pick_location" >
+        <argument
+            android:name="name"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="coordinates"
+            app:argType="float[]"
+            app:nullable="true" />
+        <argument
+            android:name="listener"
+            app:argType="ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment$OnLocationSelectedListener"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/usersListFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.users.UsersListFragment"

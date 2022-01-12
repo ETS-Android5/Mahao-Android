@@ -116,4 +116,5 @@
     <string name="done">Done</string>
     <string name="create_dummy_data">Create Dummy Data</string>
     <string name="create_feedbacks">Create Feedbacks</string>
+    <string name="enable_your_location">Enable you location for correct map functionality</string>
 </resources>
