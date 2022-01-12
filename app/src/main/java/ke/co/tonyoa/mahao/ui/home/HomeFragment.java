@@ -1,13 +1,22 @@
 package ke.co.tonyoa.mahao.ui.home;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -56,6 +69,9 @@ public class HomeFragment extends BaseFragment {
         mHomeViewModel.addFeedback(property.getId(), FeedbackType.READ);
     };
     private OnShowMoreClickListener mOnShowMoreClickListener;
+    private ActivityResultLauncher<String> mPermissionResultLauncher;
+    private ActivityResultLauncher<Intent> mLocationEnableLauncher;
+
 
     public static HomeFragment newInstance(OnShowMoreClickListener onShowMoreClickListener){
         HomeFragment homeFragment = new HomeFragment();
@@ -74,6 +90,22 @@ public class HomeFragment extends BaseFragment {
         }
         mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         mMainViewModel = new ViewModelProvider(requireParentFragment()).get(MainViewModel.class);
+
+        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+            if (result!=null && result){
+                setupCurrentLocation();
+            }
+            else {
+                Snackbar.make(mFragmentHomeBinding.coordinatorLayoutHome,
+                        "Grant Location Permission for correct functionality",
+                        BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Grant", v -> {
+                    mPermissionResultLauncher.launch(ACCESS_FINE_LOCATION);
+                }).show();
+            }
+        });
+        mLocationEnableLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            setupCurrentLocation();
+        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -140,6 +172,7 @@ public class HomeFragment extends BaseFragment {
         fetchData();
         mFragmentHomeBinding.getRoot().setOnRefreshListener(this::fetchData);
 
+        setupCurrentLocation();
         return mFragmentHomeBinding.getRoot();
     }
 
@@ -287,6 +320,35 @@ public class HomeFragment extends BaseFragment {
         public void setPropertyAdapter(PropertyAdapter propertyAdapter) {
             mPropertyAdapter = propertyAdapter;
         }
+    }
+
+    private void setupCurrentLocation(){
+        // Use fields to define the data types to return.
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+
+        // Use the builder to create a FindCurrentPlaceRequest.
+        FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
+
+        // Call findCurrentPlace and handle the response (first check that the user has granted permission).
+        if (ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (!ViewUtils.isLocationEnabled(requireContext())){
+                Snackbar.make(mFragmentHomeBinding.coordinatorLayoutHome,
+                        R.string.enable_your_location, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.enable, v -> {
+                            Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            mLocationEnableLauncher.launch(intent);
+                        })
+                        .show();
+                return;
+            }
+
+            mHomeViewModel.listenToLocationUpdates(location -> {
+            }, 1000*60, 10);
+        }
+        else {
+            mPermissionResultLauncher.launch(ACCESS_FINE_LOCATION);
+        }
+
     }
 
     public interface OnShowMoreClickListener extends Serializable {

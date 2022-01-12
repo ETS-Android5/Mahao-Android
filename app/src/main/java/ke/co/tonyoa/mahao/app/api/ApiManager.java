@@ -175,7 +175,7 @@ public class ApiManager {
                                                      LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
                                                      Boolean isEnabled, List<Integer> categories, List<Integer> amenities) throws IOException {
         return new APIResponse<>(api.getProperties(getToken(), skip, limit, sortBy==null?null:sortBy.getApiValue(),
-                latLngSort==null?null:latLngSort.latitude, latLngSort==null?null:latLngSort.longitude,
+                latLngSort==null?null:latLngSort.latitude+"", latLngSort==null?null:latLngSort.longitude+"",
                 query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,
                 (latLngFilter!=null && filterRadius!=null)? (latLngFilter.latitude+", "+latLngFilter.longitude+", "+filterRadius):null,
                 isVerified, isEnabled, categories==null?null:categories.toString().replace("[", "").replace("]", ""),

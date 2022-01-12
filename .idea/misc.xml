@@ -53,7 +53,7 @@
         <entry key="app/src/main/res/layout/fragment_edit_property.xml" value="0.2665130568356375" />
         <entry key="app/src/main/res/layout/fragment_forgot_password.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_full_photo.xml" value="0.35572916666666665" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.14266180492251596" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.17239583333333333" />
@@ -64,6 +64,7 @@
         <entry key="app/src/main/res/layout/fragment_properties.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_properties_list.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_property_amenity_select.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/fragment_property_map.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_single_amenity.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/fragment_single_category.xml" value="0.35572916666666665" />

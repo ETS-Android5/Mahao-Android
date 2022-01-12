@@ -1,9 +1,13 @@
 package ke.co.tonyoa.mahao.app.sharedprefs;
 
+import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +27,7 @@ public class SharedPrefs {
     public static final String KEY_ADMIN="KEY_ADMIN";
     public static final String KEY_PROFILE_PICTURE = "KEY_PROFILE_PICTURE";
     public static final String KEY_PHONE = "KEY_PHONE";
+    public static final String KEY_LAST_COORDINATES = "KEY_LAST_COORDINATES";
 
     private final Context mContext;
     private final SharedPreferences mSharedPreferences;
@@ -126,6 +131,20 @@ public class SharedPrefs {
     public List<String> getList(String listName){
         return new ArrayList<>(mSharedPreferences.getStringSet(listName, new HashSet<>()));
     }
+
+    public void saveLastLocation(LatLng latLng){
+        saveString(KEY_LAST_COORDINATES, latLng.latitude+", "+latLng.longitude);
+    }
+
+    public LatLng getLastLocation(){
+        String lastCoordinates = getString(KEY_LAST_COORDINATES, null);
+        if (lastCoordinates!=null){
+            String[] vals = lastCoordinates.split(",");
+            return new LatLng(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]));
+        }
+        return DEFAULT_COORDINATES;
+    }
+
 
     public void registerOnSharedPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
