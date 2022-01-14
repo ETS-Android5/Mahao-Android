@@ -3,6 +3,8 @@ package ke.co.tonyoa.mahao.ui.properties.single;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -13,6 +15,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.navigation.Navigation;
 
 import android.provider.Settings;
 import android.util.Log;
@@ -38,6 +42,9 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -49,10 +56,11 @@ import java.util.Locale;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.DialogUtils;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentPickLocationBinding;
 
-public class PickLocationFragment extends BaseFragment implements OnMapReadyCallback{
+public class PickLocationFragment extends BottomSheetDialogFragment implements OnMapReadyCallback{
 
     public static final String PICK_LOCATION_REQUEST = "PICK_LOCATION_REQUEST";
     public static final String CURRENT_LOCATION_EXTRA = "CURRENT_LOCATION";
@@ -104,8 +112,10 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentPickLocationBinding = FragmentPickLocationBinding.inflate(inflater, container, false);
-        setToolbar(mFragmentPickLocationBinding.layoutToolbar.materialToolbarLayoutToolbar);
-        setTitle("Pick Location");
+        mFragmentPickLocationBinding.layoutToolbar.materialToolbarLayoutToolbar.setTitle("Pick Location");
+        mFragmentPickLocationBinding.layoutToolbar.materialToolbarLayoutToolbar.setNavigationOnClickListener(v -> {
+            dismiss();
+        });
 
         // Initialize the Places SDK
         Places.initialize(requireContext(), getString(R.string.google_maps_key));
@@ -143,7 +153,7 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
 
                 @Override
                 public void onError(@NonNull Status status) {
-                    Log.i("PICK_LOCATION", "An error occurred: " + status);
+                    Log.e("PICK_LOCATION", "An error occurred: " + status);
                 }
             });
         }
@@ -157,8 +167,17 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
             if (mOnLocationSelectedListener!=null) {
                 mOnLocationSelectedListener.onLocationSelected(selectedAddress, selectedLocation);
             }
-            navigateUp();
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main).navigateUp();
         });
+
+        //Expand pick location dialog
+        if (getDialog()!=null) {
+            getDialog().setOnShowListener(dialog -> {
+                BottomSheetDialog d = (BottomSheetDialog) dialog;
+                View bottomSheetInternal = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+                BottomSheetBehavior.from(bottomSheetInternal).setState(BottomSheetBehavior.STATE_EXPANDED);
+            });
+        }
 
         return mFragmentPickLocationBinding.getRoot();
     }
@@ -251,13 +270,13 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
-            navigateUp();
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main).navigateUp();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    interface OnLocationSelectedListener extends Serializable {
+    public interface OnLocationSelectedListener extends Serializable {
         void onLocationSelected(String locationName, LatLng latLng);
     }
 }

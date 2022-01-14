@@ -14,6 +14,7 @@ import ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityViewModel;
 import ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListViewModel;
 import ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryViewModel;
 import ke.co.tonyoa.mahao.ui.profile.users.UsersListViewModel;
+import ke.co.tonyoa.mahao.ui.properties.FilterPropertiesViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesListViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesViewModel;
 import ke.co.tonyoa.mahao.ui.properties.single.EditPropertyViewModel;
@@ -57,4 +58,6 @@ public interface ApplicationComponent {
     void inject(UsersListViewModel usersListViewModel);
 
     void inject(PropertyMapViewModel propertyMapViewModel);
+
+    void inject(FilterPropertiesViewModel filterPropertiesViewModel);
 }
