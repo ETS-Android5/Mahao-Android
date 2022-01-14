@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,8 +22,10 @@ import ke.co.tonyoa.mahao.app.repositories.PropertyCategoriesRepository;
 
 public class EditPropertyViewModel extends AndroidViewModel {
 
-    private MutableLiveData<Uri> mThumbnailUri = new MutableLiveData<>();
-    private MutableLiveData<PropertyCategory> mSelectedPropertyCategory = new MutableLiveData<>();
+    private Uri mThumbnailUri;
+    private PropertyCategory mSelectedPropertyCategory;
+    private String mLocationName;
+    private LatLng mCoordinates;
     private MutableLiveData<Property> mPropertyMutableLiveData = new MutableLiveData<>();
     @Inject
     PropertyCategoriesRepository mPropertyCategoriesRepository;
@@ -36,10 +37,10 @@ public class EditPropertyViewModel extends AndroidViewModel {
     }
 
     public void setThumbnailUri(Uri uri){
-        mThumbnailUri.postValue(uri);
+        mThumbnailUri=uri;
     }
 
-    public LiveData<Uri> getThumbnailUri(){
+    public Uri getThumbnailUri(){
         return mThumbnailUri;
     }
 
@@ -48,10 +49,10 @@ public class EditPropertyViewModel extends AndroidViewModel {
     }
 
     public void setSelectedPropertyCategory(PropertyCategory propertyCategory){
-        mSelectedPropertyCategory.postValue(propertyCategory);
+        mSelectedPropertyCategory=propertyCategory;
     }
 
-    public LiveData<PropertyCategory> getSelectedPropertyCategory(){
+    public PropertyCategory getSelectedPropertyCategory(){
         return mSelectedPropertyCategory;
     }
 
@@ -64,11 +65,15 @@ public class EditPropertyViewModel extends AndroidViewModel {
     }
 
     public void setLocation(String location, LatLng coordinates){
-        Property property = mPropertyMutableLiveData.getValue();
-        if (property==null)
-            property = new Property();
-        property.setLocationName(location);
-        property.setLocation(Arrays.asList((float)coordinates.latitude, (float)coordinates.longitude));
-        mPropertyMutableLiveData.postValue(property);
+        mLocationName = location;
+        mCoordinates = coordinates;
+    }
+
+    public String getLocationName() {
+        return mLocationName;
+    }
+
+    public LatLng getCoordinates() {
+        return mCoordinates;
     }
 }

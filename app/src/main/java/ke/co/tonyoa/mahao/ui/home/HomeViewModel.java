@@ -66,7 +66,7 @@ public class HomeViewModel extends AndroidViewModel {
         mSharedPrefs.registerOnSharedPreferencesListener(mOnSharedPreferenceChangeListener);
         mNameLiveData.postValue(mSharedPrefs.getNames());
         mProfilePictureLiveData.postValue(mSharedPrefs.getProfilePicture());
-        mLatLngMutableLiveData.postValue(mSharedPrefs.getLastLocation());
+        mLatLngMutableLiveData.setValue(mSharedPrefs.getLastLocation());
         mNearbyProperties = Transformations.switchMap(mLatLngMutableLiveData, new Function<LatLng, LiveData<APIResponse<List<Property>>>>() {
             @Override
             public LiveData<APIResponse<List<Property>>> apply(LatLng input) {
@@ -83,6 +83,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<APIResponse<List<Property>>> getNearbyProperties() {
+        mLatLngMutableLiveData.setValue(mLatLngMutableLiveData.getValue());
         return mNearbyProperties;
     }
 

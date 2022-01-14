@@ -2,6 +2,9 @@ package ke.co.tonyoa.mahao.ui.home;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -30,6 +33,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -41,6 +45,7 @@ import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.SnapScrollListener;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentHomeBinding;
 import ke.co.tonyoa.mahao.databinding.LayoutSomeHousesBinding;
@@ -203,8 +208,16 @@ public class HomeFragment extends BaseFragment {
             if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
                 List<Property> properties = listAPIResponse.body();
                 propertyAdapter.submitList(properties);
-                if (properties!=null)
+                if (properties!=null) {
                     propertyCount = properties.size();
+
+                    //Add tabs
+                    layoutSomeHousesBinding.tabLayoutSomeHouses.removeAllTabs();
+                    for (int index = 0; index<propertyCount; index++) {
+                        TabLayout.Tab newTab = layoutSomeHousesBinding.tabLayoutSomeHouses.newTab();
+                        layoutSomeHousesBinding.tabLayoutSomeHouses.addTab(newTab);
+                    }
+                }
             }
             else {
                 Toast.makeText(requireContext(),
@@ -260,19 +273,54 @@ public class HomeFragment extends BaseFragment {
 
 
     private void setupRecyclerViews(){
-        setupRecyclerView(mPropertyAdapterRecommended, mFragmentHomeBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses);
-        setupRecyclerView(mPropertyAdapterNearby, mFragmentHomeBinding.layoutSomeHousesNearby.recyclerViewSomeHouses);
-        setupRecyclerView(mPropertyAdapterLatest, mFragmentHomeBinding.layoutSomeHousesLatest.recyclerViewSomeHouses);
-        setupRecyclerView(mPropertyAdapterPopular, mFragmentHomeBinding.layoutSomeHousesPopular.recyclerViewSomeHouses);
-        setupRecyclerView(mPropertyAdapterFavorite, mFragmentHomeBinding.layoutSomeHousesFavorite.recyclerViewSomeHouses);
-        setupRecyclerView(mPropertyAdapterPersonal, mFragmentHomeBinding.layoutSomeHousesPersonal.recyclerViewSomeHouses);
+        setupRecyclerView(mPropertyAdapterRecommended,
+                mFragmentHomeBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesRecommended.tabLayoutSomeHouses);
+        setupRecyclerView(mPropertyAdapterNearby,
+                mFragmentHomeBinding.layoutSomeHousesNearby.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesNearby.tabLayoutSomeHouses);
+        setupRecyclerView(mPropertyAdapterLatest,
+                mFragmentHomeBinding.layoutSomeHousesLatest.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesLatest.tabLayoutSomeHouses);
+        setupRecyclerView(mPropertyAdapterPopular,
+                mFragmentHomeBinding.layoutSomeHousesPopular.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesPopular.tabLayoutSomeHouses);
+        setupRecyclerView(mPropertyAdapterFavorite,
+                mFragmentHomeBinding.layoutSomeHousesFavorite.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesFavorite.tabLayoutSomeHouses);
+        setupRecyclerView(mPropertyAdapterPersonal,
+                mFragmentHomeBinding.layoutSomeHousesPersonal.recyclerViewSomeHouses,
+                mFragmentHomeBinding.layoutSomeHousesPersonal.tabLayoutSomeHouses);
 
     }
 
-    private void setupRecyclerView(PropertyAdapter propertyAdapter, RecyclerView recyclerView){
+    private void setupRecyclerView(PropertyAdapter propertyAdapter, RecyclerView recyclerView, TabLayout tabLayout){
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(propertyAdapter);
-        new PagerSnapHelper().attachToRecyclerView(recyclerView);
+
+        PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
+        pagerSnapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(new SnapScrollListener(pagerSnapHelper,
+                SnapScrollListener.Behavior.NOTIFY_ON_SCROLL,
+                position -> {
+                    tabLayout.selectTab(tabLayout.getTabAt(position));
+                }));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                recyclerView.scrollToPosition(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     class OnFavoriteClickListener implements OnItemClickListener<Property>{

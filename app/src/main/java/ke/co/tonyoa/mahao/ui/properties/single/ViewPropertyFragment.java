@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import ke.co.tonyoa.mahao.app.api.responses.PropertyPhoto;
 import ke.co.tonyoa.mahao.app.api.responses.User;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.SnapScrollListener;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentViewPropertyBinding;
 import ke.co.tonyoa.mahao.databinding.LayoutSomeHousesBinding;
@@ -231,9 +233,10 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
 
 
             mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesShowMore.setVisibility(View.GONE);
-            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesTitle.setText(R.string.recommended);
+            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesTitle.setText(R.string.related);
+            RecyclerView recyclerViewSomeHouses = mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses;
             mPropertyAdapterRecommended = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
-                    mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses.getWidth(),
+                    recyclerViewSomeHouses.getWidth(),
                     requireContext(), (property, position) -> {
                         navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentSelf(property));
                     },  (property, position) -> {
@@ -251,10 +254,34 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                     }, (property, position)->{
                         mSinglePropertyViewModel.addFeedback(property.getId(), FeedbackType.READ);
                     });
-            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses
+            recyclerViewSomeHouses
                     .setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-            mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses.setAdapter(mPropertyAdapterRecommended);
-            new PagerSnapHelper().attachToRecyclerView(mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses);
+            recyclerViewSomeHouses.setAdapter(mPropertyAdapterRecommended);
+
+            PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
+            pagerSnapHelper.attachToRecyclerView(recyclerViewSomeHouses);
+            TabLayout tabLayout = mFragmentViewPropertyBinding.layoutSomeHousesRecommended.tabLayoutSomeHouses;
+            recyclerViewSomeHouses.addOnScrollListener(new SnapScrollListener(pagerSnapHelper,
+                    SnapScrollListener.Behavior.NOTIFY_ON_SCROLL,
+                    position -> {
+                        tabLayout.selectTab(tabLayout.getTabAt(position));
+                    }));
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    recyclerViewSomeHouses.scrollToPosition(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
             fetchSingleRow(mFragmentViewPropertyBinding.layoutSomeHousesRecommended,
                     mSinglePropertyViewModel.getSimilarProperties(mProperty.getId()), mPropertyAdapterRecommended);
 
@@ -308,8 +335,16 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
                 List<Property> properties = listAPIResponse.body();
                 propertyAdapter.submitList(properties);
-                if (properties!=null)
+                if (properties!=null) {
                     propertyCount = properties.size();
+
+                    //Add tabs
+                    layoutSomeHousesBinding.tabLayoutSomeHouses.removeAllTabs();
+                    for (int index = 0; index<propertyCount; index++) {
+                        TabLayout.Tab newTab = layoutSomeHousesBinding.tabLayoutSomeHouses.newTab();
+                        layoutSomeHousesBinding.tabLayoutSomeHouses.addTab(newTab);
+                    }
+                }
             }
             else {
                 Toast.makeText(requireContext(),

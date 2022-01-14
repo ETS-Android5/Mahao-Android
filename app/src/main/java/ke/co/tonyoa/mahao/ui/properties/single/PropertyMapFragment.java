@@ -112,6 +112,7 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mCoordinates = PropertyMapFragmentArgs.fromBundle(getArguments()).getCoordinates();
         }

@@ -142,12 +142,11 @@ public class EditPropertyFragment extends BaseFragment {
             String bath = ViewUtils.getText(mFragmentEditPropertyBinding.textInputEditTextEditPropertyBaths);
             String price = ViewUtils.getText(mFragmentEditPropertyBinding.textInputEditTextEditPropertyPrice);
             String description = ViewUtils.getText(mFragmentEditPropertyBinding.textInputEditTextEditPropertyDescription);
-            Uri uri = mEditPropertyViewModel.getThumbnailUri().getValue();
+            Uri uri = mEditPropertyViewModel.getThumbnailUri();
             String url = null;
-            PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory().getValue();
+            PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory();
             if (mProperty!=null)
                 url = mProperty.getFeatureImage();
-            Property currentProperty = mEditPropertyViewModel.getProperty().getValue();
 
             if (ViewUtils.isEmptyAndRequired(mFragmentEditPropertyBinding.textInputEditTextEditPropertyName)){
                 return;
@@ -176,12 +175,11 @@ public class EditPropertyFragment extends BaseFragment {
                 return;
             }
 
-            String locationName = null;
+            String locationName = mEditPropertyViewModel.getLocationName();
             float lat = 0, lng = 0;
-            if (currentProperty!=null){
-                locationName = currentProperty.getLocationName();
-                lat = currentProperty.getLocation().get(0);
-                lng = currentProperty.getLocation().get(1);
+            if (mEditPropertyViewModel.getCoordinates()!=null){
+                lat = (float) mEditPropertyViewModel.getCoordinates().latitude;
+                lng = (float) mEditPropertyViewModel.getCoordinates().longitude;
             }
             else if (mProperty!=null){
                 locationName = mProperty.getLocationName();
@@ -196,7 +194,7 @@ public class EditPropertyFragment extends BaseFragment {
                     mFragmentEditPropertyBinding.textInputEditTextEditPropertyDescription, mFragmentEditPropertyBinding.buttonEditPropertySave);
             ViewUtils.load(mFragmentEditPropertyBinding.linearLayoutEditPropertyLoading, enabledViews, true);
             mSinglePropertyViewModel.saveProperty(mProperty==null?null:mProperty.getId(),
-                    mEditPropertyViewModel.getThumbnailUri().getValue(), propertyCategory.getId(),
+                    mEditPropertyViewModel.getThumbnailUri(), propertyCategory.getId(),
                     title, description, Integer.parseInt(bed), Integer.parseInt(bath), locationName, Float.parseFloat(price),
                     lat, lng, mProperty == null || mProperty.getIsEnabled(),
                     mProperty==null || mProperty.getIsVerified()).observe(getViewLifecycleOwner(), propertyAPIResponse -> {
@@ -227,6 +225,7 @@ public class EditPropertyFragment extends BaseFragment {
                     mProperty==null?null: new float[]{mProperty.getLocation().get(0), mProperty.getLocation().get(1)},
                     (selectedAddress, selectedLocation)->{
                         mEditPropertyViewModel.setLocation(selectedAddress, selectedLocation);
+                        mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(selectedAddress);
                     }));
         });
         mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setOnFocusChangeListener((v, hasFocus) -> {
@@ -269,4 +268,6 @@ public class EditPropertyFragment extends BaseFragment {
                 .create()
                 .show();
     }
+
+
 }

@@ -64,7 +64,8 @@ public class PropertiesListFragment extends BaseFragment {
         if (getArguments()!=null){
             mPropertyListType = (PropertyListType) getArguments().getSerializable(PROPERTY_LIST_ARG);
         }
-        mPropertiesListViewModel = new ViewModelProvider(this).get(PropertiesListViewModel.class);
+        PropertiesListViewModelFactory propertiesListViewModelFactory = new PropertiesListViewModelFactory(requireActivity().getApplication(), mPropertyListType);
+        mPropertiesListViewModel = new ViewModelProvider(this, propertiesListViewModelFactory).get(PropertiesListViewModel.class);
     }
 
     @Override
@@ -72,8 +73,6 @@ public class PropertiesListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentPropertiesListBinding = FragmentPropertiesListBinding.inflate(inflater, container, false);
-
-        mPropertiesListViewModel.setPropertyList(mPropertyListType);
 
         OnItemClickListener<Property> onItemReadListener = null;
         if (mPropertyListType!=PropertyListType.ALL && mPropertyListType!=PropertyListType.PERSONAL){

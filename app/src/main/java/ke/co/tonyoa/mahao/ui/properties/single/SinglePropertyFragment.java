@@ -2,15 +2,15 @@ package ke.co.tonyoa.mahao.ui.properties.single;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +47,19 @@ public class SinglePropertyFragment extends BaseFragment implements OnSaveListen
             mProperty = SinglePropertyFragmentArgs.fromBundle(getArguments()).getProperty();
         }
         mSinglePropertyViewModel = new ViewModelProvider(this).get(SinglePropertyViewModel.class);
+
+        // This callback will only be called when MyFragment is at least Started.
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mSinglePropertyViewModel.getSelectedPosition().getValue() != 0) {
+                    mSinglePropertyViewModel.setSelectedPosition(0);
+                } else {
+                    navigateUp();
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
