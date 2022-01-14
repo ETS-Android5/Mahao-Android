@@ -21,6 +21,7 @@
             app:titleEnabled="false"
             app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
             <LinearLayout
+                android:id="@+id/linearLayout_properties_searchFilter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_4"

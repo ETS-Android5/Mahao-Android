@@ -10,12 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.databinding.FragmentPropertiesBinding;
+import ke.co.tonyoa.mahao.ui.main.MainFragmentDirections;
 
 public class PropertiesFragment extends BaseFragment {
 
@@ -83,6 +85,17 @@ public class PropertiesFragment extends BaseFragment {
                     tab.setText(title);
                     tab.setIcon(icon);
                 }).attach();
+
+        mFragmentPropertiesBinding.viewPagerProperties.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                //mFragmentPropertiesBinding.linearLayoutPropertiesSearchFilter.setVisibility(position==0?View.VISIBLE:View.GONE);
+            }
+        });
+        mFragmentPropertiesBinding.imageButtonPropertiesFilter.setOnClickListener(v->{
+            navigate(MainFragmentDirections.actionNavigationMainToFilterPropertiesFragment(null));
+        });
 
         return mFragmentPropertiesBinding.getRoot();
     }

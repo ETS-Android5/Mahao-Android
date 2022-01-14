@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="bed_vals">
+        <item>-1</item>
+        <item>7</item>
+    </integer-array>
+    <integer-array name="price_vals">
+        <item>-1</item>
+        <item>100000</item>
+    </integer-array>
+</resources>

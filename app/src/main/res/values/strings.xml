@@ -117,4 +117,8 @@
     <string name="create_dummy_data">Create Dummy Data</string>
     <string name="create_feedbacks">Create Feedbacks</string>
     <string name="enable_your_location">Enable you location for correct map functionality</string>
+    <string name="bedrooms">Bedrooms</string>
+    <string name="bathrooms">Bathrooms</string>
+    <string name="none">None</string>
+    <string name="infinite">Infinite</string>
 </resources>

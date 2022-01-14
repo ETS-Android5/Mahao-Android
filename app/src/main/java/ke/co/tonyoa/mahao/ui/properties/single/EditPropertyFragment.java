@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,12 +120,6 @@ public class EditPropertyFragment extends BaseFragment {
             }
         });
 
-        mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnDismissListener(() -> {
-            PropertyCategory propertyCategory = mEditPropertyViewModel.getSelectedPropertyCategory().getValue();
-            if (propertyCategory!=null) {
-                mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(propertyCategory.getTitle());
-            }
-        });
         mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setOnFocusChangeListener((v, isFocused)->{
             if (isFocused) {
                 mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.performClick();

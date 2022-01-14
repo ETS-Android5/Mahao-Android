@@ -124,6 +124,13 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_navigation_main_to_filterPropertiesFragment"
+            app:destination="@id/filterPropertiesFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
 
     </fragment>
     <fragment
@@ -180,7 +187,7 @@
             android:name="coordinates"
             app:argType="float[]" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/pickLocationFragment"
         android:name="ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment"
         android:label="fragment_pick_location"
@@ -197,7 +204,7 @@
             android:name="listener"
             app:argType="ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment$OnLocationSelectedListener"
             app:nullable="true" />
-    </fragment>
+    </dialog>
     <fragment
         android:id="@+id/usersListFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.users.UsersListFragment"
@@ -285,4 +292,22 @@
             android:name="selected"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/filterPropertiesFragment"
+        android:name="ke.co.tonyoa.mahao.ui.properties.FilterPropertiesFragment"
+        android:label="fragment_filter_properties"
+        tools:layout="@layout/fragment_filter_properties" >
+        <argument
+            android:name="propertyFilter"
+            app:argType="ke.co.tonyoa.mahao.ui.properties.FilterPropertiesFragment$PropertyFilter"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_filterPropertiesFragment_to_pickLocationFragment"
+            app:destination="@id/pickLocationFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
+    </dialog>
 </navigation>
