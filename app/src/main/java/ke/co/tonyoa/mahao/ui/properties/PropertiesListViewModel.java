@@ -1,9 +1,8 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
-import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_LIMIT;
-
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -28,12 +27,13 @@ import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
 public class PropertiesListViewModel extends AndroidViewModel {
 
+    public static final int LIMIT = 2000;
     @Inject
     PropertiesRepository mPropertiesRepository;
     @Inject
     SharedPrefs mSharedPrefs;
-    private MutableLiveData<PropertiesListFragment.PropertyListType> mPropertyListMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> mUserIdLiveData = new MutableLiveData<>();
     private LiveData<APIResponse<List<Property>>> mPropertiesLiveData;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -42,43 +42,50 @@ public class PropertiesListViewModel extends AndroidViewModel {
             if (key.equals(SharedPrefs.KEY_LAST_COORDINATES)){
                 mLatLngMutableLiveData.postValue(mSharedPrefs.getLastLocation());
             }
+            else if (key.equals(SharedPrefs.KEY_USERID)){
+                mUserIdLiveData.postValue(mSharedPrefs.getUserId());
+            }
         }
     };
+    private PropertiesListFragment.PropertyListType mPropertyListType;
 
-    public PropertiesListViewModel(@NonNull Application application) {
+    public PropertiesListViewModel(@NonNull Application application, PropertiesListFragment.PropertyListType propertyListType) {
         super(application);
         MahaoApplication.getInstance(application).getApplicationComponent().inject(this);
-        mPropertyListMutableLiveData.postValue(PropertiesListFragment.PropertyListType.ALL);
+        mPropertyListType = propertyListType;
+        mSharedPrefs.registerOnSharedPreferencesListener(mOnSharedPreferenceChangeListener);
 
-        mPropertiesLiveData = Transformations.switchMap(mPropertyListMutableLiveData, input -> {
-            switch (input){
-                case ALL:
-                    return mPropertiesRepository.getProperties(0, 2000, null, null, null,
-                            null, null, null, null, null, null, null, null,
-                            null, null, null, null);
-                case LATEST:
-                    return mPropertiesRepository.getLatestProperties(null, 0, 2000);
-                case NEARBY:
-                    LatLng value = mLatLngMutableLiveData.getValue();
-                    return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, value, null, null,
-                            null, null, null, null, null, value,
-                            5, null, null, null, null);
-                case POPULAR:
-                    return mPropertiesRepository.getPopularProperties(null, 0, 2000);
-                case FAVORITE:
-                    return mPropertiesRepository.getFavoriteProperties(0, 2000);
-                case PERSONAL:
-                    return mPropertiesRepository.getUserProperties(0, 2000);
-                case RECOMMENDED:
-                    return mPropertiesRepository.getRecommendedProperties(null, 0, 2000);
-            }
-            return null;
-        });
+        mLatLngMutableLiveData.setValue(mSharedPrefs.getLastLocation());
+        mUserIdLiveData.setValue(mSharedPrefs.getUserId());
 
+        // If user changes, fetch data again
+        mPropertiesLiveData = Transformations.switchMap(mUserIdLiveData, input -> getProperties());
     }
 
-    public void setPropertyList(PropertiesListFragment.PropertyListType propertyListType){
-        mPropertyListMutableLiveData.postValue(propertyListType);
+    private LiveData<APIResponse<List<Property>>> getProperties(){
+        switch (mPropertyListType){
+            case ALL:
+                return mPropertiesRepository.getProperties(0, LIMIT, null, null, null,
+                        null, null, null, null, null, null, null, null,
+                        null, null, null, null);
+            case LATEST:
+                return mPropertiesRepository.getLatestProperties(null, 0, LIMIT);
+            case NEARBY:
+                mLatLngMutableLiveData.setValue(mSharedPrefs.getLastLocation());
+                LatLng value = mLatLngMutableLiveData.getValue();
+                return mPropertiesRepository.getProperties(0, LIMIT, SortBy.DISTANCE, value, null, null,
+                        null, null, null, null, null, value,
+                        5, null, null, null, null);
+            case POPULAR:
+                return mPropertiesRepository.getPopularProperties(null, 0, LIMIT);
+            case FAVORITE:
+                return mPropertiesRepository.getFavoriteProperties(0, LIMIT);
+            case PERSONAL:
+                return mPropertiesRepository.getUserProperties(0, LIMIT);
+            case RECOMMENDED:
+                return mPropertiesRepository.getRecommendedProperties(null, 0, LIMIT);
+        }
+        return null;
     }
 
     public LiveData<APIResponse<List<Property>>> getPropertiesLiveData(){

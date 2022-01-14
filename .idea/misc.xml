@@ -6,6 +6,7 @@
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-night/ic_dalmatian_spots.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-night/ic_page_turner.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-night/ic_vanishing_stripes.xml" value="0.12604166666666666" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-v24/ic_home_accent_24dp.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-v24/round_edittext_background.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-v24/round_edittext_background_transparent.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable-xxhdpi/gradient_drawable.xml" value="0.240625" />
@@ -19,6 +20,9 @@
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/round_background_light.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/round_background_transparent.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/round_edittext_background.xml" value="0.240625" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/tab_indicator_default.xml" value="0.240625" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/tab_indicator_selected.xml" value="0.240625" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/tab_selector.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/activity_main.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_edit_property.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_filter_properties.xml" value="0.25" />

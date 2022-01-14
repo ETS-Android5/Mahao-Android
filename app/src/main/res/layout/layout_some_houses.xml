@@ -58,4 +58,12 @@
             android:visibility="gone"/>
     </FrameLayout>
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout_someHouses"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_24"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        android:background="@android:color/transparent"/>
 </LinearLayout>
