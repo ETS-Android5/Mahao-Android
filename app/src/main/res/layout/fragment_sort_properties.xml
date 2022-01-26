@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.properties.SortPropertiesFragment">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/size_2"
+        app:cardUseCompatPadding="false"
+        app:elevation="@dimen/size_4">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4"
+                        android:layout_marginStart="@dimen/size_16"
+                        android:text="@string/sort"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        app:drawableStartCompat="@drawable/ic_baseline_sort_24"
+                        android:drawablePadding="@dimen/size_16"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_1"
+                        android:layout_marginTop="@dimen/size_8"
+                        android:layout_marginBottom="@dimen/size_8"
+                        android:background="@color/color_background_gray"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/size_8"
+                        android:layout_marginEnd="@dimen/size_8"
+                        android:layout_marginStart="@dimen/size_8"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/size_8"
+                            android:layout_marginStart="@dimen/size_8"
+                            android:orientation="vertical">
+
+                            <RadioGroup
+                                android:id="@+id/radioGroup_sort_columns"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <RadioButton
+                                    android:id="@+id/radioButton_sort_time"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="?colorPrimary"
+                                    android:text="@string/time" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/size_1"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    android:background="@color/color_background_gray"/>
+
+                                <RadioButton
+                                    android:id="@+id/radioButton_sort_price"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="?colorPrimary"
+                                    android:text="@string/price" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/size_1"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    android:background="@color/color_background_gray"/>
+
+                                <RadioButton
+                                    android:id="@+id/radioButton_sort_distance"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="?colorPrimary"
+                                    android:text="@string/distance" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/size_2"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    android:background="@color/color_background_gray"/>
+                            </RadioGroup>
+
+                            <RadioGroup
+                                android:id="@+id/radioGroup_sort_direction"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <RadioButton
+                                    android:id="@+id/radioButton_sort_ascending"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="?colorPrimary"
+                                    android:text="@string/ascending" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/size_1"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    android:background="@color/color_background_gray"/>
+
+                                <RadioButton
+                                    android:id="@+id/radioButton_sort_descending"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:buttonTint="?colorPrimary"
+                                    android:text="@string/descending" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/size_1"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    android:background="@color/color_background_gray"/>
+                            </RadioGroup>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8"
+                android:layout_marginEnd="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_8"
+                android:layout_marginBottom="@dimen/size_16"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/button_sortProperties_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/size_8"
+                    android:layout_weight="1"
+                    android:text="@string/cancel"
+                    android:textColor="?colorSurface"
+                    android:backgroundTint="@android:color/holo_red_dark"/>
+
+                <Button
+                    android:id="@+id/button_sortProperties_done"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/size_8"
+                    android:text="@string/done"
+                    android:textColor="?colorSurface"
+                    android:backgroundTint="@android:color/holo_blue_dark"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</FrameLayout>

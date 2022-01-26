@@ -3,7 +3,6 @@ package ke.co.tonyoa.mahao.ui.properties;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,7 +63,9 @@ public class PropertiesListFragment extends BaseFragment {
         if (getArguments()!=null){
             mPropertyListType = (PropertyListType) getArguments().getSerializable(PROPERTY_LIST_ARG);
         }
-        PropertiesListViewModelFactory propertiesListViewModelFactory = new PropertiesListViewModelFactory(requireActivity().getApplication(), mPropertyListType);
+        PropertiesViewModel propertiesViewModel = new ViewModelProvider(requireParentFragment()).get(PropertiesViewModel.class);
+        PropertiesListViewModelFactory propertiesListViewModelFactory = new PropertiesListViewModelFactory(requireActivity().getApplication(),
+                mPropertyListType, propertiesViewModel.getFilterAndSort());
         mPropertiesListViewModel = new ViewModelProvider(this, propertiesListViewModelFactory).get(PropertiesListViewModel.class);
     }
 

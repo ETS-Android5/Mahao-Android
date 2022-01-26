@@ -1,39 +1,46 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
+import static ke.co.tonyoa.mahao.app.utils.ViewUtils.getChip;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.Navigation;
 
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentFilterPropertiesBinding;
 import ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment;
 
-public class FilterPropertiesFragment extends BottomSheetDialogFragment {
+public class FilterPropertiesFragment extends BaseFragment {
 
     private FragmentFilterPropertiesBinding mFragmentFilterPropertiesBinding;
     private FilterPropertiesViewModel mFilterPropertiesViewModel;
-    private PropertyFilter mPropertyFilter;
 
     public FilterPropertiesFragment() {
         // Required empty public constructor
@@ -42,10 +49,14 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        PropertyFilter propertyFilter = null;
         if (getArguments() != null) {
-            mPropertyFilter = FilterPropertiesFragmentArgs.fromBundle(getArguments()).getPropertyFilter();
+            propertyFilter = FilterPropertiesFragmentArgs.fromBundle(getArguments()).getPropertyFilter();
         }
-        mFilterPropertiesViewModel = new ViewModelProvider(this).get(FilterPropertiesViewModel.class);
+        FilterPropertiesViewModelFactory filterPropertiesViewModelFactory = new FilterPropertiesViewModelFactory(requireActivity().getApplication(),
+                propertyFilter);
+        mFilterPropertiesViewModel = new ViewModelProvider(this, filterPropertiesViewModelFactory).get(FilterPropertiesViewModel.class);
     }
 
     @Override
@@ -53,26 +64,24 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentFilterPropertiesBinding = FragmentFilterPropertiesBinding.inflate(inflater, container, false);
+        setToolbar(mFragmentFilterPropertiesBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        setTitle(getString(R.string.filter));
 
         initializeListeners();
-        if (mPropertyFilter!=null){
-            mFragmentFilterPropertiesBinding.rangeSliderFilterBeds
-                    .setValues(mPropertyFilter.getMinBed()==null?-1f:mPropertyFilter.getMinBed(),
-                            mPropertyFilter.getMaxBed()==null?7f:mPropertyFilter.getMaxBed());
+        mFragmentFilterPropertiesBinding.rangeSliderFilterBeds
+                .setValues(mFilterPropertiesViewModel.getMinBed()==null?-1f:mFilterPropertiesViewModel.getMinBed(),
+                        mFilterPropertiesViewModel.getMaxBed()==null?7f:mFilterPropertiesViewModel.getMaxBed());
 
-            mFragmentFilterPropertiesBinding.rangeSliderFilterBaths
-                    .setValues(mPropertyFilter.getMinBath()==null?-1f:mPropertyFilter.getMinBath(),
-                            mPropertyFilter.getMaxBath()==null?7f:mPropertyFilter.getMaxBath());
+        mFragmentFilterPropertiesBinding.rangeSliderFilterBaths
+                .setValues(mFilterPropertiesViewModel.getMinBath()==null?-1f:mFilterPropertiesViewModel.getMinBath(),
+                        mFilterPropertiesViewModel.getMaxBath()==null?7f:mFilterPropertiesViewModel.getMaxBath());
 
-            mFragmentFilterPropertiesBinding.rangeSliderFilterPrice
-                    .setValues(mPropertyFilter.getMinPrice()==null?-1f:mPropertyFilter.getMinPrice(),
-                            mPropertyFilter.getMaxPrice()==null?100000f:mPropertyFilter.getMaxPrice());
+        mFragmentFilterPropertiesBinding.rangeSliderFilterPrice
+                .setValues(mFilterPropertiesViewModel.getMinPrice()==null?-1f:mFilterPropertiesViewModel.getMinPrice(),
+                        mFilterPropertiesViewModel.getMaxPrice()==null?100000f:mFilterPropertiesViewModel.getMaxPrice());
 
-            mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation
-                    .setText(mPropertyFilter.getLocationName()==null?null:mPropertyFilter.getLocationName());
-        }
-
-
+        mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation
+                .setText(mFilterPropertiesViewModel.getLocationName()==null?null:mFilterPropertiesViewModel.getLocationName());
         fetchCategories();
         fetchAmenities();
         return mFragmentFilterPropertiesBinding.getRoot();
@@ -105,23 +114,132 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
             if (hasFocus)
                 mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation.performClick();
         });
+        mFragmentFilterPropertiesBinding.textViewFilterPropertiesLocationRadius
+                .setText(getString(R.string.d_filter_radius, mFragmentFilterPropertiesBinding.sliderFilterLocationRadius.getValue()));
+        mFragmentFilterPropertiesBinding.sliderFilterLocationRadius.addOnChangeListener((slider, value, fromUser) -> {
+            mFragmentFilterPropertiesBinding.textViewFilterPropertiesLocationRadius
+                    .setText(getString(R.string.d_filter_radius, value));
+        });
+        mFragmentFilterPropertiesBinding.imageButtonFilterPropertiesCancelLocation.setOnClickListener(v->{
+            mFilterPropertiesViewModel.setLocationName(null);
+            mFilterPropertiesViewModel.setLatLng(null);
+            mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation.setText(null);
+        });
+
+        NavBackStackEntry currentBackStackEntry = getNavController().getCurrentBackStackEntry();
+        if (currentBackStackEntry!=null) {
+            MutableLiveData<Object> locationLiveData = currentBackStackEntry.getSavedStateHandle().getLiveData("location");
+            locationLiveData.observe(getViewLifecycleOwner(), result->{
+                if (result instanceof PickLocationFragment.LocationWithLatLng){
+                    PickLocationFragment.LocationWithLatLng locationWithLatLng = (PickLocationFragment.LocationWithLatLng) result;
+                    String locationName = locationWithLatLng.getLocation();
+                    mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation.setText(locationName);
+                    mFilterPropertiesViewModel.setLatLng(locationWithLatLng.getLatLng());
+                    mFilterPropertiesViewModel.setLocationName(locationName);
+                }
+            });
+        }
+
         mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation.setOnClickListener(v->{
-            LatLng filterCoordinates = mFilterPropertiesViewModel.getFilterCoordinates();
+            LatLng filterCoordinates = mFilterPropertiesViewModel.getLatLng();
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main)
                     .navigate(FilterPropertiesFragmentDirections
-                            .actionFilterPropertiesFragmentToPickLocationFragment(mFilterPropertiesViewModel.getFilterLocation(),
+                            .actionFilterPropertiesFragmentToPickLocationFragment(mFilterPropertiesViewModel.getLocationName(),
                                     filterCoordinates==null?null:new float[]{(float) filterCoordinates.latitude,
-                                            (float) filterCoordinates.longitude}, (PickLocationFragment.OnLocationSelectedListener) (locationName, latLng) -> {
-                                        mFilterPropertiesViewModel.setFilterCoordinates(latLng);
-                                        mFilterPropertiesViewModel.setFilterLocation(locationName);
-                                    }));
+                                            (float) filterCoordinates.longitude}));
         });
         mFragmentFilterPropertiesBinding.buttonFilterPropertiesCancel.setOnClickListener(v->{
-            dismiss();
+            navigateBack();
         });
         mFragmentFilterPropertiesBinding.buttonFilterPropertiesDone.setOnClickListener(v->{
-            //TODO: Complete filtering
+            saveCurrentValues();
+
+            PropertyFilter propertyFilter = new PropertyFilter(mFilterPropertiesViewModel.getMinBed(),
+                    mFilterPropertiesViewModel.getMaxBed(), mFilterPropertiesViewModel.getMinBath(),
+                    mFilterPropertiesViewModel.getMaxBath(), mFilterPropertiesViewModel.getMinPrice(),
+                    mFilterPropertiesViewModel.getMaxPrice(), mFilterPropertiesViewModel.getLocationName(),
+                    mFilterPropertiesViewModel.getLatLng(), mFilterPropertiesViewModel.getFilterRadius(), new ArrayList<>(mFilterPropertiesViewModel.getSelectedPropertyCategories()),
+                    new ArrayList<>(mFilterPropertiesViewModel.getSelectedAmenities()));
+            NavBackStackEntry previousBackStackEntry = getNavController().getPreviousBackStackEntry();
+            if (previousBackStackEntry != null) {
+                previousBackStackEntry.getSavedStateHandle().set("filter", propertyFilter);
+            }
+            navigateBack();
         });
+    }
+
+    private void saveCurrentValues(){
+        String minBedText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMinBed);
+        Integer minBed = getIntFromText(minBedText);
+        String maxBedText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMaxBed);
+        Integer maxBed = getIntFromText(maxBedText);
+        String minBathText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMinBath);
+        Integer minBath = getIntFromText(minBathText);
+        String maxBathText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMaxBath);
+        Integer maxBath = getIntFromText(maxBathText);
+        String minPriceText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMinPrice);
+        Float minPrice = getFloatFromText(minPriceText);
+        String maxPriceText = ViewUtils.getText(mFragmentFilterPropertiesBinding.textViewFilterPropertiesMaxPrice);
+        Float maxPrice = getFloatFromText(maxPriceText);
+        Integer filterRadius = (int) mFragmentFilterPropertiesBinding.sliderFilterLocationRadius.getValue();
+
+        int numSelectedCategories = mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedCategories.getChildCount();
+        Set<PropertyCategory> selectedCategories = new HashSet<>();
+        for (int index=0; index<numSelectedCategories; index++) {
+            View chip = mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedCategories.getChildAt(index);
+            if (chip.getTag() instanceof PropertyCategory){
+                selectedCategories.add((PropertyCategory) chip.getTag());
+            }
+        }
+        mFilterPropertiesViewModel.setSelectedPropertyCategories(selectedCategories);
+
+        int numSelectedAmenities = mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedAmenities.getChildCount();
+        Set<Amenity> selectedAmenities = new HashSet<>();
+        for (int index = 0; index<numSelectedAmenities; index++){
+            View chip = mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedAmenities.getChildAt(index);
+            if (chip.getTag() instanceof Amenity){
+                selectedAmenities.add((Amenity) chip.getTag());
+            }
+        }
+        mFilterPropertiesViewModel.setSelectedAmenities(selectedAmenities);
+
+        mFilterPropertiesViewModel.setMinBed(minBed);
+        mFilterPropertiesViewModel.setMaxBed(maxBed);
+        mFilterPropertiesViewModel.setMinBath(minBath);
+        mFilterPropertiesViewModel.setMaxBath(maxBath);
+        mFilterPropertiesViewModel.setMinPrice(minPrice);
+        mFilterPropertiesViewModel.setMaxPrice(maxPrice);
+        mFilterPropertiesViewModel.setFilterRadius(filterRadius);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveCurrentValues();
+    }
+
+    private Integer getIntFromText(String text){
+        Integer val = null;
+        try {
+            if (text.contains("."))
+                text = text.split("\\.")[0];
+            val = Integer.parseInt(text);
+        }
+        catch (NumberFormatException numberFormatException){
+            numberFormatException.printStackTrace();
+        }
+        return val;
+    }
+
+    public Float getFloatFromText(String text){
+        Float val = null;
+        try {
+            val = Float.parseFloat(text);
+        }
+        catch (NumberFormatException numberFormatException){
+            numberFormatException.printStackTrace();
+        }
+        return val;
     }
 
     private void setRangeText(TextView textView, float value, float min, float max){
@@ -141,10 +259,19 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
                 if (categories!=null) {
                     categoryCount = categories.size();
 
+                    mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesCategories.removeAllViews();
+                    mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedCategories.removeAllViews();
                     for (PropertyCategory propertyCategory:categories){
+                        boolean isChecked = mFilterPropertiesViewModel.getSelectedPropertyCategories().contains(propertyCategory);
                         mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesCategories.addView(getChip(propertyCategory.getId(),
                                 propertyCategory.getTitle(), propertyCategory,
-                                mPropertyFilter!=null && mPropertyFilter.getCategories()!=null && mPropertyFilter.getCategories().contains(propertyCategory.getId())));
+                                isChecked, (buttonView, buttonIsChecked) -> {
+                                    selectChip(propertyCategory, buttonIsChecked, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedCategories, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesCategories);
+                                }, null, requireContext()));
+                        // If is checked, add it to the list of checked categories
+                        if (isChecked){
+                            selectChip(propertyCategory, true, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedCategories, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesCategories);
+                        }
                     }
                 }
             }
@@ -169,6 +296,41 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
         });
     }
 
+    private void selectChip(Object tag, boolean isChecked,
+                            ChipGroup chipGroupSelected, ChipGroup chipGroupAll) {
+        if (isChecked) {
+            int id;
+            String title;
+            if (tag instanceof PropertyCategory){
+                PropertyCategory propertyCategory = (PropertyCategory) tag;
+                id = propertyCategory.getId();
+                title = propertyCategory.getTitle();
+            }
+            else if (tag instanceof Amenity){
+                Amenity amenity = (Amenity) tag;
+                id = amenity.getId();
+                title = amenity.getTitle();
+            }
+            else {
+                return;
+            }
+            chipGroupSelected.addView(getChip(id,
+                    title, tag, true, null,
+                    v ->{
+                        View checkedChip = chipGroupAll
+                                .findViewWithTag(tag);
+                        if (checkedChip != null){
+                            ((Chip)checkedChip).setChecked(false);
+                        }
+
+                        chipGroupSelected.removeView(chipGroupSelected.findViewWithTag(tag));
+                    }, requireContext()));
+        }
+        else {
+            chipGroupSelected.removeView(chipGroupSelected.findViewWithTag(tag));
+        }
+    }
+
     private void fetchAmenities(){
         ViewUtils.load(mFragmentFilterPropertiesBinding.linearLayoutFilterPropertiesLoadingAmenities,
                 Arrays.asList(mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesAmenities), true);
@@ -182,10 +344,20 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
                 if (amenities!=null) {
                     amenityCount = amenities.size();
 
+                    mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesAmenities.removeAllViews();
+                    mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedAmenities.removeAllViews();
                     for (Amenity amenity:amenities){
+                        boolean isChecked = mFilterPropertiesViewModel.getSelectedAmenities().contains(amenity);
                         mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesAmenities.addView(getChip(amenity.getId(),
                                 amenity.getTitle(), amenity,
-                                mPropertyFilter!=null && mPropertyFilter.getAmenities()!=null && mPropertyFilter.getAmenities().contains(amenity.getId())));
+                                isChecked, ((buttonView, buttonIsChecked) -> {
+                                    selectChip(amenity, buttonIsChecked, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedAmenities, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesAmenities);
+                                }), null, requireContext()));
+
+                        // If is checked, add it to the list of checked amenities
+                        if (isChecked){
+                            selectChip(amenity, true, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesSelectedAmenities, mFragmentFilterPropertiesBinding.chipGroupFilterPropertiesAmenities);
+                        }
                     }
                 }
             }
@@ -210,41 +382,36 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
         });
     }
 
-    private Chip getChip(int id, String text, Object tag, boolean isChecked){
-        Chip chip = new Chip(requireContext());
-        chip.setId(id);
-        chip.setText(text);
-        chip.setTag(tag);
-        chip.setCheckable(true);
-        chip.setCheckedIconVisible(false);
-        chip.setChecked(isChecked);
-        chip.setClickable(true);
-        chip.setFocusable(true);
-        chip.setEnsureMinTouchTargetSize(false);
-        chip.setChipBackgroundColorResource(R.color.chip_color);
-        //chip.setChipDrawable(ChipDrawable.createFromAttributes(getContext(), null, 0, R.style.CustomChipChoice));
-
-        chip.setOnCheckedChangeListener((compoundButton, selected) -> {
-
-        });
-        return chip;
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==android.R.id.home){
+            navigateUp();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static class PropertyFilter implements Serializable {
+        private String mQuery;
         private Integer mMinBed;
         private Integer mMaxBed;
         private Integer mMinBath;
         private Integer mMaxBath;
-        private Integer mMinPrice;
-        private Integer mMaxPrice;
+        private Float mMinPrice;
+        private Float mMaxPrice;
         private String mLocationName;
         private LatLng mLatLng;
-        private List<Integer> mCategories;
-        private List<Integer> mAmenities;
+        private Integer mFilterRadius;
+        private List<PropertyCategory> mCategories;
+        private List<Amenity> mAmenities;
+
+        public PropertyFilter(){
+
+        }
 
         public PropertyFilter(Integer minBed, Integer maxBed, Integer minBath, Integer maxBath,
-                              Integer minPrice, Integer maxPrice, String locationName, LatLng latLng,
-                              List<Integer> categories, List<Integer> amenities) {
+                              Float minPrice, Float maxPrice, String locationName, LatLng latLng,
+                              Integer filterRadius, List<PropertyCategory> categories, List<Amenity> amenities) {
             mMinBed = minBed;
             mMaxBed = maxBed;
             mMinBath = minBath;
@@ -253,6 +420,7 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
             mMaxPrice = maxPrice;
             mLocationName = locationName;
             mLatLng = latLng;
+            mFilterRadius = filterRadius;
             mCategories = categories;
             mAmenities = amenities;
         }
@@ -289,19 +457,19 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
             mMaxBath = maxBath;
         }
 
-        public Integer getMinPrice() {
+        public Float getMinPrice() {
             return mMinPrice;
         }
 
-        public void setMinPrice(Integer minPrice) {
+        public void setMinPrice(Float minPrice) {
             mMinPrice = minPrice;
         }
 
-        public Integer getMaxPrice() {
+        public Float getMaxPrice() {
             return mMaxPrice;
         }
 
-        public void setMaxPrice(Integer maxPrice) {
+        public void setMaxPrice(Float maxPrice) {
             mMaxPrice = maxPrice;
         }
 
@@ -321,24 +489,56 @@ public class FilterPropertiesFragment extends BottomSheetDialogFragment {
             mLatLng = latLng;
         }
 
-        public List<Integer> getCategories() {
+        public Integer getFilterRadius() {
+            return mFilterRadius;
+        }
+
+        public void setFilterRadius(Integer filterRadius) {
+            mFilterRadius = filterRadius;
+        }
+
+        public List<PropertyCategory> getCategories() {
             return mCategories;
         }
 
-        public void setCategories(List<Integer> categories) {
+        public void setCategories(List<PropertyCategory> categories) {
             mCategories = categories;
         }
 
-        public List<Integer> getAmenities() {
+        public List<Amenity> getAmenities() {
             return mAmenities;
         }
 
-        public void setAmenities(List<Integer> amenities) {
+        public void setAmenities(List<Amenity> amenities) {
             mAmenities = amenities;
         }
+
+        public String getQuery() {
+            return mQuery;
+        }
+
+        public void setQuery(String query) {
+            mQuery = query;
+        }
+
+        @Override
+        public String toString() {
+            return "PropertyFilter{" +
+                    "mMinBed=" + mMinBed +
+                    ", mMaxBed=" + mMaxBed +
+                    ", mMinBath=" + mMinBath +
+                    ", mMaxBath=" + mMaxBath +
+                    ", mMinPrice=" + mMinPrice +
+                    ", mMaxPrice=" + mMaxPrice +
+                    ", mLocationName='" + mLocationName + '\'' +
+                    ", mLatLng=" + mLatLng +
+                    ", mCategories=" + mCategories +
+                    ", mAmenities=" + mAmenities +
+                    ", mQuery="+mQuery+
+                    ", mFilterRadius="+mFilterRadius+
+                    '}';
+        }
+
     }
 
-    interface OnFilterListener{
-        void onFilter();
-    }
 }
