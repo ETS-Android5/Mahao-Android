@@ -58,7 +58,7 @@ public class ApiManager {
     private static final String AUTH_PREFIX = "Bearer ";
     private static final int NUMBER_OF_THREADS = 6;
     private static final ExecutorService apiExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-    public static final String API_URL = "https://5988-105-27-239-221.ngrok.io";
+    public static final String API_URL = "https://a7d3-105-27-239-221.ngrok.io";
     private final RestApi api;
     private final Application application;
     private final SharedPrefs mSharedPrefs;
@@ -174,6 +174,13 @@ public class ApiManager {
                                                      Integer maxBath, Float minPrice, Float maxPrice,
                                                      LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
                                                      Boolean isEnabled, List<Integer> categories, List<Integer> amenities) throws IOException {
+        if (categories!=null && categories.size()==0)
+            categories = null;
+        if (amenities!=null && amenities.size()==0)
+            amenities = null;
+        if (sortBy!=SortBy.DISTANCE && sortBy!=SortBy.NEG_DISTANCE){
+            latLngSort = null;
+        }
         return new APIResponse<>(api.getProperties(getToken(), skip, limit, sortBy==null?null:sortBy.getApiValue(),
                 latLngSort==null?null:latLngSort.latitude+"", latLngSort==null?null:latLngSort.longitude+"",
                 query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,

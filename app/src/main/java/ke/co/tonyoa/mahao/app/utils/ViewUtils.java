@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
@@ -26,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ke.co.tonyoa.mahao.R;
 
 public class ViewUtils {
 
@@ -155,6 +158,27 @@ public class ViewUtils {
     public static boolean isLocationEnabled(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return LocationManagerCompat.isLocationEnabled(locationManager);
+    }
+
+
+    public static Chip getChip(int id, String text, Object tag, boolean isChecked,
+                               CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+                               View.OnClickListener onCloseIconClickListener, Context context){
+        Chip chip = new Chip(context);
+        chip.setId(id);
+        chip.setText(text);
+        chip.setTag(tag);
+        chip.setCheckable(onCheckedChangeListener!=null);
+        chip.setCheckedIconVisible(false);
+        chip.setChecked(isChecked);
+        chip.setClickable(true);
+        chip.setFocusable(true);
+        chip.setEnsureMinTouchTargetSize(false);
+        chip.setChipBackgroundColorResource(R.color.chip_color);
+        chip.setCloseIconVisible(onCloseIconClickListener!=null);
+        chip.setOnCloseIconClickListener(onCloseIconClickListener);
+        chip.setOnCheckedChangeListener(onCheckedChangeListener);
+        return chip;
     }
 
     public abstract static class TextValidator implements TextWatcher{

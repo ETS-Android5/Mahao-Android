@@ -3,8 +3,6 @@ package ke.co.tonyoa.mahao.ui.properties.single;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -15,7 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.Navigation;
 
 import android.provider.Settings;
@@ -42,9 +40,6 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -56,16 +51,10 @@ import java.util.Locale;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
-import ke.co.tonyoa.mahao.app.utils.DialogUtils;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentPickLocationBinding;
 
-public class PickLocationFragment extends BottomSheetDialogFragment implements OnMapReadyCallback{
-
-    public static final String PICK_LOCATION_REQUEST = "PICK_LOCATION_REQUEST";
-    public static final String CURRENT_LOCATION_EXTRA = "CURRENT_LOCATION";
-    public static final String LOCATION_NAME_EXTRA = "LOCATION_NAME";
-    public static final String LOCATION_LAT_LNG_EXTRA = "LOCATION_LAT_LNG";
+public class PickLocationFragment extends BaseFragment implements OnMapReadyCallback{
 
     private FragmentPickLocationBinding mFragmentPickLocationBinding;
     private GoogleMap mGoogleMap;
@@ -75,7 +64,6 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
     private String mLocationName;
     private float[] mCoordinates;
     private boolean mClicked = true;
-    private OnLocationSelectedListener mOnLocationSelectedListener;
 
     public PickLocationFragment() {
         // Required empty public constructor
@@ -88,7 +76,6 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
         if (getArguments() != null) {
             mLocationName = PickLocationFragmentArgs.fromBundle(getArguments()).getName();
             mCoordinates = PickLocationFragmentArgs.fromBundle(getArguments()).getCoordinates();
-            mOnLocationSelectedListener = PickLocationFragmentArgs.fromBundle(getArguments()).getListener();
         }
         mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
             if (result!=null && result){
@@ -114,7 +101,7 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
         mFragmentPickLocationBinding = FragmentPickLocationBinding.inflate(inflater, container, false);
         mFragmentPickLocationBinding.layoutToolbar.materialToolbarLayoutToolbar.setTitle("Pick Location");
         mFragmentPickLocationBinding.layoutToolbar.materialToolbarLayoutToolbar.setNavigationOnClickListener(v -> {
-            dismiss();
+            navigateBack();
         });
 
         // Initialize the Places SDK
@@ -146,6 +133,7 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
                     mClicked = true;
+                    if (place.getLatLng() != null)
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12));
                     mFragmentPickLocationBinding.textViewLocationPickerCurrentAddress.setText(place.getName()+", "+place.getAddress());
                 }
@@ -161,23 +149,13 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
         mFragmentPickLocationBinding.locationPickerDestinationButton.setOnClickListener(v->{
             LatLng selectedLocation = mGoogleMap.getCameraPosition().target;
             String selectedAddress = ViewUtils.getText(mFragmentPickLocationBinding.textViewLocationPickerCurrentAddress);
-            Bundle bundle = new Bundle();
-            bundle.putString(LOCATION_NAME_EXTRA, selectedAddress);
-            bundle.putDoubleArray(LOCATION_LAT_LNG_EXTRA, new double[]{selectedLocation.latitude, selectedLocation.longitude});
-            if (mOnLocationSelectedListener!=null) {
-                mOnLocationSelectedListener.onLocationSelected(selectedAddress, selectedLocation);
-            }
-            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main).navigateUp();
-        });
 
-        //Expand pick location dialog
-        if (getDialog()!=null) {
-            getDialog().setOnShowListener(dialog -> {
-                BottomSheetDialog d = (BottomSheetDialog) dialog;
-                View bottomSheetInternal = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-                BottomSheetBehavior.from(bottomSheetInternal).setState(BottomSheetBehavior.STATE_EXPANDED);
-            });
-        }
+            LocationWithLatLng locationWithLatLng = new LocationWithLatLng(selectedAddress, selectedLocation);
+            NavBackStackEntry previousBackStackEntry = getNavController().getPreviousBackStackEntry();
+            if (previousBackStackEntry != null)
+                previousBackStackEntry.getSavedStateHandle().set("location", locationWithLatLng);
+            navigateBack();
+        });
 
         return mFragmentPickLocationBinding.getRoot();
     }
@@ -247,7 +225,9 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
                         if (placeLikelihoods.size() > 0) {
                             Place place = placeLikelihoods.get(0).getPlace();
                             mClicked = true;
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12));
+                            if (place.getLatLng()!=null) {
+                                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 12));
+                            }
                             mFragmentPickLocationBinding.textViewLocationPickerCurrentAddress.setText(place.getName() + ", " + place.getAddress());
                         }
                     } else {
@@ -276,7 +256,29 @@ public class PickLocationFragment extends BottomSheetDialogFragment implements O
         return super.onOptionsItemSelected(item);
     }
 
-    public interface OnLocationSelectedListener extends Serializable {
-        void onLocationSelected(String locationName, LatLng latLng);
+    public static class LocationWithLatLng implements Serializable {
+        private String mLocation;
+        private LatLng mLatLng;
+
+        LocationWithLatLng(String location, LatLng latLng) {
+            mLocation = location;
+            mLatLng = latLng;
+        }
+
+        public String getLocation() {
+            return mLocation;
+        }
+
+        public void setLocation(String location) {
+            mLocation = location;
+        }
+
+        public LatLng getLatLng() {
+            return mLatLng;
+        }
+
+        public void setLatLng(LatLng latLng) {
+            mLatLng = latLng;
+        }
     }
 }

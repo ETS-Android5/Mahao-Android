@@ -8,27 +8,11 @@
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     tools:context=".ui.properties.FilterPropertiesFragment">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/tap_action_layout"
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/layout_toolbar"
+        layout="@layout/layout_toolbar"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_16"
-        android:layout_marginEnd="@dimen/size_16"
-        android:paddingTop="@dimen/size_8"
-        android:paddingStart="@dimen/size_16"
-        android:paddingEnd="@dimen/size_16"
-        android:paddingBottom="@dimen/size_8">
-
-        <TextView
-            android:id="@+id/textView_bottomSheetMap_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_16"
-            android:text="@string/filter"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_gravity="center"/>
-
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_width="match_parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -210,22 +194,54 @@
                     app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
                     android:drawablePadding="@dimen/size_8"/>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout_filterProperties_location"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16"
-                    android:hint="@string/location"
-                    style="@style/Theme.Mahao.FormTextInputLayout"
-                    app:endIconDrawable="@drawable/ic_baseline_cancel_24"
-                    app:endIconTint="@android:color/holo_red_dark">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText_filterProperties_location"
-                        android:layout_width="match_parent"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_filterProperties_location"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        tools:text="The location and coordinates"
-                        android:inputType="none"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_weight="1"
+                        android:hint="@string/location"
+                        style="@style/Theme.Mahao.FormTextInputLayout"
+                        app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                        app:endIconTint="@android:color/holo_red_dark">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_filterProperties_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="The location and coordinates"
+                            android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/imageButton_filterProperties_cancelLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_8"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_baseline_cancel_24"
+                        android:background="?selectableItemBackground"
+                        app:tint="@android:color/holo_red_dark"/>
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_filterLocationRadius"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="1"
+                    android:valueTo="100"
+                    android:value="1"
+                    android:stepSize="1"/>
+
+                <TextView
+                    android:id="@+id/textView_filterProperties_locationRadius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/d_filter_radius"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -250,22 +266,45 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                    <HorizontalScrollView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <com.google.android.material.chip.ChipGroup
-                                android:id="@+id/chipGroup_filterProperties_categories"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/size_8"
-                                android:layout_marginBottom="@dimen/size_8"
-                                app:singleLine="false"/>
-                        </LinearLayout>
-                    </HorizontalScrollView>
+                                android:orientation="horizontal">
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_filterProperties_categories"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    app:singleLine="false"/>
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_filterProperties_selectedCategories"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    app:singleLine="false"/>
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:id="@+id/linearLayout_filterProperties_emptyCategories"
@@ -341,22 +380,45 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <HorizontalScrollView
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <com.google.android.material.chip.ChipGroup
-                                android:id="@+id/chipGroup_filterProperties_amenities"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/size_8"
-                                android:layout_marginBottom="@dimen/size_8"
-                                app:singleLine="false"/>
-                        </LinearLayout>
-                    </HorizontalScrollView>
+                                android:orientation="horizontal">
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_filterProperties_amenities"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    app:singleLine="false"/>
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_filterProperties_selectedAmenities"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/size_8"
+                                    android:layout_marginBottom="@dimen/size_8"
+                                    app:singleLine="false"/>
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayout_filterProperties_emptyAmenities"

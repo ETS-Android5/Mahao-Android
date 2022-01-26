@@ -1,7 +1,5 @@
 package ke.co.tonyoa.mahao.ui.properties.single;
 
-import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;
-
 import static ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyFragment.PROPERTY_EXTRA;
 
 import android.content.Context;
@@ -10,16 +8,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -219,14 +216,23 @@ public class EditPropertyFragment extends BaseFragment {
             pickOrTakeImage();
         });
 
+        NavBackStackEntry currentBackStackEntry = getNavController().getCurrentBackStackEntry();
+        if (currentBackStackEntry!=null) {
+            MutableLiveData<Object> locationLiveData = currentBackStackEntry.getSavedStateHandle().getLiveData("location");
+            locationLiveData.observe(getViewLifecycleOwner(), result->{
+                if (result instanceof PickLocationFragment.LocationWithLatLng){
+                    PickLocationFragment.LocationWithLatLng locationWithLatLng = (PickLocationFragment.LocationWithLatLng) result;
+                    String locationName = locationWithLatLng.getLocation();
+                    mEditPropertyViewModel.setLocation(locationName, locationWithLatLng.getLatLng());
+                    mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(locationName);
+                }
+            });
+        }
+
         mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setInputType(InputType.TYPE_NULL);
         mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setOnClickListener(v->{
             navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentToPickLocationFragment(mProperty==null?null:mProperty.getLocationName(),
-                    mProperty==null?null: new float[]{mProperty.getLocation().get(0), mProperty.getLocation().get(1)},
-                    (selectedAddress, selectedLocation)->{
-                        mEditPropertyViewModel.setLocation(selectedAddress, selectedLocation);
-                        mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(selectedAddress);
-                    }));
+                    mProperty==null?null: new float[]{mProperty.getLocation().get(0), mProperty.getLocation().get(1)}));
         });
         mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus){
@@ -267,6 +273,7 @@ public class EditPropertyFragment extends BaseFragment {
                 }).setTitle("Image Source")
                 .create()
                 .show();
+
     }
 
 

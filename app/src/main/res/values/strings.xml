@@ -121,4 +121,9 @@
     <string name="bathrooms">Bathrooms</string>
     <string name="none">None</string>
     <string name="infinite">Infinite</string>
+    <string name="d_filter_radius">%1$.0fKM radius</string>
+    <string name="time">Time</string>
+    <string name="distance">Distance</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 </resources>

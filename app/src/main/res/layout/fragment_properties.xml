@@ -27,7 +27,7 @@
                 android:layout_marginStart="@dimen/size_4"
                 android:layout_marginEnd="@dimen/size_4"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_56"
@@ -41,7 +41,9 @@
                         android:layout_weight="1"
                         android:layout_gravity="center"
                         android:hint="@string/search"
-                        android:backgroundTint="@color/color_background_gray_transparentish"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
                         android:drawableStart="@drawable/ic_baseline_search_24"
                         android:drawablePadding="@dimen/size_8">
                         <requestFocus />
@@ -85,26 +87,7 @@
                             android:id="@+id/chipGroup_properties_filters"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sample filter"/>
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sample filter"/>
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sample filter"/>
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sample filter"/>
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sample filter"/>
+
                         </com.google.android.material.chip.ChipGroup>
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -114,7 +97,7 @@
                 android:id="@+id/tabLayout_properties"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_56"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="@dimen/size_112"
                 app:tabMode="scrollable"
                 app:layout_collapseMode="pin"
                 android:background="@color/color_background_gray_transparentish"/>
