@@ -22,14 +22,14 @@
         android:enabled="false"/>
 
     <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_baseline_person_24"
-        android:title="@string/title_profile"
+        android:id="@+id/navigation_map"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/title_map"
         android:checkable="true"/>
 
     <item
-        android:id="@+id/navigation_about"
-        android:icon="@drawable/ic_baseline_info_24"
-        android:title="@string/title_about"
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/title_profile"
         android:checkable="true"/>
 </menu>

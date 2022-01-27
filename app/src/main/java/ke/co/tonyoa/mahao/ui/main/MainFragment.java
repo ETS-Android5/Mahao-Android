@@ -1,5 +1,7 @@
 package ke.co.tonyoa.mahao.ui.main;
 
+import static ke.co.tonyoa.mahao.app.utils.DialogUtils.getStandardRatingDialogBuilder;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codemybrainsout.ratingdialog.RatingDialog;
+
 import java.io.Serializable;
 
 import ke.co.tonyoa.mahao.R;
@@ -21,7 +25,7 @@ import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.databinding.FragmentMainBinding;
 import ke.co.tonyoa.mahao.ui.auth.login.LoginFragment;
 import ke.co.tonyoa.mahao.ui.home.HomeFragment;
-import ke.co.tonyoa.mahao.ui.more.MoreFragment;
+import ke.co.tonyoa.mahao.ui.map.MapsFragment;
 import ke.co.tonyoa.mahao.ui.profile.ProfileFragment;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesFragment;
 
@@ -81,6 +85,8 @@ public class MainFragment extends BaseFragment implements Serializable {
         mFragmentMainBinding.viewpagerMain.setAdapter(mainFragmentAdapter);
 
         mMainViewModel.getSelectedPosition().observe(getViewLifecycleOwner(),position->{
+            // Position 2 is the placeholder menu item to align menu items evenly
+            mFragmentMainBinding.bottomNavigationMain.getMenu().getItem(position<2?position:position+1).setChecked(true);
             mFragmentMainBinding.viewpagerMain.setCurrentItem(position);
         });
 
@@ -97,9 +103,11 @@ public class MainFragment extends BaseFragment implements Serializable {
                 position = 0;
             } else if (itemId == R.id.navigation_properties) {
                 position = 1;
-            } else if (itemId == R.id.navigation_profile) {
+            }
+            else if (itemId == R.id.navigation_map) {
                 position = 2;
-            } else if (itemId == R.id.navigation_about) {
+            }
+            else if (itemId == R.id.navigation_profile) {
                 position = 3;
             }
             mMainViewModel.setSelectedPosition(position);
@@ -116,6 +124,10 @@ public class MainFragment extends BaseFragment implements Serializable {
         mFragmentMainBinding.floatingActionButtonMain.setOnClickListener(v->{
             navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(null));
         });
+
+        //Create a ratingDialog that displays after 3 user sessions
+        RatingDialog ratingDialog = getStandardRatingDialogBuilder(requireContext()).session(3).build();
+        ratingDialog.show();
 
         return mFragmentMainBinding.getRoot();
     }
@@ -147,9 +159,9 @@ public class MainFragment extends BaseFragment implements Serializable {
                 case 1:
                     return new PropertiesFragment();
                 case 2:
-                    return new ProfileFragment();
+                    return new MapsFragment();
                 case 3:
-                    return new MoreFragment();
+                    return new ProfileFragment();
             }
             return null;
         }

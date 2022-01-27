@@ -126,4 +126,9 @@
     <string name="distance">Distance</string>
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <string name="about_mahao">About Mahao</string>
+    <string name="licenses">Licenses</string>
+    <string name="share_message">Find your next home easily using Mahao. Get it at https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="send_email">Send Email</string>
+    <string name="title_map">Map</string>
 </resources>

@@ -278,7 +278,14 @@
         android:id="@+id/policyFragment"
         android:name="ke.co.tonyoa.mahao.ui.profile.policy.PolicyFragment"
         android:label="fragment_policy"
-        tools:layout="@layout/fragment_policy" />
+        tools:layout="@layout/fragment_policy">
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="reference" />
+    </fragment>
     <fragment
         android:id="@+id/fullPhotoFragment"
         android:name="ke.co.tonyoa.mahao.ui.properties.single.FullPhotoFragment"
