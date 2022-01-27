@@ -117,7 +117,7 @@ public class HomeFragment extends BaseFragment {
                              ViewGroup container, Bundle savedInstanceState) {
         mFragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false);
         mFragmentHomeBinding.imageViewHomeProfile.setOnClickListener(v->{
-            mMainViewModel.setSelectedPosition(2);
+            mMainViewModel.setSelectedPosition(3);
         });
 
         mHomeViewModel.getName().observe(getViewLifecycleOwner(), name->{

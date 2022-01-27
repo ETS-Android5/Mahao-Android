@@ -28,4 +28,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:background">?selectableItemBackground</item>
     </style>
+
+    <style name="Theme.Mahao.ActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

@@ -5,9 +5,15 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.codemybrainsout.ratingdialog.RatingDialog;
+
+import ke.co.tonyoa.mahao.R;
 
 public class DialogUtils {
 
@@ -33,6 +39,29 @@ public class DialogUtils {
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    public static RatingDialog.Builder getStandardRatingDialogBuilder(Context context) {
+        return new RatingDialog.Builder(context)
+                .threshold(3.5f)
+                .onRatingBarFormSumbit(new RatingDialog.Builder.RatingDialogFormListener() {
+                    @Override
+                    public void onFormSubmitted(String feedback) {
+                        composeEmail(context, new String[]{"mahaoorg@gmail.com"},
+                                "Mahao Report", feedback);
+                    }
+                });
+    }
+
+    public static void composeEmail(Context context, String[] addresses, String subject, String body) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            Intent.createChooser(intent, context.getString(R.string.send_email));
+        }
     }
 
 }
