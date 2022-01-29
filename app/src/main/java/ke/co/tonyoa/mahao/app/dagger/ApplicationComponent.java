@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import ke.co.tonyoa.mahao.ui.auth.forgot.ForgotPasswordViewModel;
+import ke.co.tonyoa.mahao.ui.auth.forgot.NewPasswordViewModel;
 import ke.co.tonyoa.mahao.ui.auth.login.LoginViewModel;
 import ke.co.tonyoa.mahao.ui.auth.register.RegisterViewModel;
 import ke.co.tonyoa.mahao.ui.home.HomeViewModel;
@@ -60,4 +61,6 @@ public interface ApplicationComponent {
     void inject(PropertyMapViewModel propertyMapViewModel);
 
     void inject(FilterPropertiesViewModel filterPropertiesViewModel);
+
+    void inject(NewPasswordViewModel newPasswordViewModel);
 }

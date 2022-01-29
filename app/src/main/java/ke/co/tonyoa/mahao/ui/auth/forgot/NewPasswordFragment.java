@@ -2,66 +2,94 @@ package ke.co.tonyoa.mahao.ui.auth.forgot;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
+import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.utils.ViewUtils;
+import ke.co.tonyoa.mahao.databinding.FragmentNewPasswordBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewPasswordFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class NewPasswordFragment extends Fragment {
+public class NewPasswordFragment extends BaseFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mToken;
+    private FragmentNewPasswordBinding mFragmentNewPasswordBinding;
+    private NewPasswordViewModel mNewPasswordViewModel;
+    private List<View> mEnabledViews;
 
     public NewPasswordFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NewPasswordFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NewPasswordFragment newInstance(String param1, String param2) {
-        NewPasswordFragment fragment = new NewPasswordFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mToken = getArguments().getString("token");
         }
+        mNewPasswordViewModel = new ViewModelProvider(this).get(NewPasswordViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_password, container, false);
+        mFragmentNewPasswordBinding = FragmentNewPasswordBinding.inflate(inflater,
+                container, false);
+        // setToolbar(mFragmentNewPasswordBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        setTitle(getString(R.string.register));
+
+        mEnabledViews = new ArrayList<>(Arrays.asList(mFragmentNewPasswordBinding.layoutToolbar.materialToolbarLayoutToolbar,
+                mFragmentNewPasswordBinding.textInputEditTextNewPasswordPassword,
+                mFragmentNewPasswordBinding.textInputEditTextNewPasswordConfirmPassword,
+                mFragmentNewPasswordBinding.buttonNewPasswordConfirm));
+
+        mFragmentNewPasswordBinding.buttonNewPasswordConfirm.setOnClickListener(v->{
+            String password = ViewUtils.getText(mFragmentNewPasswordBinding.textInputEditTextNewPasswordPassword);
+            String confirmPassword = ViewUtils.getText(mFragmentNewPasswordBinding.textInputEditTextNewPasswordConfirmPassword);
+            if (ViewUtils.isEmptyAndRequired(mFragmentNewPasswordBinding.textInputEditTextNewPasswordPassword)){
+                return;
+            }
+            if (ViewUtils.isEmptyAndRequired(mFragmentNewPasswordBinding.textInputEditTextNewPasswordConfirmPassword)){
+                return;
+            }
+            if (password.length()<6){
+                mFragmentNewPasswordBinding.textInputEditTextNewPasswordPassword.setError(getString(R.string.password_too_short));
+                return;
+            }
+            if (!password.equals(confirmPassword)){
+                mFragmentNewPasswordBinding.textInputEditTextNewPasswordPassword.setError(getString(R.string.passwords_need_to_match));
+                mFragmentNewPasswordBinding.textInputEditTextNewPasswordConfirmPassword.setText("");
+                return;
+            }
+
+            ViewUtils.load(mFragmentNewPasswordBinding.linearLayoutNewPasswordLoading, mEnabledViews, true);
+            mNewPasswordViewModel.resetPassword(mToken, password).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
+                ViewUtils.load(mFragmentNewPasswordBinding.linearLayoutNewPasswordLoading, mEnabledViews, false);
+                if (loginResponseAPIResponse!=null && loginResponseAPIResponse.isSuccessful()){
+                    Toast.makeText(requireContext(), R.string.password_reset_successfully, Toast.LENGTH_SHORT).show();
+                    mNewPasswordViewModel.logout();
+                    navigateBack();
+                }
+                else {
+                    Toast.makeText(requireContext(),
+                            (loginResponseAPIResponse==null || loginResponseAPIResponse.errorMessage(requireContext())==null)?
+                                    getString(R.string.unknown_error):
+                                    loginResponseAPIResponse.errorMessage(requireContext()),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        return mFragmentNewPasswordBinding.getRoot();
     }
 }

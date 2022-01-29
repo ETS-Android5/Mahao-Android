@@ -56,7 +56,8 @@ public class RegisterFragment extends BaseFragment {
             mFragmentRegisterBinding.buttonRegisterCreate.setEnabled(isChecked);
         });
         mFragmentRegisterBinding.textViewRegisterTerms.setOnClickListener(v->{
-            //TODO: Navigate to terms and conditions
+            navigate(RegisterFragmentDirections.actionNavigationRegisterToPolicyFragment("file:///android_res/raw/mahao_terms.html",
+                    R.string.terms_and_conditions));
         });
         mFragmentRegisterBinding.textViewRegisterLogin.setOnClickListener(v->{
             navigateBack();

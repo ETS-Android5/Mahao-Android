@@ -43,15 +43,10 @@
     <fragment
         android:id="@+id/navigation_register"
         android:name="ke.co.tonyoa.mahao.ui.auth.register.RegisterFragment"
-        tools:layout="@layout/fragment_register" />
-
-    <fragment
-        android:id="@+id/navigation_forgot"
-        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.ForgotPasswordFragment"
-        tools:layout="@layout/fragment_forgot_password" >
+        tools:layout="@layout/fragment_register" >
         <action
-            android:id="@+id/action_navigation_forgot_to_navigation_verification"
-            app:destination="@id/navigation_verification"
+            android:id="@+id/action_navigation_register_to_policyFragment"
+            app:destination="@id/policyFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -59,24 +54,22 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_verification"
-        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.VerificationCodeFragment"
-        tools:layout="@layout/fragment_verification_code" >
-        <action
-            android:id="@+id/action_navigation_verification_to_navigation_new_password"
-            app:destination="@id/navigation_new_password"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/navigation_login"
-            app:popUpToInclusive="false"/>
+        android:id="@+id/navigation_forgot"
+        android:name="ke.co.tonyoa.mahao.ui.auth.forgot.ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_new_password"
         android:name="ke.co.tonyoa.mahao.ui.auth.forgot.NewPasswordFragment"
-        tools:layout="@layout/fragment_new_password" />
+        tools:layout="@layout/fragment_new_password">
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="http://localhost/reset-password?token={token}" />
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="https://localhost/reset-password?token={token}" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_main"
