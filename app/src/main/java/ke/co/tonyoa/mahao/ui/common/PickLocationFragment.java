@@ -1,4 +1,4 @@
-package ke.co.tonyoa.mahao.ui.properties.single;
+package ke.co.tonyoa.mahao.ui.common;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static ke.co.tonyoa.mahao.ui.home.HomeViewModel.DEFAULT_COORDINATES;

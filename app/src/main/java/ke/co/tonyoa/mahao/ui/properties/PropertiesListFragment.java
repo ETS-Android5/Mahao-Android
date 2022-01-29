@@ -1,18 +1,31 @@
 package ke.co.tonyoa.mahao.ui.properties;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +57,8 @@ public class PropertiesListFragment extends BaseFragment {
     private PropertiesListViewModel mPropertiesListViewModel;
     private PropertyListType mPropertyListType;
     private PropertyAdapter mPropertyAdapter;
+    private ActivityResultLauncher<String> mPermissionResultLauncher;
+    private ActivityResultLauncher<Intent> mLocationEnableLauncher;
 
     public static PropertiesListFragment newInstance(PropertyListType propertyListType){
         Bundle bundle = new Bundle();
@@ -67,6 +82,22 @@ public class PropertiesListFragment extends BaseFragment {
         PropertiesListViewModelFactory propertiesListViewModelFactory = new PropertiesListViewModelFactory(requireActivity().getApplication(),
                 mPropertyListType, propertiesViewModel.getFilterAndSort());
         mPropertiesListViewModel = new ViewModelProvider(this, propertiesListViewModelFactory).get(PropertiesListViewModel.class);
+
+        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+            if (result!=null && result){
+                setupCurrentLocation();
+            }
+            else {
+                Snackbar.make(mFragmentPropertiesListBinding.recyclerViewPropertiesList,
+                        "Grant Location Permission for correct functionality",
+                        BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Grant", v -> {
+                    mPermissionResultLauncher.launch(ACCESS_FINE_LOCATION);
+                }).show();
+            }
+        });
+        mLocationEnableLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            setupCurrentLocation();
+        });
     }
 
     @Override
@@ -129,6 +160,14 @@ public class PropertiesListFragment extends BaseFragment {
         return mFragmentPropertiesListBinding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPropertyListType == PropertyListType.ALL || mPropertyListType == PropertyListType.NEARBY){
+            setupCurrentLocation();
+        }
+    }
+
     private void fetchData(){
         LinearLayout loadingView = mFragmentPropertiesListBinding.linearLayoutPropertiesListLoading;
         List<RecyclerView> enabledViews = Arrays.asList(mFragmentPropertiesListBinding.recyclerViewPropertiesList);
@@ -161,5 +200,34 @@ public class PropertiesListFragment extends BaseFragment {
             }
             mFragmentPropertiesListBinding.getRoot().setRefreshing(false);
         });
+    }
+
+    private void setupCurrentLocation(){
+        // Use fields to define the data types to return.
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+
+        // Use the builder to create a FindCurrentPlaceRequest.
+        FindCurrentPlaceRequest request = FindCurrentPlaceRequest.newInstance(placeFields);
+
+        // Call findCurrentPlace and handle the response (first check that the user has granted permission).
+        if (ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (!ViewUtils.isLocationEnabled(requireContext())){
+                Snackbar.make(mFragmentPropertiesListBinding.recyclerViewPropertiesList,
+                        R.string.enable_your_location, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.enable, v -> {
+                            Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            mLocationEnableLauncher.launch(intent);
+                        })
+                        .show();
+                return;
+            }
+
+            mPropertiesListViewModel.listenToLocationUpdates(location -> {
+            }, 1000*60, 10);
+        }
+        else {
+            mPermissionResultLauncher.launch(ACCESS_FINE_LOCATION);
+        }
+
     }
 }

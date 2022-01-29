@@ -12,6 +12,7 @@ import androidx.navigation.NavBackStackEntry;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,8 @@ import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.databinding.FragmentMainBinding;
 import ke.co.tonyoa.mahao.ui.auth.login.LoginFragment;
+import ke.co.tonyoa.mahao.ui.common.PropertyMapFragment;
 import ke.co.tonyoa.mahao.ui.home.HomeFragment;
-import ke.co.tonyoa.mahao.ui.map.MapsFragment;
 import ke.co.tonyoa.mahao.ui.profile.ProfileFragment;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesFragment;
 
@@ -138,7 +139,14 @@ public class MainFragment extends BaseFragment implements Serializable {
         mMainViewModel.getUserProfile().observe(getViewLifecycleOwner(), userAPIResponse->{
             if (userAPIResponse == null || !userAPIResponse.isSuccessful()){
                 if (isAdded() && isVisible()) {
-                    navigate(MainFragmentDirections.actionNavigationMainToNavigationLogin());
+                    try {
+                        navigate(MainFragmentDirections.actionNavigationMainToNavigationLogin());
+                    }
+                    catch (IllegalArgumentException e){
+                        //Already navigated to login
+                        e.printStackTrace();
+                        Log.e("Main Frag", e.getMessage());
+                    }
                 }
             }
         });
@@ -159,7 +167,7 @@ public class MainFragment extends BaseFragment implements Serializable {
                 case 1:
                     return new PropertiesFragment();
                 case 2:
-                    return new MapsFragment();
+                    return new PropertyMapFragment();
                 case 3:
                     return new ProfileFragment();
             }

@@ -35,7 +35,7 @@ import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentFilterPropertiesBinding;
-import ke.co.tonyoa.mahao.ui.properties.single.PickLocationFragment;
+import ke.co.tonyoa.mahao.ui.common.PickLocationFragment;
 
 public class FilterPropertiesFragment extends BaseFragment {
 

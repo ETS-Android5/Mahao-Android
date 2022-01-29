@@ -58,7 +58,7 @@ public class ApiManager {
     private static final String AUTH_PREFIX = "Bearer ";
     private static final int NUMBER_OF_THREADS = 6;
     private static final ExecutorService apiExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-    public static final String API_URL = "https://a7d3-105-27-239-221.ngrok.io";
+    public static final String API_URL = "https://5ca6-185-199-103-169.ngrok.io";
     private final RestApi api;
     private final Application application;
     private final SharedPrefs mSharedPrefs;
