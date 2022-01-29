@@ -11,6 +11,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,7 @@ import ke.co.tonyoa.mahao.app.utils.DialogUtils;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentSinglePropertyBinding;
 
-public class SinglePropertyFragment extends BaseFragment implements OnSaveListener<Property> {
+public class SinglePropertyFragment extends BaseFragment implements OnSaveListener<Property>, EditPropertyFragment.OnBackClickedListener {
 
     public static final String PROPERTY_EXTRA = "PROPERTY_EXTRA";
 
@@ -200,6 +202,11 @@ public class SinglePropertyFragment extends BaseFragment implements OnSaveListen
 
         mSinglePropertyViewModel.setSelectedPosition(0);
         requireActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onBackClicked() {
+        requireActivity().onBackPressed();
     }
 
     class SinglePropertyAdapter extends FragmentStateAdapter {

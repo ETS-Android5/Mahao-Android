@@ -10,23 +10,26 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -124,6 +127,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                     .load(owner.getProfilePicture())
                     .placeholder(R.drawable.ic_baseline_person_24)
                     .error(R.drawable.ic_baseline_person_24)
+                    .transform(new CircleCrop())
                     .into(mFragmentViewPropertyBinding.imageViewViewPropertyOwner);
             mFragmentViewPropertyBinding.textViewViewPropertyOwnerName.setText(String.format("%s %s",
                     owner.getFirstName(), owner.getLastName()));
@@ -169,6 +173,14 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             String encoding = "utf-8";
             mFragmentViewPropertyBinding.webViewViewPropertyDescription.loadDataWithBaseURL(null, text,
                     mimeType, encoding, null);
+            mFragmentViewPropertyBinding.webViewViewPropertyDescription.setWebViewClient(new WebViewClient(){
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    view.setBackgroundColor(ResourcesCompat.getColor(getResources(), android.R.color.transparent,
+                            null));
+                }
+            });
 
             mAmenityAdapter = new AmenityAdapter(requireContext(), null);
             mFragmentViewPropertyBinding.recyclerViewViewPropertyAmenities.setLayoutManager(new LinearLayoutManager(requireContext(),
@@ -201,7 +213,6 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                         List<PropertyPhoto> newPropertyPhotos = new ArrayList<>(currentPropertyPhotos);
                         newPropertyPhotos.remove(propertyPhotoAPIResponse.body());
                         mPropertyPhotoAdapter.submitList(newPropertyPhotos);
-                        Log.e("Property photos", "Property photos are "+newPropertyPhotos.size());
                         mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(newPropertyPhotos.size()>0?View.GONE:View.VISIBLE);
                     }
                     else {
@@ -286,6 +297,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                     mSinglePropertyViewModel.getSimilarProperties(mProperty.getId()), mPropertyAdapterRecommended);
 
             mFragmentViewPropertyBinding.floatingActionButtonViewPropertyMap.setOnClickListener(v->{
+                mSinglePropertyViewModel.addFeedback(mProperty.getId(), FeedbackType.MAP);
                 navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentToPropertyMapFragment(new float[]{mProperty.getLocation().get(0),
                     mProperty.getLocation().get(1), 10}, mProperty.getId()));
             });
@@ -424,6 +436,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                 .show();
     }
 
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -434,7 +447,9 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         // User is not admin and not the owner
-        if ((!mSinglePropertyViewModel.isAdmin() && (mProperty!=null && !mProperty.getOwnerId().equals(Integer.parseInt(mSinglePropertyViewModel.getUserId()))))) {
+        if ((!mSinglePropertyViewModel.isAdmin() &&
+                (mProperty!=null && !mProperty.getOwnerId()
+                        .equals(Integer.parseInt(mSinglePropertyViewModel.getUserId()))))) {
             menu.clear();
         }
         MenuItem itemVerify = menu.findItem(R.id.action_editDoneDelete_verify);
@@ -448,6 +463,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             itemEnable.setTitle(mProperty.getIsEnabled() ? R.string.disable : R.string.enable);
         }
     }
+
 
     @Override
     public void onPropertyAmenitiesChanged(List<Amenity> added, List<Amenity> removed) {

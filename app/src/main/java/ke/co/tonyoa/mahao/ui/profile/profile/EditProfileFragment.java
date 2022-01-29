@@ -156,9 +156,9 @@ public class EditProfileFragment extends BaseFragment {
                 Uri uri = ((ImageResult.Success<Uri>) imageResult).getValue();
                 Glide.with(requireContext())
                         .load(uri)
-                        .centerCrop()
                         .placeholder(R.drawable.ic_home_black_24dp)
                         .error(R.drawable.ic_home_black_24dp)
+                        .transform(new CircleCrop())
                         .into(mFragmentEditProfileBinding.imageViewEditProfileAvatar);
                 mFragmentEditProfileBinding.animationViewEditProfileLoadingProfilePicture.setVisibility(View.VISIBLE);
                 mEditProfileViewModel.updateProfilePicture(uri).observe(getViewLifecycleOwner(), userAPIResponse -> {

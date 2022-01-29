@@ -150,7 +150,8 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
             LatLng selectedLocation = mGoogleMap.getCameraPosition().target;
             String selectedAddress = ViewUtils.getText(mFragmentPickLocationBinding.textViewLocationPickerCurrentAddress);
 
-            LocationWithLatLng locationWithLatLng = new LocationWithLatLng(selectedAddress, selectedLocation);
+            LocationWithLatLng locationWithLatLng = new LocationWithLatLng(selectedAddress,
+                    (float) selectedLocation.latitude, (float) selectedLocation.longitude);
             NavBackStackEntry previousBackStackEntry = getNavController().getPreviousBackStackEntry();
             if (previousBackStackEntry != null)
                 previousBackStackEntry.getSavedStateHandle().set("location", locationWithLatLng);
@@ -258,11 +259,13 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
 
     public static class LocationWithLatLng implements Serializable {
         private String mLocation;
-        private LatLng mLatLng;
+        private float mLat;
+        private float mLng;
 
-        LocationWithLatLng(String location, LatLng latLng) {
+        LocationWithLatLng(String location, float lat, float lng) {
             mLocation = location;
-            mLatLng = latLng;
+            mLat = lat;
+            mLng = lng;
         }
 
         public String getLocation() {
@@ -273,12 +276,20 @@ public class PickLocationFragment extends BaseFragment implements OnMapReadyCall
             mLocation = location;
         }
 
-        public LatLng getLatLng() {
-            return mLatLng;
+        public float getLat() {
+            return mLat;
         }
 
-        public void setLatLng(LatLng latLng) {
-            mLatLng = latLng;
+        public void setLat(float lat) {
+            mLat = lat;
+        }
+
+        public float getLng() {
+            return mLng;
+        }
+
+        public void setLng(float lng) {
+            mLng = lng;
         }
     }
 }
