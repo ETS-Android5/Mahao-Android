@@ -3,6 +3,7 @@ package ke.co.tonyoa.mahao.ui.auth.forgot;
 import android.animation.Animator;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,16 +62,15 @@ public class ForgotPasswordFragment extends BaseFragment {
             }
 
             ViewUtils.load(mFragmentForgotPasswordBinding.linearLayoutForgotLoading, mEnabledViews, true);
-            mForgotPasswordViewModel.recoverPassword(email).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
-                ViewUtils.load(mFragmentForgotPasswordBinding.linearLayoutForgotLoading, mEnabledViews, false);
-                if (loginResponseAPIResponse!=null && loginResponseAPIResponse.isSuccessful()){
-                    Toast.makeText(requireContext(), R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
+            mForgotPasswordViewModel.recoverPassword(email).observe(getViewLifecycleOwner(), forgotPasswordResponseAPIResponse -> {
+                if (forgotPasswordResponseAPIResponse !=null && forgotPasswordResponseAPIResponse.isSuccessful()){
+                    Toast.makeText(requireContext(), getString(R.string.password_recovery_email_sent,
+                            email), Toast.LENGTH_LONG).show();
                     mFragmentForgotPasswordBinding.animationViewForgotLoading.setAnimation(R.raw.email_send);
-                    mFragmentForgotPasswordBinding.animationViewForgotLoading.playAnimation();
+                    mFragmentForgotPasswordBinding.animationViewForgotLoading.setRepeatCount(1);
                     mFragmentForgotPasswordBinding.animationViewForgotLoading.addAnimatorListener(new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
-
                         }
 
                         @Override
@@ -88,12 +88,14 @@ public class ForgotPasswordFragment extends BaseFragment {
 
                         }
                     });
+                    mFragmentForgotPasswordBinding.animationViewForgotLoading.playAnimation();
                 }
                 else {
+                    ViewUtils.load(mFragmentForgotPasswordBinding.linearLayoutForgotLoading, mEnabledViews, false);
                     Toast.makeText(requireContext(),
-                            (loginResponseAPIResponse==null || loginResponseAPIResponse.errorMessage(requireContext())==null)?
+                            (forgotPasswordResponseAPIResponse ==null || forgotPasswordResponseAPIResponse.errorMessage(requireContext())==null)?
                                     getString(R.string.unknown_error):
-                                    loginResponseAPIResponse.errorMessage(requireContext()),
+                                    forgotPasswordResponseAPIResponse.errorMessage(requireContext()),
                             Toast.LENGTH_SHORT).show();
                 }
             });
