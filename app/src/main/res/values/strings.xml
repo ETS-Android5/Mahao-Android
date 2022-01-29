@@ -133,4 +133,6 @@
     <string name="title_map">Map</string>
     <string name="password_recovery_email_sent">Password recovery email sent to %1$s</string>
     <string name="password_reset_successfully">The password was reset successfully</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="profile_updated_successfully">Profile Updated Successfully</string>
 </resources>

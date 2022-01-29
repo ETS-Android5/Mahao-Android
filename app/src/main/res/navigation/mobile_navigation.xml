@@ -127,6 +127,9 @@
         <action
             android:id="@+id/action_navigation_main_to_sortPropertiesFragment"
             app:destination="@id/sortPropertiesFragment" />
+        <action
+            android:id="@+id/action_navigation_main_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
 
     </fragment>
     <fragment
@@ -322,4 +325,9 @@
             android:name="sortBy"
             app:argType="ke.co.tonyoa.mahao.ui.properties.PropertiesViewModel$SortBy" />
     </dialog>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="ke.co.tonyoa.mahao.ui.profile.profile.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>

@@ -1,6 +1,7 @@
 package ke.co.tonyoa.mahao.app.repositories;
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -149,6 +150,30 @@ public class AuthRepository {
             try {
                 APIResponse<User> response = apiManager.updateUser(firstName, lastName,
                         phone, location, password);
+                if (response != null && response.isSuccessful()){
+                    User body = response.body();
+                    mSharedPrefs.saveNames(firstName, lastName);
+                    mSharedPrefs.savePhone(phone);
+                    mSharedPrefs.saveProfilePicture(body.getProfilePicture());
+                }
+                liveData.postValue(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+                liveData.postValue(null);
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<APIResponse<User>> updateProfilePicture(Uri profilePicture) {
+        MutableLiveData<APIResponse<User>> liveData = new MutableLiveData<>();
+        ApiManager.execute(() -> {
+            try {
+                APIResponse<User> response = apiManager.updateProfilePicture(profilePicture);
+                if (response != null && response.isSuccessful()){
+                    User body = response.body();
+                    mSharedPrefs.saveProfilePicture(body.getProfilePicture());
+                }
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

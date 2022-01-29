@@ -157,6 +157,10 @@ public class ApiManager {
                 new UpdateUserRequest(password, firstName, lastName, phone, location)).execute());
     }
 
+    public APIResponse<User> updateProfilePicture(Uri profilePicture) throws IOException {
+        return new APIResponse<>(api.updateProfilePicture(getToken(), getFilePart(profilePicture, "profile_picture")).execute());
+    }
+
     public APIResponse<User> register(String firstName, String lastName, String email, String phone,
                                         String location, boolean isVerified, boolean isActive,
                                         boolean isSuperUser, String password) throws IOException {

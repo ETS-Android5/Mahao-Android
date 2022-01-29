@@ -14,6 +14,7 @@ import ke.co.tonyoa.mahao.ui.profile.amenities.AmenitiesViewModel;
 import ke.co.tonyoa.mahao.ui.profile.amenities.single.SingleAmenityViewModel;
 import ke.co.tonyoa.mahao.ui.profile.categories.CategoriesListViewModel;
 import ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryViewModel;
+import ke.co.tonyoa.mahao.ui.profile.profile.EditProfileViewModel;
 import ke.co.tonyoa.mahao.ui.profile.users.UsersListViewModel;
 import ke.co.tonyoa.mahao.ui.properties.FilterPropertiesViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesListViewModel;
@@ -63,4 +64,6 @@ public interface ApplicationComponent {
     void inject(FilterPropertiesViewModel filterPropertiesViewModel);
 
     void inject(NewPasswordViewModel newPasswordViewModel);
+
+    void inject(EditProfileViewModel editProfileViewModel);
 }
