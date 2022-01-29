@@ -134,7 +134,8 @@ public class FilterPropertiesFragment extends BaseFragment {
                     PickLocationFragment.LocationWithLatLng locationWithLatLng = (PickLocationFragment.LocationWithLatLng) result;
                     String locationName = locationWithLatLng.getLocation();
                     mFragmentFilterPropertiesBinding.textInputEditTextFilterPropertiesLocation.setText(locationName);
-                    mFilterPropertiesViewModel.setLatLng(locationWithLatLng.getLatLng());
+                    mFilterPropertiesViewModel.setLatLng(new LatLng(locationWithLatLng.getLat(),
+                            locationWithLatLng.getLng()));
                     mFilterPropertiesViewModel.setLocationName(locationName);
                 }
             });

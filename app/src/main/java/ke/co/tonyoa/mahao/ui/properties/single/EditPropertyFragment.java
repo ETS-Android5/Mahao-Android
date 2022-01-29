@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,7 @@ public class EditPropertyFragment extends BaseFragment {
     private EditPropertyViewModel mEditPropertyViewModel;
     private SinglePropertyViewModel mSinglePropertyViewModel;
     private OnSaveListener<Property> mOnSaveListener;
+    private OnBackClickedListener mOnBackClickedListener;
     private ImagePicker mImagePicker;
     private ArrayAdapter<PropertyCategory> mPropertyCategoryArrayAdapter;
 
@@ -77,6 +79,9 @@ public class EditPropertyFragment extends BaseFragment {
         if (requireParentFragment() instanceof OnSaveListener){
             mOnSaveListener = (OnSaveListener<Property>)requireParentFragment();
         }
+        if (requireParentFragment() instanceof OnBackClickedListener){
+            mOnBackClickedListener = (OnBackClickedListener) requireParentFragment();
+        }
     }
 
     @Override
@@ -85,6 +90,17 @@ public class EditPropertyFragment extends BaseFragment {
         // Inflate the layout for this fragment
         mFragmentEditPropertyBinding = FragmentEditPropertyBinding.inflate(inflater, container, false);
         mImagePicker = new ImagePicker(this);
+        setToolbar(mFragmentEditPropertyBinding.layoutToolbar.materialToolbarLayoutToolbar);
+        if (mProperty==null){
+            setTitle("New Property");
+        }
+        else {
+            setTitle(mProperty.getTitle());
+        }
+        mFragmentEditPropertyBinding.layoutToolbar.materialToolbarLayoutToolbar.setNavigationOnClickListener(v->{
+            if (mOnBackClickedListener != null)
+                mOnBackClickedListener.onBackClicked();
+        });
 
         mEditPropertyViewModel.getProperty().observe(getViewLifecycleOwner(), property -> {
             if (property!=null){
@@ -93,6 +109,8 @@ public class EditPropertyFragment extends BaseFragment {
                         .placeholder(R.drawable.ic_home_black_24dp)
                         .error(R.drawable.ic_home_black_24dp)
                         .into(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage);
+                mFragmentEditPropertyBinding.textViewEditPropertyNoThumbnail.setVisibility(property.getFeatureImage()==null?
+                        View.VISIBLE:View.GONE);
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyName.setText(property.getTitle());
                 PropertyCategory propertyCategory = property.getPropertyCategory();
                 if (propertyCategory!=null) {
@@ -224,7 +242,8 @@ public class EditPropertyFragment extends BaseFragment {
                 if (result instanceof PickLocationFragment.LocationWithLatLng){
                     PickLocationFragment.LocationWithLatLng locationWithLatLng = (PickLocationFragment.LocationWithLatLng) result;
                     String locationName = locationWithLatLng.getLocation();
-                    mEditPropertyViewModel.setLocation(locationName, locationWithLatLng.getLatLng());
+                    mEditPropertyViewModel.setLocation(locationName, new LatLng(locationWithLatLng.getLat(),
+                            locationWithLatLng.getLng()));
                     mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(locationName);
                 }
             });
@@ -277,5 +296,8 @@ public class EditPropertyFragment extends BaseFragment {
 
     }
 
+    public interface OnBackClickedListener {
+        void onBackClicked();
+    }
 
 }

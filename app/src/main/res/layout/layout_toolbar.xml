@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/materialToolbar_layoutToolbar"
-    app:navigationIcon="@drawable/ic_baseline_arrow_back_24">
+    app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+    app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
 
 </com.google.android.material.appbar.MaterialToolbar>

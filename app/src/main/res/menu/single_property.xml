@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_editDoneDelete_edit"
         android:title="@string/edit"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_editDoneDelete_enable"
         android:title="@string/disable" />
     <item android:id="@+id/action_editDoneDelete_verify"

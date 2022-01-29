@@ -7,13 +7,23 @@
     android:orientation="vertical"
     tools:context=".ui.properties.single.EditPropertyFragment">
 
+    <include
+        android:id="@+id/layout_toolbar"
+        layout="@layout/layout_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?actionBarSize">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_16"
+            android:layout_marginTop="@dimen/size_8"
+            android:layout_marginStart="@dimen/size_16"
+            android:layout_marginEnd="@dimen/size_16"
+            android:layout_marginBottom="@dimen/size_16"
             android:orientation="vertical">
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout_editProperty_name"
@@ -36,15 +46,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_16"
+                android:hint="@string/category"
                 style="@style/Theme.Mahao.FormTextInputLayout"
                 app:startIconDrawable="@drawable/ic_baseline_filter_alt_24">
-                <AutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/autoCompleteTextView_editProperty_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="Bedsitters"
-                    android:hint="@string/category"
-                    android:completionThreshold="0"/>
+                    android:completionThreshold="0"
+                    style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

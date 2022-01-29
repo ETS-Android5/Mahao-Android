@@ -66,15 +66,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/animationView_itemVerticalProperty_like"
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="@dimen/size_24"
                         android:layout_height="@dimen/size_24"
                         android:layout_margin="@dimen/size_4"
-                        app:lottie_rawRes="@raw/like"
-                        app:lottie_loop="false"
-                        app:lottie_autoPlay="false"
-                        android:background="?selectableItemBackground"/>
+                        android:background="@android:color/transparent">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/gradient_drawable"
+                            android:alpha="0.8"/>
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/animationView_itemVerticalProperty_like"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:lottie_rawRes="@raw/like"
+                            app:lottie_loop="false"
+                            app:lottie_autoPlay="false"
+                            android:background="?selectableItemBackground"/>
+                    </com.google.android.material.card.MaterialCardView>
+
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/animationView_itemVerticalProperty_loading"
                         android:layout_width="@dimen/size_24"
