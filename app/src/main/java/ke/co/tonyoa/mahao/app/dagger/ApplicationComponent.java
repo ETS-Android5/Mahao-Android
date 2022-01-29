@@ -19,7 +19,7 @@ import ke.co.tonyoa.mahao.ui.properties.PropertiesListViewModel;
 import ke.co.tonyoa.mahao.ui.properties.PropertiesViewModel;
 import ke.co.tonyoa.mahao.ui.properties.single.EditPropertyViewModel;
 import ke.co.tonyoa.mahao.ui.properties.single.PropertyAmenitySelectViewModel;
-import ke.co.tonyoa.mahao.ui.properties.single.PropertyMapViewModel;
+import ke.co.tonyoa.mahao.ui.common.PropertyMapViewModel;
 import ke.co.tonyoa.mahao.ui.properties.single.SinglePropertyViewModel;
 
 @Singleton

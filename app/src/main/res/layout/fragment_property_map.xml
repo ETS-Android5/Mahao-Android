@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.properties.single.PropertyMapFragment">
+    tools:context=".ui.common.PropertyMapFragment">
 
     <include
         android:id="@+id/layout_toolbar"
@@ -26,10 +26,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/linearProgressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_4"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_anchor="@id/layout_bottomsheetMap"
+            app:layout_anchorGravity="top|center"/>
 
         <include
             android:id="@+id/layout_bottomsheetMap"
             layout="@layout/layout_bottomsheet_map" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_64"
+        android:layout_marginStart="@dimen/size_8"
+        android:layout_marginEnd="@dimen/size_8">
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
+    </com.google.android.material.card.MaterialCardView>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

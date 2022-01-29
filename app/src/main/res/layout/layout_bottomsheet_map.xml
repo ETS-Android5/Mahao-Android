@@ -7,14 +7,13 @@
     android:id="@+id/linearLayout_bottomSheet_map"
     android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-    app:behavior_peekHeight="@dimen/size_80">
+    app:behavior_peekHeight="104dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/tap_action_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_80"
         android:layout_marginStart="@dimen/size_16"
-        app:cardBackgroundColor="@color/color_background_gray_transparentish"
         android:layout_marginEnd="@dimen/size_16"
         android:paddingTop="@dimen/size_8"
         android:paddingStart="@dimen/size_16"
@@ -49,7 +48,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_24">
 
         <LinearLayout
             android:orientation="vertical"

@@ -287,7 +287,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
 
             mFragmentViewPropertyBinding.floatingActionButtonViewPropertyMap.setOnClickListener(v->{
                 navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentToPropertyMapFragment(new float[]{mProperty.getLocation().get(0),
-                    mProperty.getLocation().get(1), 10}));
+                    mProperty.getLocation().get(1), 10}, mProperty.getId()));
             });
 
             mFragmentViewPropertyBinding.animationViewViewPropertyLike.setOnClickListener(v->{

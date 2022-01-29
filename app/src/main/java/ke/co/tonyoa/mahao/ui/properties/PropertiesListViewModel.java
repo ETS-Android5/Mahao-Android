@@ -2,6 +2,7 @@ package ke.co.tonyoa.mahao.ui.properties;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.location.LocationListener;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
@@ -27,6 +28,7 @@ import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
+import ke.co.tonyoa.mahao.app.utils.LocationUpdateListener;
 
 public class PropertiesListViewModel extends AndroidViewModel {
 
@@ -35,6 +37,8 @@ public class PropertiesListViewModel extends AndroidViewModel {
     PropertiesRepository mPropertiesRepository;
     @Inject
     SharedPrefs mSharedPrefs;
+    @Inject
+    LocationUpdateListener mLocationUpdateListener;
     private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<String> mUserIdLiveData = new MutableLiveData<>();
     private LiveData<APIResponse<List<Property>>> mPropertiesLiveData;
@@ -139,11 +143,11 @@ public class PropertiesListViewModel extends AndroidViewModel {
             case LATEST:
                 return mPropertiesRepository.getLatestProperties(null, 0, LIMIT);
             case NEARBY:
-                mLatLngMutableLiveData.setValue(mSharedPrefs.getLastLocation());
-                LatLng value = mLatLngMutableLiveData.getValue();
-                return mPropertiesRepository.getProperties(0, LIMIT, SortBy.DISTANCE, value, null, null,
-                        null, null, null, null, null, value,
-                        5, null, null, null, null);
+                return Transformations.switchMap(mLatLngMutableLiveData, input -> {
+                    return mPropertiesRepository.getProperties(0, LIMIT, SortBy.DISTANCE, input, null, null,
+                            null, null, null, null, null, input,
+                            5, null, null, null, null);
+                });
             case POPULAR:
                 return mPropertiesRepository.getPopularProperties(null, 0, LIMIT);
             case FAVORITE:
@@ -171,4 +175,9 @@ public class PropertiesListViewModel extends AndroidViewModel {
     public void addFeedback(int propertyId, FeedbackType feedbackType) {
         mPropertiesRepository.addFeedback(propertyId, feedbackType);
     }
+
+    public void listenToLocationUpdates(LocationListener locationListener, long updateTime, long updateDistance){
+        mLocationUpdateListener.startListening(locationListener, updateTime, updateDistance);
+    }
+
 }

@@ -33,6 +33,7 @@ import ke.co.tonyoa.mahao.app.interfaces.OnSaveListener;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentEditPropertyBinding;
+import ke.co.tonyoa.mahao.ui.common.PickLocationFragment;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
