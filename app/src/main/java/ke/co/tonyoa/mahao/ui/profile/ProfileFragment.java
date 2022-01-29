@@ -73,6 +73,9 @@ public class ProfileFragment extends BaseFragment {
                     .into(layoutViewUserProfile.imageViewUser);
 
         });
+        mFragmentProfileBinding.layoutViewUserProfile.imageViewUser.setOnClickListener(v->{
+            navigate(MainFragmentDirections.actionNavigationMainToEditProfileFragment());
+        });
 
         boolean isAdmin = mProfileViewModel.isAdmin();
         for (View view: Arrays.asList(mFragmentProfileBinding.linearLayoutProfileUsers, mFragmentProfileBinding.linearLayoutProfileCategories,

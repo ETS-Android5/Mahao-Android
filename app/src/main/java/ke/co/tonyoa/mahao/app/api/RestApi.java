@@ -110,6 +110,19 @@ public interface RestApi {
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     Call<User> updateUser(@Header("Authorization") String token, @Body UpdateUserRequest updateUserRequest);
 
+
+    /**
+     * Update logged in user's profile picture
+     * @param token
+     * @param profilePicture
+     * @return
+     */
+    @Multipart
+    @POST("/api/v1/users/me/avatar")
+    @Headers({"Accept: application/json"})
+    Call<User> updateProfilePicture(@Header("Authorization") String token, @Part MultipartBody.Part profilePicture);
+
+
     /**
      * Create new user without the need to be logged in
      * @param createUserRequest
