@@ -26,6 +26,7 @@ public class EditPropertyViewModel extends AndroidViewModel {
     private PropertyCategory mSelectedPropertyCategory;
     private String mLocationName;
     private LatLng mCoordinates;
+    private boolean mInitialLoad = true;
     private MutableLiveData<Property> mPropertyMutableLiveData = new MutableLiveData<>();
     @Inject
     PropertyCategoriesRepository mPropertyCategoriesRepository;
@@ -34,6 +35,10 @@ public class EditPropertyViewModel extends AndroidViewModel {
     public EditPropertyViewModel(@NonNull Application application, Property property) {
         super(application);
         MahaoApplication.getInstance(application).getApplicationComponent().inject(this);
+        if (property != null){
+            mSelectedPropertyCategory = property.getPropertyCategory();
+            mLocationName = property.getLocationName();
+        }
         mPropertyMutableLiveData.postValue(property);
         mPropertyCategories = mPropertyCategoriesRepository.getPropertyCategories();
     }
@@ -77,5 +82,13 @@ public class EditPropertyViewModel extends AndroidViewModel {
 
     public LatLng getCoordinates() {
         return mCoordinates;
+    }
+
+    public boolean isInitialLoad() {
+        return mInitialLoad;
+    }
+
+    public void setInitialLoad(boolean initialLoad) {
+        mInitialLoad = initialLoad;
     }
 }

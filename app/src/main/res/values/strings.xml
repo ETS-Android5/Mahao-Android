@@ -135,4 +135,5 @@
     <string name="password_reset_successfully">The password was reset successfully</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="profile_updated_successfully">Profile Updated Successfully</string>
+    <string name="property_saved_successfully">Property saved successfully</string>
 </resources>

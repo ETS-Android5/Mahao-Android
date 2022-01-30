@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import ke.co.tonyoa.mahao.R;
@@ -41,7 +42,11 @@ public abstract class BaseFragment extends Fragment {
 
     protected final NavController getNavController() {
         if (mNavController == null) {
-            mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            Fragment fragmentById = requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
+            //mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            if (fragmentById != null) {
+                mNavController = ((NavHostFragment) fragmentById).getNavController();
+            }
         }
         return mNavController;
     }

@@ -472,5 +472,6 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
         newAmenities.removeAll(removed);
         mAmenityAdapter.submitList(newAmenities);
         mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyAmenities.setVisibility(newAmenities.size()>0?View.GONE:View.VISIBLE);
+        mFragmentViewPropertyBinding.textViewViewPropertyAmenities.setText(getString(R.string.d_amens, newAmenities.size()));
     }
 }

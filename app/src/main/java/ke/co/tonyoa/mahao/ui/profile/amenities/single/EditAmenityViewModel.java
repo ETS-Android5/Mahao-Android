@@ -10,17 +10,26 @@ import androidx.lifecycle.MutableLiveData;
 
 public class EditAmenityViewModel extends AndroidViewModel {
 
-    private MutableLiveData<Uri> mThumbnailUri = new MutableLiveData<>();
+    private Uri mThumbnailUri;
+    private boolean mInitialLoad = true;
 
     public EditAmenityViewModel(@NonNull Application application) {
         super(application);
     }
 
     public void setThumbnailUri(Uri uri){
-        mThumbnailUri.postValue(uri);
+        mThumbnailUri = uri;
     }
 
-    public LiveData<Uri> getThumbnailUri(){
+    public Uri getThumbnailUri(){
         return mThumbnailUri;
+    }
+
+    public boolean isInitialLoad() {
+        return mInitialLoad;
+    }
+
+    public void setInitialLoad(boolean initialLoad) {
+        mInitialLoad = initialLoad;
     }
 }

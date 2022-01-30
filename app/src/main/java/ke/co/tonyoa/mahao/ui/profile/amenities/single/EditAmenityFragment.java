@@ -78,13 +78,21 @@ public class EditAmenityFragment extends Fragment {
         mFragmentEditAmenityBinding = FragmentEditAmenityBinding.inflate(inflater, container, false);
         mImagePicker = new ImagePicker(this);
 
-        if (mAmenity != null) {
+        if (mAmenity != null && mEditAmenityViewModel.isInitialLoad()) {
             Glide.with(requireContext())
                     .load(mAmenity.getIcon())
                     .placeholder(R.drawable.ic_home_black_24dp)
                     .error(R.drawable.ic_home_black_24dp)
                     .into(mFragmentEditAmenityBinding.imageViewEditAmenityAmenity);
             mFragmentEditAmenityBinding.textInputEditTextEditAmenityAmenity.setText(mAmenity.getTitle());
+            mEditAmenityViewModel.setInitialLoad(false);
+        }
+        else if (mEditAmenityViewModel.getThumbnailUri() != null){
+            Glide.with(requireContext())
+                    .load(mEditAmenityViewModel.getThumbnailUri())
+                    .placeholder(R.drawable.ic_home_black_24dp)
+                    .error(R.drawable.ic_home_black_24dp)
+                    .into(mFragmentEditAmenityBinding.imageViewEditAmenityAmenity);
         }
 
         mFragmentEditAmenityBinding.buttonEditAmenitySave.setOnClickListener(v->{
@@ -97,7 +105,7 @@ public class EditAmenityFragment extends Fragment {
                     mFragmentEditAmenityBinding.textInputEditTextEditAmenityAmenity, mFragmentEditAmenityBinding.buttonEditAmenitySave);
             ViewUtils.load(mFragmentEditAmenityBinding.linearLayoutEditAmenityLoading, enabledViews, true);
             mSingleAmenityViewModel.saveAmenity(mAmenity==null?null:mAmenity.getId(),
-                    title, "Some Description", mEditAmenityViewModel.getThumbnailUri().getValue()).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
+                    title, "Some Description", mEditAmenityViewModel.getThumbnailUri()).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
                 ViewUtils.load(mFragmentEditAmenityBinding.linearLayoutEditAmenityLoading, enabledViews, false);
                 if (loginResponseAPIResponse!=null && loginResponseAPIResponse.isSuccessful()){
                     Toast.makeText(requireContext(), R.string.amenity_created_successfully, Toast.LENGTH_SHORT).show();
