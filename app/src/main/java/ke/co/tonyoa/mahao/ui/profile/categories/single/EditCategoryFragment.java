@@ -3,7 +3,6 @@ package ke.co.tonyoa.mahao.ui.profile.categories.single;
 import static ke.co.tonyoa.mahao.ui.profile.categories.single.SingleCategoryFragment.PROPERTY_CATEGORY_EXTRA;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -79,13 +78,21 @@ public class EditCategoryFragment extends Fragment {
         mFragmentEditCategoryBinding = FragmentEditCategoryBinding.inflate(inflater, container, false);
         mImagePicker = new ImagePicker(this);
 
-        if (mPropertyCategory != null) {
+        if (mPropertyCategory != null && mEditCategoryViewModel.isInitialLoad()) {
             Glide.with(requireContext())
                     .load(mPropertyCategory.getIcon())
                     .placeholder(R.drawable.ic_home_black_24dp)
                     .error(R.drawable.ic_home_black_24dp)
                     .into(mFragmentEditCategoryBinding.imageViewEditCategoryCategory);
             mFragmentEditCategoryBinding.textInputEditTextEditCategoryCategory.setText(mPropertyCategory.getTitle());
+            mEditCategoryViewModel.setInitialLoad(false);
+        }
+        else if (mEditCategoryViewModel.getThumbnailUri() != null){
+            Glide.with(requireContext())
+                    .load(mEditCategoryViewModel.getThumbnailUri())
+                    .placeholder(R.drawable.ic_home_black_24dp)
+                    .error(R.drawable.ic_home_black_24dp)
+                    .into(mFragmentEditCategoryBinding.imageViewEditCategoryCategory);
         }
 
         mFragmentEditCategoryBinding.buttonEditCategorySave.setOnClickListener(v->{
@@ -98,7 +105,7 @@ public class EditCategoryFragment extends Fragment {
                     mFragmentEditCategoryBinding.textInputEditTextEditCategoryCategory, mFragmentEditCategoryBinding.buttonEditCategorySave);
             ViewUtils.load(mFragmentEditCategoryBinding.linearLayoutEditCategoryLoading, enabledViews, true);
             mSingleCategoryViewModel.savePropertyCategory(mPropertyCategory==null?null:mPropertyCategory.getId(),
-                    title, "Some Description", mEditCategoryViewModel.getThumbnailUri().getValue()).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
+                    title, "Some Description", mEditCategoryViewModel.getThumbnailUri()).observe(getViewLifecycleOwner(), loginResponseAPIResponse -> {
                 ViewUtils.load(mFragmentEditCategoryBinding.linearLayoutEditCategoryLoading, enabledViews, false);
                 if (loginResponseAPIResponse!=null && loginResponseAPIResponse.isSuccessful()){
                     Toast.makeText(requireContext(), R.string.category_created_successfully, Toast.LENGTH_SHORT).show();

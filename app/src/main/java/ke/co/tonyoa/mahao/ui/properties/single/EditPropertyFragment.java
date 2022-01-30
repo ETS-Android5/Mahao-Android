@@ -103,7 +103,7 @@ public class EditPropertyFragment extends BaseFragment {
         });
 
         mEditPropertyViewModel.getProperty().observe(getViewLifecycleOwner(), property -> {
-            if (property!=null){
+            if (property!=null && mEditPropertyViewModel.isInitialLoad()){
                 Glide.with(requireContext())
                         .load(property.getFeatureImage())
                         .placeholder(R.drawable.ic_home_black_24dp)
@@ -112,16 +112,28 @@ public class EditPropertyFragment extends BaseFragment {
                 mFragmentEditPropertyBinding.textViewEditPropertyNoThumbnail.setVisibility(property.getFeatureImage()==null?
                         View.VISIBLE:View.GONE);
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyName.setText(property.getTitle());
-                PropertyCategory propertyCategory = property.getPropertyCategory();
-                if (propertyCategory!=null) {
-                    mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory.setText(propertyCategory.getTitle());
-                }
-                mEditPropertyViewModel.setSelectedPropertyCategory(propertyCategory);
-                mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(property.getLocationName());
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyBeds.setText(property.getNumBed()==null?null:property.getNumBed()+"");
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyBaths.setText(property.getNumBath()==null?null:property.getNumBath()+"");
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyPrice.setText(property.getPrice()==null?null:property.getPrice()+"");
                 mFragmentEditPropertyBinding.textInputEditTextEditPropertyDescription.setText(property.getDescription());
+                mFragmentEditPropertyBinding.autoCompleteTextViewEditPropertyCategory
+                        .setText(property.getPropertyCategory().getTitle());
+                mFragmentEditPropertyBinding.textInputEditTextEditPropertyLocation.setText(property.getLocationName());
+                mEditPropertyViewModel.setInitialLoad(false);
+            }
+            else if (mEditPropertyViewModel.getThumbnailUri() != null){
+                Glide.with(requireContext())
+                        .load(mEditPropertyViewModel.getThumbnailUri())
+                        .placeholder(R.drawable.ic_home_black_24dp)
+                        .error(R.drawable.ic_home_black_24dp)
+                        .into(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage);
+            }
+            else if (property != null){
+                Glide.with(requireContext())
+                        .load(property.getFeatureImage())
+                        .placeholder(R.drawable.ic_home_black_24dp)
+                        .error(R.drawable.ic_home_black_24dp)
+                        .into(mFragmentEditPropertyBinding.imageViewEditPropertyFeatureImage);
             }
         });
 
@@ -216,7 +228,7 @@ public class EditPropertyFragment extends BaseFragment {
                     mProperty==null || mProperty.getIsVerified()).observe(getViewLifecycleOwner(), propertyAPIResponse -> {
                 ViewUtils.load(mFragmentEditPropertyBinding.linearLayoutEditPropertyLoading, enabledViews, false);
                 if (propertyAPIResponse!=null && propertyAPIResponse.isSuccessful()){
-                    Toast.makeText(requireContext(), R.string.category_created_successfully, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.property_saved_successfully, Toast.LENGTH_SHORT).show();
                     if (mOnSaveListener!=null)
                         mOnSaveListener.onSave(propertyAPIResponse.body());
                 }
