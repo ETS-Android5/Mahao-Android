@@ -5,28 +5,34 @@ import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ke.co.tonyoa.mahao.app.api.APIResponse;
 import ke.co.tonyoa.mahao.app.api.ApiManager;
-import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
+import ke.co.tonyoa.mahao.app.paging.RepoResult;
+import ke.co.tonyoa.mahao.app.paging.CategoriesRepoDataSource;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 
 @Singleton
 public class PropertyCategoriesRepository {
-    private final ApiManager apiManager;
+    private final ApiManager mApiManager;
     private final SharedPrefs mSharedPrefs;
-    private Application mContext;
+    private final Application mContext;
 
     @Inject
     public PropertyCategoriesRepository(ApiManager apiManager, SharedPrefs sharedPrefs, Application context) {
-        this.apiManager = apiManager;
+        this.mApiManager = apiManager;
         this.mSharedPrefs = sharedPrefs;
         mContext = context;
     }
@@ -35,7 +41,7 @@ public class PropertyCategoriesRepository {
         MutableLiveData<APIResponse<List<PropertyCategory>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<PropertyCategory>> response = apiManager.getPropertyCategories(1, 5000);
+                APIResponse<List<PropertyCategory>> response = mApiManager.getPropertyCategories(1, 5000);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -45,11 +51,28 @@ public class PropertyCategoriesRepository {
         return liveData;
     }
 
+    public LiveData<RepoResult<PropertyCategory>> getPropertyCategoriesPaged(){
+        CategoriesRepoDataSource.PropertyCategoriesRepoDataSourceFactory collectorsRepoDataSourceFactory =
+                new CategoriesRepoDataSource.PropertyCategoriesRepoDataSourceFactory(mContext, mApiManager);
+        LiveData<PagedList<PropertyCategory>> pagedListLiveData = new LivePagedListBuilder<>(collectorsRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<PropertyCategory>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<PropertyCategory> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(collectorsRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
+                        CategoriesRepoDataSource::getLoadState),
+                Transformations.switchMap(collectorsRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
+                        CategoriesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
+    }
+
     public LiveData<APIResponse<PropertyCategory>> getPropertyCategoryById(int amenityId) {
         MutableLiveData<APIResponse<PropertyCategory>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<PropertyCategory> response = apiManager.getPropertyCategoryById(amenityId);
+                APIResponse<PropertyCategory> response = mApiManager.getPropertyCategoryById(amenityId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -63,7 +86,7 @@ public class PropertyCategoriesRepository {
         MutableLiveData<APIResponse<PropertyCategory>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<PropertyCategory> response = apiManager.createPropertyCategory(icon, title, description);
+                APIResponse<PropertyCategory> response = mApiManager.createPropertyCategory(icon, title, description);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -77,7 +100,7 @@ public class PropertyCategoriesRepository {
         MutableLiveData<APIResponse<PropertyCategory>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<PropertyCategory> response = apiManager.updatePropertyCategory(propertyCategoryId, icon, title, description);
+                APIResponse<PropertyCategory> response = mApiManager.updatePropertyCategory(propertyCategoryId, icon, title, description);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,7 +114,7 @@ public class PropertyCategoriesRepository {
         MutableLiveData<APIResponse<PropertyCategory>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<PropertyCategory> response = apiManager.deletePropertyCategoryById(propertyCategoryId);
+                APIResponse<PropertyCategory> response = mApiManager.deletePropertyCategoryById(propertyCategoryId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

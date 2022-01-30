@@ -29,11 +29,13 @@ public class EditPropertyViewModel extends AndroidViewModel {
     private MutableLiveData<Property> mPropertyMutableLiveData = new MutableLiveData<>();
     @Inject
     PropertyCategoriesRepository mPropertyCategoriesRepository;
+    private LiveData<APIResponse<List<PropertyCategory>>> mPropertyCategories;
 
     public EditPropertyViewModel(@NonNull Application application, Property property) {
         super(application);
         MahaoApplication.getInstance(application).getApplicationComponent().inject(this);
         mPropertyMutableLiveData.postValue(property);
+        mPropertyCategories = mPropertyCategoriesRepository.getPropertyCategories();
     }
 
     public void setThumbnailUri(Uri uri){
@@ -45,7 +47,7 @@ public class EditPropertyViewModel extends AndroidViewModel {
     }
 
     public LiveData<APIResponse<List<PropertyCategory>>> getPropertyCategories(){
-        return mPropertyCategoriesRepository.getPropertyCategories();
+        return mPropertyCategories;
     }
 
     public void setSelectedPropertyCategory(PropertyCategory propertyCategory){
