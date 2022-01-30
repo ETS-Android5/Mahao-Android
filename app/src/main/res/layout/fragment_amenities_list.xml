@@ -27,6 +27,13 @@
             app:spanCount="3" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/linearProgressIndicator_amenitiesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?actionBarSize"
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
     <FrameLayout
         android:layout_width="match_parent"

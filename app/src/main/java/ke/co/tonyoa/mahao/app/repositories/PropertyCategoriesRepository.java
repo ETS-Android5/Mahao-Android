@@ -52,17 +52,17 @@ public class PropertyCategoriesRepository {
     }
 
     public LiveData<RepoResult<PropertyCategory>> getPropertyCategoriesPaged(){
-        CategoriesRepoDataSource.PropertyCategoriesRepoDataSourceFactory collectorsRepoDataSourceFactory =
+        CategoriesRepoDataSource.PropertyCategoriesRepoDataSourceFactory propertyCategoriesRepoDataSourceFactory =
                 new CategoriesRepoDataSource.PropertyCategoriesRepoDataSourceFactory(mContext, mApiManager);
-        LiveData<PagedList<PropertyCategory>> pagedListLiveData = new LivePagedListBuilder<>(collectorsRepoDataSourceFactory,
+        LiveData<PagedList<PropertyCategory>> pagedListLiveData = new LivePagedListBuilder<>(propertyCategoriesRepoDataSourceFactory,
                 RepoDataSource.getDefaultPagedListConfig())
                 .setFetchExecutor(Executors.newFixedThreadPool(2))
                 .build();
         MutableLiveData<RepoResult<PropertyCategory>> repoResultMutableLiveData = new MutableLiveData<>();
         RepoResult<PropertyCategory> repoResult = new RepoResult<>(pagedListLiveData,
-                Transformations.switchMap(collectorsRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
+                Transformations.switchMap(propertyCategoriesRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
                         CategoriesRepoDataSource::getLoadState),
-                Transformations.switchMap(collectorsRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
+                Transformations.switchMap(propertyCategoriesRepoDataSourceFactory.getPropertyCategoriesRepoDataSource(),
                         CategoriesRepoDataSource::getNetworkErrors));
         repoResultMutableLiveData.postValue(repoResult);
         return repoResultMutableLiveData;

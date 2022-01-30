@@ -23,14 +23,16 @@ public class PropertyAmenitySelectViewModel extends AndroidViewModel {
     AmenitiesRepository mAmenitiesRepository;
     @Inject
     PropertiesRepository mPropertiesRepository;
+    private final LiveData<APIResponse<List<Amenity>>> mAmenities;
 
     public PropertyAmenitySelectViewModel(@NonNull Application application) {
         super(application);
         MahaoApplication.getInstance(application).getApplicationComponent().inject(this);
+        mAmenities = mAmenitiesRepository.getAmenities();
     }
 
     public LiveData<APIResponse<List<Amenity>>> getAmenities(){
-        return mAmenitiesRepository.getAmenities();
+        return mAmenities;
     }
 
     public LiveData<APIResponse<List<ModifyAmenitiesResponse>>> modifyAmenities(int propertyId, List<Integer> added, List<Integer> removed){

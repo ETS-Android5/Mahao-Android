@@ -7,21 +7,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.Objects;
 
-import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.databinding.ItemAmenityBinding;
 
-public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapter.AmenityViewHolder> {
+public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapterPaged.AmenityViewHolder> {
 
-    private Context mContext;
-    private OnItemClickListener<Amenity> mOnItemClickListener;
+    private final Context mContext;
+    private final OnItemClickListener<Amenity> mOnItemClickListener;
 
     public AmenityAdapter(Context context, OnItemClickListener<Amenity> onItemClickListener) {
         super(new DiffUtil.ItemCallback<Amenity>() {
@@ -41,38 +37,15 @@ public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapter.AmenityV
 
     @NonNull
     @Override
-    public AmenityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new AmenityViewHolder(ItemAmenityBinding.inflate(LayoutInflater.from(mContext), parent, false));
+    public AmenityAdapterPaged.AmenityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        return new AmenityAdapterPaged.AmenityViewHolder(mContext, ItemAmenityBinding.inflate(inflater, parent, false),
+                mOnItemClickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AmenityViewHolder holder, int position) {
-        holder.bind(position);
+    public void onBindViewHolder(@NonNull AmenityAdapterPaged.AmenityViewHolder holder, int position) {
+        holder.bind(getItem(position));
     }
 
-    class AmenityViewHolder extends RecyclerView.ViewHolder{
-
-        private ItemAmenityBinding mItemAmenityBinding;
-
-        public AmenityViewHolder(ItemAmenityBinding itemAmenityBinding) {
-            super(itemAmenityBinding.getRoot());
-            mItemAmenityBinding = itemAmenityBinding;
-            itemView.setOnClickListener(v->{
-                if (mOnItemClickListener!=null){
-                    Amenity amenity = getItem(getAdapterPosition());
-                    mOnItemClickListener.onItemClick(amenity, getAdapterPosition());
-                }
-            });
-        }
-
-        public void bind(int position){
-            Amenity amenity = getItem(position);
-            Glide.with(mContext)
-                    .load(amenity.getIcon())
-                    .placeholder(R.drawable.ic_home_black_24dp)
-                    .error(R.drawable.ic_home_black_24dp)
-                    .into(mItemAmenityBinding.imageViewItemAmenityIcon);
-            mItemAmenityBinding.textViewItemAmenityTitle.setText(amenity.getTitle());
-        }
-    }
 }
