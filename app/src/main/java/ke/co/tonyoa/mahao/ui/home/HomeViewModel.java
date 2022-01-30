@@ -70,7 +70,7 @@ public class HomeViewModel extends AndroidViewModel {
         mNearbyProperties = Transformations.switchMap(mLatLngMutableLiveData, new Function<LatLng, LiveData<APIResponse<List<Property>>>>() {
             @Override
             public LiveData<APIResponse<List<Property>>> apply(LatLng input) {
-                return mPropertiesRepository.getProperties(0, DEFAULT_LIMIT, SortBy.DISTANCE, input, null, null,
+                return mPropertiesRepository.getProperties(1, DEFAULT_LIMIT, SortBy.DISTANCE, input, null, null,
                         null, null, null, null, null, input,
                         5, null, null, null, null);
             }
@@ -79,7 +79,7 @@ public class HomeViewModel extends AndroidViewModel {
 
 
     public LiveData<APIResponse<List<Property>>> getRecommendedProperties() {
-        return mPropertiesRepository.getRecommendedProperties(null, 0, DEFAULT_LIMIT);
+        return mPropertiesRepository.getRecommendedProperties(null, 1, DEFAULT_LIMIT);
     }
 
     public LiveData<APIResponse<List<Property>>> getNearbyProperties() {
@@ -88,19 +88,19 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<APIResponse<List<Property>>> getLatestProperties() {
-        return mPropertiesRepository.getLatestProperties(null, 0, DEFAULT_LIMIT);
+        return mPropertiesRepository.getLatestProperties(null, 1, DEFAULT_LIMIT);
     }
 
     public LiveData<APIResponse<List<Property>>> getPopularProperties() {
-        return mPropertiesRepository.getPopularProperties(null, 0, DEFAULT_LIMIT);
+        return mPropertiesRepository.getPopularProperties(null, 1, DEFAULT_LIMIT);
     }
 
     public LiveData<APIResponse<List<Property>>> getFavoriteProperties() {
-        return mPropertiesRepository.getFavoriteProperties(0, DEFAULT_LIMIT);
+        return mPropertiesRepository.getFavoriteProperties(1, DEFAULT_LIMIT);
     }
 
     public LiveData<APIResponse<List<Property>>> getPersonalProperties() {
-        return mPropertiesRepository.getUserProperties(0, DEFAULT_LIMIT);
+        return mPropertiesRepository.getUserProperties(1, DEFAULT_LIMIT);
     }
 
     public LiveData<APIResponse<FavoriteResponse>> addFavorite(int propertyId){

@@ -91,4 +91,8 @@ dependencies {
 
     //RatingDialog
     implementation 'com.codemybrainsout.rating:ratingdialog:1.1.0'
+
+
+    //Paging 2 for Java support, no update to Paging 3
+    implementation "androidx.paging:paging-runtime:2.1.2"
 }

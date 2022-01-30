@@ -20,6 +20,7 @@ import java.util.List;
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.User;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentUsersListBinding;
 
@@ -54,7 +55,7 @@ public class UsersListFragment extends BaseFragment {
         mFragmentUsersListBinding.recyclerViewUsersList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         mFragmentUsersListBinding.recyclerViewUsersList.setAdapter(mUserAdapter);
         fetchData();
-        mFragmentUsersListBinding.swipeRefreshLayoutUsers.setOnRefreshListener(this::fetchData);
+        mFragmentUsersListBinding.swipeRefreshLayoutUsers.setOnRefreshListener(()-> mUsersListViewModel.invalidateList());
 
         return mFragmentUsersListBinding.getRoot();
     }
@@ -63,34 +64,38 @@ public class UsersListFragment extends BaseFragment {
         LinearLayout loadingView = mFragmentUsersListBinding.linearLayoutUsersListLoading;
         List<RecyclerView> enabledViews = Arrays.asList(mFragmentUsersListBinding.recyclerViewUsersList);
         ViewUtils.load(loadingView, enabledViews, true);
-        mUsersListViewModel.getUsers().observe(getViewLifecycleOwner(), listAPIResponse -> {
-            ViewUtils.load(loadingView, enabledViews, false);
-            int usersCount = 0;
-            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
-                List<User> users = listAPIResponse.body();
-                mUserAdapter.submitList(users);
-                if (users!=null)
-                    usersCount = users.size();
+        mUsersListViewModel.getUsers().observe(getViewLifecycleOwner(), userPagedList ->{
+            mUserAdapter.submitList(userPagedList);
+            if (userPagedList.getLoadedCount()>0){
+                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.VISIBLE);
+                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.GONE);
             }
             else {
-                Toast.makeText(requireContext(),
-                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
-                                getString(R.string.unknown_error):
-                                listAPIResponse.errorMessage(requireContext()),
-                        Toast.LENGTH_SHORT).show();
-                usersCount = mUserAdapter.getItemCount();
+                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.GONE);
+                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+        mUsersListViewModel.getLoadState().observe(getViewLifecycleOwner(), loadState->{
+            if (loadState != RepoDataSource.LOADING_ONGOING){
+                mFragmentUsersListBinding.swipeRefreshLayoutUsers.setRefreshing(false);
+                mFragmentUsersListBinding.linearProgressIndicatorUsersList.setVisibility(View.GONE);
+            }
+            else {
+                mFragmentUsersListBinding.linearProgressIndicatorUsersList.setVisibility(View.VISIBLE);
             }
 
-            if (usersCount>0){
-                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.GONE);
-                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.VISIBLE);
-            }
-            else {
-                mFragmentUsersListBinding.linearLayoutUsersListEmpty.setVisibility(View.VISIBLE);
-                mFragmentUsersListBinding.recyclerViewUsersList.setVisibility(View.GONE);
-            }
-            mFragmentUsersListBinding.swipeRefreshLayoutUsers.setRefreshing(false);
+            // No items loaded, and it is loading
+            ViewUtils.load(loadingView, enabledViews, mUserAdapter.getItemCount() == 0 && loadState == RepoDataSource.LOADING_ONGOING);
+            mUserAdapter.setLoadState(loadState);
         });
+        mUsersListViewModel.getErrors().observe(getViewLifecycleOwner(), error->{
+            if (error != null) {
+                // Show any errors other than one showing no next page found
+                if (!error.equalsIgnoreCase("Not Found") || mUserAdapter.getItemCount() == 0)
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
