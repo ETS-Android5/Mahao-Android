@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
-import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentCategoriesListBinding;
 
@@ -58,7 +57,7 @@ public class CategoriesListFragment extends BaseFragment {
         mFragmentCategoriesListBinding.recyclerViewCategoriesList.setLayoutManager(new GridLayoutManager(requireContext(), 3));
         mFragmentCategoriesListBinding.recyclerViewCategoriesList.setAdapter(mCategoryAdapter);
         fetchData();
-        mFragmentCategoriesListBinding.swipeRefreshLayoutCategories.setOnRefreshListener(this::fetchData);
+        mFragmentCategoriesListBinding.swipeRefreshLayoutCategories.setOnRefreshListener(()-> mCategoriesListViewModel.invalidateList());
 
         return mFragmentCategoriesListBinding.getRoot();
     }
@@ -67,33 +66,36 @@ public class CategoriesListFragment extends BaseFragment {
         LinearLayout loadingView = mFragmentCategoriesListBinding.linearLayoutCategoriesListLoading;
         List<RecyclerView> enabledViews = Arrays.asList(mFragmentCategoriesListBinding.recyclerViewCategoriesList);
         ViewUtils.load(loadingView, enabledViews, true);
-        mCategoriesListViewModel.getPropertyCategories().observe(getViewLifecycleOwner(), listAPIResponse -> {
-            ViewUtils.load(loadingView, enabledViews, false);
-            int propertyCount = 0;
-            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
-                List<PropertyCategory> propertyCategories = listAPIResponse.body();
-                mCategoryAdapter.submitList(propertyCategories);
-                if (propertyCategories!=null)
-                    propertyCount = propertyCategories.size();
+        mCategoriesListViewModel.getPropertyCategories().observe(getViewLifecycleOwner(), categoriesPagedList ->{
+            mCategoryAdapter.submitList(categoriesPagedList);
+            if (categoriesPagedList.getLoadedCount()>0){
+                mFragmentCategoriesListBinding.recyclerViewCategoriesList.setVisibility(View.VISIBLE);
+                mFragmentCategoriesListBinding.linearLayoutCategoriesListEmpty.setVisibility(View.GONE);
             }
             else {
-                Toast.makeText(requireContext(),
-                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
-                                getString(R.string.unknown_error):
-                                listAPIResponse.errorMessage(requireContext()),
-                        Toast.LENGTH_SHORT).show();
-                propertyCount = mCategoryAdapter.getItemCount();
+                mFragmentCategoriesListBinding.recyclerViewCategoriesList.setVisibility(View.GONE);
+                mFragmentCategoriesListBinding.linearLayoutCategoriesListEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+        mCategoriesListViewModel.getLoadState().observe(getViewLifecycleOwner(), loadState->{
+            if (loadState != RepoDataSource.LOADING_ONGOING){
+                mFragmentCategoriesListBinding.swipeRefreshLayoutCategories.setRefreshing(false);
+                mFragmentCategoriesListBinding.linearProgressIndicatorCategoriesList.setVisibility(View.GONE);
+            }
+            else {
+                mFragmentCategoriesListBinding.linearProgressIndicatorCategoriesList.setVisibility(View.VISIBLE);
             }
 
-            if (propertyCount>0){
-                mFragmentCategoriesListBinding.linearLayoutCategoriesListEmpty.setVisibility(View.GONE);
-                mFragmentCategoriesListBinding.recyclerViewCategoriesList.setVisibility(View.VISIBLE);
+            // No items loaded, and it is loading
+            ViewUtils.load(loadingView, enabledViews, mCategoryAdapter.getItemCount() == 0 && loadState == RepoDataSource.LOADING_ONGOING);
+            mCategoryAdapter.setLoadState(loadState);
+        });
+        mCategoriesListViewModel.getErrors().observe(getViewLifecycleOwner(), error->{
+            if (error != null) {
+                // Show any errors other than one showing no next page found
+                if (!error.equalsIgnoreCase("Not Found") || mCategoryAdapter.getItemCount() == 0)
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
-            else {
-                mFragmentCategoriesListBinding.linearLayoutCategoriesListEmpty.setVisibility(View.VISIBLE);
-                mFragmentCategoriesListBinding.recyclerViewCategoriesList.setVisibility(View.GONE);
-            }
-            mFragmentCategoriesListBinding.swipeRefreshLayoutCategories.setRefreshing(false);
         });
     }
 
