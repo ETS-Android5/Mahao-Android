@@ -21,12 +21,13 @@ import java.util.Objects;
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.interfaces.Bindable;
+import ke.co.tonyoa.mahao.app.interfaces.ListItemable;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.ItemHorizontalPropertyBinding;
 import ke.co.tonyoa.mahao.databinding.ItemVerticalPropertyBinding;
 
-public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.PropertyViewHolder> {
+public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.PropertyViewHolder> implements ListItemable<Property> {
 
     public enum ListType{
         HORIZONTAL_PROPERTY,
@@ -34,15 +35,14 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
     }
 
     private final ListType mListType;
-    private int mRecyclerViewWidth;
     private final Context mContext;
     private final OnItemClickListener<Property> mOnPropertyClickListener;
     private final OnItemClickListener<Property> mOnPropertyLikeListener;
-    private OnItemClickListener<Property> mOnPropertyReadListener;
+    private final OnItemClickListener<Property> mOnPropertyReadListener;
 
-    public PropertyAdapter(ListType listType, int recyclerViewWidth, Context context,
+    public PropertyAdapter(ListType listType, Context context,
                            OnItemClickListener<Property> onPropertyClickListener,
-                              OnItemClickListener<Property> onPropertyLikeListener,
+                           OnItemClickListener<Property> onPropertyLikeListener,
                            OnItemClickListener<Property> onPropertyReadListener) {
         super(new DiffUtil.ItemCallback<Property>() {
             @Override
@@ -56,7 +56,6 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
             }
         });
         mListType = listType;
-        mRecyclerViewWidth = recyclerViewWidth;
         mContext = context;
         mOnPropertyClickListener = onPropertyClickListener;
         mOnPropertyLikeListener = onPropertyLikeListener;
@@ -69,16 +68,12 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
     public PropertyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (mListType == ListType.HORIZONTAL_PROPERTY){
-            //Adjust to partially show next and previous items
-            ItemHorizontalPropertyBinding itemHorizontalPropertyBinding = ItemHorizontalPropertyBinding.inflate(inflater, parent, false);
-            int width = mRecyclerViewWidth;
-            ViewGroup.LayoutParams params = itemHorizontalPropertyBinding.getRoot().getLayoutParams();
-            //params.width = (int)(width * 0.8);
-            //itemHorizontalPropertyBinding.getRoot().setLayoutParams(params);
-            return new HorizontalPropertyViewHolder(itemHorizontalPropertyBinding);
+            return new HorizontalPropertyViewHolder(ItemHorizontalPropertyBinding.inflate(inflater, parent, false),
+                    mOnPropertyClickListener, mOnPropertyLikeListener, mContext, this);
         }
         else {
-            return new VerticalPropertyViewHolder(ItemVerticalPropertyBinding.inflate(inflater, parent, false));
+            return new VerticalPropertyViewHolder(ItemVerticalPropertyBinding.inflate(inflater, parent, false),
+                    mOnPropertyClickListener, mOnPropertyLikeListener, mContext, this);
         }
     }
 
@@ -98,6 +93,10 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
         }
     }
 
+    @Override
+    public Property getListItem(int position) {
+        return getItem(position);
+    }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -126,24 +125,39 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
     }
 
 
-    abstract static class PropertyViewHolder extends RecyclerView.ViewHolder implements Bindable{
-        public PropertyViewHolder(@NonNull View itemView) {
+    public abstract static class PropertyViewHolder extends RecyclerView.ViewHolder implements Bindable{
+        protected final OnItemClickListener<Property> mOnPropertyClickListener;
+        protected final OnItemClickListener<Property> mOnPropertyLikeListener;
+        protected final Context mContext;
+        protected final ListItemable<Property> mListItemable;
+
+        public PropertyViewHolder(@NonNull View itemView, OnItemClickListener<Property> onPropertyClickListener,
+                                  OnItemClickListener<Property> onPropertyLikeListener, Context context,
+                                  ListItemable<Property> listItemable) {
             super(itemView);
+            mOnPropertyClickListener = onPropertyClickListener;
+            mOnPropertyLikeListener = onPropertyLikeListener;
+            mContext = context;
+            mListItemable = listItemable;
         }
     }
 
-    class HorizontalPropertyViewHolder extends PropertyViewHolder{
+    public static class HorizontalPropertyViewHolder extends PropertyViewHolder{
 
         @NonNull
         private final ItemHorizontalPropertyBinding mItemHorizontalPropertyBinding;
 
-        public HorizontalPropertyViewHolder(ItemHorizontalPropertyBinding itemHorizontalPropertyBinding) {
-            super(itemHorizontalPropertyBinding.getRoot());
+        public HorizontalPropertyViewHolder(ItemHorizontalPropertyBinding itemHorizontalPropertyBinding,
+                                            OnItemClickListener<Property> onPropertyClickListener,
+                                            OnItemClickListener<Property> onPropertyLikeListener, Context context,
+                                            ListItemable<Property> listItemable) {
+            super(itemHorizontalPropertyBinding.getRoot(), onPropertyClickListener, onPropertyLikeListener,
+                    context, listItemable);
             mItemHorizontalPropertyBinding = itemHorizontalPropertyBinding;
             mItemHorizontalPropertyBinding.getRoot().setOnClickListener(v->{
                 if (mOnPropertyClickListener!=null){
                     int position = getAdapterPosition();
-                    Property property = getItem(position);
+                    Property property = listItemable.getListItem(position);
                     mOnPropertyClickListener.onItemClick(property, position);
                 }
             });
@@ -155,7 +169,7 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
                     mItemHorizontalPropertyBinding.animationViewItemHorizontalPropertyLoading.playAnimation();
                     
                     int position = getAdapterPosition();
-                    Property property = getItem(position);
+                    Property property = listItemable.getListItem(position);
                     // Make the favorite status to one opposite of the previous status
                     property.setIsFavorite(!property.getIsFavorite());
                     displayFavorite(property, true);
@@ -166,7 +180,9 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
 
         @Override
         public void bind(int position) {
-            Property property = getItem(position);
+            Property property = mListItemable.getListItem(position);
+            if (property == null)
+                return;
             Glide.with(mContext)
                     .load(property.getFeatureImage())
                     .placeholder(R.drawable.ic_home_black_24dp)
@@ -185,7 +201,7 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
 
         @Override
         public void like(int position) {
-            Property property = getItem(position);
+            Property property = mListItemable.getListItem(position);
             boolean isCurrentFavorite = mItemHorizontalPropertyBinding.animationViewItemHorizontalPropertyLike.getProgress()==1;
             // Only change state if it is different
             if (property.getIsFavorite()!=isCurrentFavorite){
@@ -213,18 +229,22 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
         }
     }
 
-    class VerticalPropertyViewHolder extends PropertyViewHolder{
+    public static class VerticalPropertyViewHolder extends PropertyViewHolder{
 
         @NonNull
         private final ItemVerticalPropertyBinding mItemVerticalPropertyBinding;
 
-        public VerticalPropertyViewHolder(ItemVerticalPropertyBinding itemVerticalPropertyBinding) {
-            super(itemVerticalPropertyBinding.getRoot());
+        public VerticalPropertyViewHolder(ItemVerticalPropertyBinding itemVerticalPropertyBinding,
+                                          OnItemClickListener<Property> onPropertyClickListener,
+                                          OnItemClickListener<Property> onPropertyLikeListener, Context context,
+                                          ListItemable<Property> listItemable) {
+            super(itemVerticalPropertyBinding.getRoot(), onPropertyClickListener, onPropertyLikeListener,
+                    context, listItemable);
             mItemVerticalPropertyBinding = itemVerticalPropertyBinding;
             mItemVerticalPropertyBinding.getRoot().setOnClickListener(v->{
                 if (mOnPropertyClickListener!=null){
                     int position = getAdapterPosition();
-                    Property property = getItem(position);
+                    Property property = listItemable.getListItem(position);
                     mOnPropertyClickListener.onItemClick(property, position);
                 }
             });
@@ -236,7 +256,7 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
                     mItemVerticalPropertyBinding.animationViewItemVerticalPropertyLike.playAnimation();
 
                     int position = getAdapterPosition();
-                    Property property = getItem(position);
+                    Property property = listItemable.getListItem(position);
                     // Make the favorite status to one opposite of the previous status
                     property.setIsFavorite(!property.getIsFavorite());
                     displayFavorite(property, true);
@@ -247,7 +267,9 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
 
         @Override
         public void bind(int position) {
-            Property property = getItem(position);
+            Property property = mListItemable.getListItem(position);
+            if (property == null)
+                return;
             Glide.with(mContext)
                     .load(property.getFeatureImage())
                     .placeholder(R.drawable.ic_home_black_24dp)
@@ -267,7 +289,7 @@ public class PropertyAdapter extends ListAdapter<Property, PropertyAdapter.Prope
 
         @Override
         public void like(int position) {
-            Property property = getItem(position);
+            Property property = mListItemable.getListItem(position);
             boolean isCurrentFavorite = mItemVerticalPropertyBinding.animationViewItemVerticalPropertyLike.getProgress()==1;
             // Only change state if it is different
             if (property.getIsFavorite()!=isCurrentFavorite){

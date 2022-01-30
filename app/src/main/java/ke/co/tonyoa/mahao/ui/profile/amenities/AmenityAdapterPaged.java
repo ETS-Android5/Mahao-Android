@@ -15,13 +15,15 @@ import java.util.Objects;
 
 import ke.co.tonyoa.mahao.R;
 import ke.co.tonyoa.mahao.app.api.responses.Amenity;
+import ke.co.tonyoa.mahao.app.interfaces.ListItemable;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
 import ke.co.tonyoa.mahao.databinding.ItemAmenityBinding;
 import ke.co.tonyoa.mahao.databinding.ItemLoadingBinding;
 import ke.co.tonyoa.mahao.ui.common.LoadingViewHolder;
 
-public class AmenityAdapterPaged extends PagedListAdapter<Amenity, RecyclerView.ViewHolder> {
+public class AmenityAdapterPaged extends PagedListAdapter<Amenity, RecyclerView.ViewHolder> implements
+        ListItemable<Amenity> {
 
     private static final int TYPE_LOAD = 1;
     private static final int TYPE_AMENITY = 2;
@@ -52,7 +54,7 @@ public class AmenityAdapterPaged extends PagedListAdapter<Amenity, RecyclerView.
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (viewType == TYPE_AMENITY) {
             return new AmenityViewHolder(mContext, ItemAmenityBinding.inflate(inflater, parent, false),
-                    mOnItemClickListener);
+                    mOnItemClickListener, this);
         }
         else {
             return new LoadingViewHolder(ItemLoadingBinding.inflate(inflater, parent, false));
@@ -83,19 +85,33 @@ public class AmenityAdapterPaged extends PagedListAdapter<Amenity, RecyclerView.
         notifyItemChanged(getItemCount()-1);
     }
 
+    @Override
+    public Amenity getListItem(int position) {
+        return getItem(position);
+    }
+
 
     public static class AmenityViewHolder extends RecyclerView.ViewHolder{
 
         private final Context mContext;
         private final ItemAmenityBinding mItemAmenityBinding;
         private final OnItemClickListener<Amenity> mOnItemClickListener;
+        private ListItemable<Amenity> mListItemable;
 
         public AmenityViewHolder(Context context, ItemAmenityBinding itemAmenityBinding,
-                                 OnItemClickListener<Amenity> onItemClickListener) {
+                                 OnItemClickListener<Amenity> onItemClickListener,
+                                 ListItemable<Amenity> listItemable) {
             super(itemAmenityBinding.getRoot());
             mContext = context;
             mItemAmenityBinding = itemAmenityBinding;
             mOnItemClickListener = onItemClickListener;
+            mListItemable = listItemable;
+            itemView.setOnClickListener(v->{
+                if (mOnItemClickListener !=null){
+                    mOnItemClickListener.onItemClick(mListItemable.getListItem(getAdapterPosition()),
+                            getAdapterPosition());
+                }
+            });
         }
 
         public void bind(Amenity amenity){
@@ -107,12 +123,6 @@ public class AmenityAdapterPaged extends PagedListAdapter<Amenity, RecyclerView.
                     .error(R.drawable.ic_home_black_24dp)
                     .into(mItemAmenityBinding.imageViewItemAmenityIcon);
             mItemAmenityBinding.textViewItemAmenityTitle.setText(amenity.getTitle());
-
-            itemView.setOnClickListener(v->{
-                if (mOnItemClickListener !=null){
-                    mOnItemClickListener.onItemClick(amenity, getAdapterPosition());
-                }
-            });
         }
     }
 }

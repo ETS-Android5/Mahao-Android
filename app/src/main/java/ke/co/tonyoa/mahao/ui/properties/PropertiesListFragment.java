@@ -35,6 +35,7 @@ import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentPropertiesListBinding;
 import ke.co.tonyoa.mahao.ui.main.MainFragmentDirections;
@@ -56,7 +57,7 @@ public class PropertiesListFragment extends BaseFragment {
     private FragmentPropertiesListBinding mFragmentPropertiesListBinding;
     private PropertiesListViewModel mPropertiesListViewModel;
     private PropertyListType mPropertyListType;
-    private PropertyAdapter mPropertyAdapter;
+    private PropertyAdapterPaged mPropertyAdapter;
     private ActivityResultLauncher<String> mPermissionResultLauncher;
     private ActivityResultLauncher<Intent> mLocationEnableLauncher;
 
@@ -115,8 +116,8 @@ public class PropertiesListFragment extends BaseFragment {
                 }
             };
         }
-        mPropertyAdapter = new PropertyAdapter(PropertyAdapter.ListType.VERTICAL_PROPERTY,
-                mFragmentPropertiesListBinding.recyclerViewPropertiesList.getWidth(), requireContext(),
+        mPropertyAdapter = new PropertyAdapterPaged(PropertyAdapter.ListType.VERTICAL_PROPERTY,
+                requireContext(),
                 (property, position) -> {
                     navigate(MainFragmentDirections.actionNavigationMainToSinglePropertyFragment(property));
                 }, (property, position) -> {
@@ -155,7 +156,7 @@ public class PropertiesListFragment extends BaseFragment {
                 LinearLayoutManager.VERTICAL, false));
         mFragmentPropertiesListBinding.recyclerViewPropertiesList.setAdapter(mPropertyAdapter);
         fetchData();
-        mFragmentPropertiesListBinding.getRoot().setOnRefreshListener(this::fetchData);
+        mFragmentPropertiesListBinding.getRoot().setOnRefreshListener(()->mPropertiesListViewModel.invalidateList());
 
         return mFragmentPropertiesListBinding.getRoot();
     }
@@ -172,33 +173,36 @@ public class PropertiesListFragment extends BaseFragment {
         LinearLayout loadingView = mFragmentPropertiesListBinding.linearLayoutPropertiesListLoading;
         List<RecyclerView> enabledViews = Arrays.asList(mFragmentPropertiesListBinding.recyclerViewPropertiesList);
         ViewUtils.load(loadingView, enabledViews, true);
-        mPropertiesListViewModel.getPropertiesLiveData().observe(getViewLifecycleOwner(), listAPIResponse -> {
-            ViewUtils.load(loadingView, enabledViews, false);
-            int propertyCount = 0;
-            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
-                List<Property> properties = listAPIResponse.body();
-                mPropertyAdapter.submitList(properties);
-                if (properties!=null)
-                    propertyCount = properties.size();
+        mPropertiesListViewModel.getPropertiesLiveData().observe(getViewLifecycleOwner(), propertyPagedList ->{
+            mPropertyAdapter.submitList(propertyPagedList);
+            if (propertyPagedList.getLoadedCount()>0){
+                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.VISIBLE);
+                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.GONE);
             }
             else {
-                Toast.makeText(requireContext(),
-                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
-                                getString(R.string.unknown_error):
-                                listAPIResponse.errorMessage(requireContext()),
-                        Toast.LENGTH_SHORT).show();
-                propertyCount = mPropertyAdapter.getItemCount();
+                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.GONE);
+                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+        mPropertiesListViewModel.getLoadState().observe(getViewLifecycleOwner(), loadState->{
+            if (loadState != RepoDataSource.LOADING_ONGOING){
+                mFragmentPropertiesListBinding.getRoot().setRefreshing(false);
+                mFragmentPropertiesListBinding.linearProgressIndicatorPropertiesList.setVisibility(View.GONE);
+            }
+            else {
+                mFragmentPropertiesListBinding.linearProgressIndicatorPropertiesList.setVisibility(View.VISIBLE);
             }
 
-            if (propertyCount>0){
-                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.GONE);
-                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.VISIBLE);
+            // No items loaded, and it is loading
+            ViewUtils.load(loadingView, enabledViews, mPropertyAdapter.getItemCount() == 0 && loadState == RepoDataSource.LOADING_ONGOING);
+            mPropertyAdapter.setLoadState(loadState);
+        });
+        mPropertiesListViewModel.getErrors().observe(getViewLifecycleOwner(), error->{
+            if (error != null) {
+                // Show any errors other than one showing no next page found
+                if (!error.equalsIgnoreCase("Not Found") || mPropertyAdapter.getItemCount() == 0)
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
-            else {
-                mFragmentPropertiesListBinding.linearLayoutPropertiesListEmpty.setVisibility(View.VISIBLE);
-                mFragmentPropertiesListBinding.recyclerViewPropertiesList.setVisibility(View.GONE);
-            }
-            mFragmentPropertiesListBinding.getRoot().setRefreshing(false);
         });
     }
 

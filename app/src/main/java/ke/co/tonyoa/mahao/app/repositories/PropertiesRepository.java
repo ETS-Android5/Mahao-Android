@@ -5,11 +5,15 @@ import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,17 +28,21 @@ import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyPhoto;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
+import ke.co.tonyoa.mahao.app.paging.PropertiesRepoDataSource;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
+import ke.co.tonyoa.mahao.app.paging.RepoResult;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
+import ke.co.tonyoa.mahao.ui.properties.PropertiesListFragment;
 
 @Singleton
 public class PropertiesRepository {
-    private final ApiManager apiManager;
+    private final ApiManager mApiManager;
     private final SharedPrefs mSharedPrefs;
-    private Application mContext;
+    private final Application mContext;
 
     @Inject
     public PropertiesRepository(ApiManager apiManager, SharedPrefs sharedPrefs, Application context) {
-        this.apiManager = apiManager;
+        this.mApiManager = apiManager;
         this.mSharedPrefs = sharedPrefs;
         mContext = context;
     }
@@ -47,7 +55,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getProperties(page, limit,
+                APIResponse<List<Property>> response = mApiManager.getProperties(page, limit,
                         sortBy, latLngSort, query, minBed, maxBed, minBath, maxBath, minPrice, maxPrice,
                         latLngFilter, filterRadius, isVerified, isEnabled, categories, amenities);
                 liveData.postValue(response);
@@ -59,11 +67,35 @@ public class PropertiesRepository {
         return liveData;
     }
 
+    public LiveData<RepoResult<Property>> getPropertiesPaged(SortBy sortBy, LatLng latLngSort,
+                                                             String query, Integer minBed, Integer maxBed, Integer minBath,
+                                                             Integer maxBath, Float minPrice, Float maxPrice,
+                                                             LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
+                                                             Boolean isEnabled, List<Integer> categories, List<Integer> amenities){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.ALL, sortBy, latLngSort, query, minBed,
+                        maxBed, minBath, maxBath, minPrice, maxPrice, latLngFilter, filterRadius, isVerified,
+                        isEnabled, categories, amenities, null);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
+    }
+
     public LiveData<APIResponse<List<Property>>> getUserProperties(int page, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getUserProperties(page, limit);
+                APIResponse<List<Property>> response = mApiManager.getUserProperties(page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -71,13 +103,31 @@ public class PropertiesRepository {
             }
         });
         return liveData;
+    }
+
+    public LiveData<RepoResult<Property>> getUserPropertiesPaged(){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.PERSONAL);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
     }
 
     public LiveData<APIResponse<List<Property>>> getFavoriteProperties(int page, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getFavoriteProperties(page, limit);
+                APIResponse<List<Property>> response = mApiManager.getFavoriteProperties(page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,13 +135,31 @@ public class PropertiesRepository {
             }
         });
         return liveData;
+    }
+
+    public LiveData<RepoResult<Property>> getFavoritePropertiesPaged(){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.FAVORITE);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
     }
 
     public LiveData<APIResponse<List<Property>>> getLatestProperties(Integer category, int page, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getLatestProperties(category, page, limit);
+                APIResponse<List<Property>> response = mApiManager.getLatestProperties(category, page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,13 +167,31 @@ public class PropertiesRepository {
             }
         });
         return liveData;
+    }
+
+    public LiveData<RepoResult<Property>> getLatestPropertiesPaged(Integer category){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.LATEST, category);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
     }
 
     public LiveData<APIResponse<List<Property>>> getPopularProperties(Integer category, int page, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getPopularProperties(category, page, limit);
+                APIResponse<List<Property>> response = mApiManager.getPopularProperties(category, page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -115,11 +201,29 @@ public class PropertiesRepository {
         return liveData;
     }
 
+    public LiveData<RepoResult<Property>> getPopularPropertiesPaged(Integer category){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.POPULAR, category);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
+    }
+
     public LiveData<APIResponse<List<Property>>> getRecommendedProperties(Integer category, int page, int limit) {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getRecommendedProperties(category, page, limit);
+                APIResponse<List<Property>> response = mApiManager.getRecommendedProperties(category, page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -127,6 +231,24 @@ public class PropertiesRepository {
             }
         });
         return liveData;
+    }
+
+    public LiveData<RepoResult<Property>> getRecommendedPropertiesPaged(Integer category){
+        PropertiesRepoDataSource.PropertiesRepoDataSourceFactory propertiesRepoDataSourceFactory =
+                new PropertiesRepoDataSource.PropertiesRepoDataSourceFactory(mContext, mApiManager,
+                        PropertiesListFragment.PropertyListType.RECOMMENDED, category);
+        LiveData<PagedList<Property>> pagedListLiveData = new LivePagedListBuilder<>(propertiesRepoDataSourceFactory,
+                RepoDataSource.getDefaultPagedListConfig())
+                .setFetchExecutor(Executors.newFixedThreadPool(2))
+                .build();
+        MutableLiveData<RepoResult<Property>> repoResultMutableLiveData = new MutableLiveData<>();
+        RepoResult<Property> repoResult = new RepoResult<>(pagedListLiveData,
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getLoadState),
+                Transformations.switchMap(propertiesRepoDataSourceFactory.getPropertiesRepoDataSource(),
+                        PropertiesRepoDataSource::getNetworkErrors));
+        repoResultMutableLiveData.postValue(repoResult);
+        return repoResultMutableLiveData;
     }
 
     public LiveData<APIResponse<List<Property>>> getSimilarProperties(int propertyId, Integer category,
@@ -134,7 +256,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<List<Property>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Property>> response = apiManager.getSimilarProperties(propertyId,
+                APIResponse<List<Property>> response = mApiManager.getSimilarProperties(propertyId,
                         category, page, limit);
                 liveData.postValue(response);
             } catch (IOException e) {
@@ -149,7 +271,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Property> response = apiManager.getPropertyById(propertyId);
+                APIResponse<Property> response = mApiManager.getPropertyById(propertyId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -165,7 +287,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Property> response = apiManager.createProperty(featureImage, propertyCategoryId,
+                APIResponse<Property> response = mApiManager.createProperty(featureImage, propertyCategoryId,
                         title, description, numBed, numBath, locationName, price, latLng, isEnabled,
                         isVerified);
                 liveData.postValue(response);
@@ -181,7 +303,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Property> response = apiManager.createProperty(createPropertyRequest);
+                APIResponse<Property> response = mApiManager.createProperty(createPropertyRequest);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -199,7 +321,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Property> response = apiManager.updateProperty(propertyId, featureImage,
+                APIResponse<Property> response = mApiManager.updateProperty(propertyId, featureImage,
                         propertyCategoryId, title, description, numBed, numBath, locationName,
                         price, latLng, isEnabled, isVerified);
                 liveData.postValue(response);
@@ -215,7 +337,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Property>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Property> response = apiManager.deletePropertyById(propertyId);
+                APIResponse<Property> response = mApiManager.deletePropertyById(propertyId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -231,7 +353,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<List<ModifyAmenitiesResponse>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<ModifyAmenitiesResponse>> response = apiManager.modifyPropertyAmenities(propertyId,
+                APIResponse<List<ModifyAmenitiesResponse>> response = mApiManager.modifyPropertyAmenities(propertyId,
                         added, removed);
                 liveData.postValue(response);
             } catch (IOException e) {
@@ -246,7 +368,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<FavoriteResponse>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<FavoriteResponse> response = apiManager.addFavorite(propertyId);
+                APIResponse<FavoriteResponse> response = mApiManager.addFavorite(propertyId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -260,7 +382,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<FavoriteResponse>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<FavoriteResponse> response = apiManager.removeFavorite(propertyId);
+                APIResponse<FavoriteResponse> response = mApiManager.removeFavorite(propertyId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -274,7 +396,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<Feedback>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<Feedback> response = apiManager.addFeedback(propertyId, feedbackType);
+                APIResponse<Feedback> response = mApiManager.addFeedback(propertyId, feedbackType);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -288,7 +410,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<List<PropertyPhoto>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<PropertyPhoto>> response = apiManager.addPropertyPhotos(propertyId, photos);
+                APIResponse<List<PropertyPhoto>> response = mApiManager.addPropertyPhotos(propertyId, photos);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -302,7 +424,7 @@ public class PropertiesRepository {
         MutableLiveData<APIResponse<PropertyPhoto>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<PropertyPhoto> response = apiManager.removePropertyPhoto(propertyId, propertyPhotoId);
+                APIResponse<PropertyPhoto> response = mApiManager.removePropertyPhoto(propertyId, propertyPhotoId);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

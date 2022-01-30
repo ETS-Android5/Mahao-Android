@@ -247,7 +247,6 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             mFragmentViewPropertyBinding.layoutSomeHousesRecommended.textViewSomeHousesTitle.setText(R.string.related);
             RecyclerView recyclerViewSomeHouses = mFragmentViewPropertyBinding.layoutSomeHousesRecommended.recyclerViewSomeHouses;
             mPropertyAdapterRecommended = new PropertyAdapter(PropertyAdapter.ListType.HORIZONTAL_PROPERTY,
-                    recyclerViewSomeHouses.getWidth(),
                     requireContext(), (property, position) -> {
                         navigate(SinglePropertyFragmentDirections.actionSinglePropertyFragmentSelf(property));
                     },  (property, position) -> {

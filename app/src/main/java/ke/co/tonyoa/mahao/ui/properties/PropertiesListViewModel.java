@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.location.LocationListener;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.paging.PagedList;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -26,25 +26,28 @@ import ke.co.tonyoa.mahao.app.api.responses.Property;
 import ke.co.tonyoa.mahao.app.api.responses.PropertyCategory;
 import ke.co.tonyoa.mahao.app.enums.FeedbackType;
 import ke.co.tonyoa.mahao.app.enums.SortBy;
+import ke.co.tonyoa.mahao.app.paging.RepoResult;
 import ke.co.tonyoa.mahao.app.repositories.PropertiesRepository;
 import ke.co.tonyoa.mahao.app.sharedprefs.SharedPrefs;
 import ke.co.tonyoa.mahao.app.utils.LocationUpdateListener;
 
 public class PropertiesListViewModel extends AndroidViewModel {
 
-    public static final int LIMIT = 2000;
     @Inject
     PropertiesRepository mPropertiesRepository;
     @Inject
     SharedPrefs mSharedPrefs;
     @Inject
     LocationUpdateListener mLocationUpdateListener;
-    private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> mUserIdLiveData = new MutableLiveData<>();
-    private LiveData<APIResponse<List<Property>>> mPropertiesLiveData;
-    private LiveData<PropertiesViewModel.FilterAndSort> mFilterAndSortLiveData;
+    private final MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> mUserIdLiveData = new MutableLiveData<>();
+    private final LiveData<RepoResult<Property>> mRepoResult;
+    private final LiveData<PagedList<Property>> mPropertiesLiveData;
+    private final LiveData<Integer> mLoadState;
+    private final LiveData<String> mErrors;
+    private final LiveData<PropertiesViewModel.FilterAndSort> mFilterAndSortLiveData;
 
-    private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(SharedPrefs.KEY_LAST_COORDINATES)){
@@ -55,7 +58,7 @@ public class PropertiesListViewModel extends AndroidViewModel {
             }
         }
     };
-    private PropertiesListFragment.PropertyListType mPropertyListType;
+    private final PropertiesListFragment.PropertyListType mPropertyListType;
 
     public PropertiesListViewModel(@NonNull Application application,
                                    PropertiesListFragment.PropertyListType propertyListType,
@@ -70,15 +73,17 @@ public class PropertiesListViewModel extends AndroidViewModel {
         mUserIdLiveData.setValue(mSharedPrefs.getUserId());
 
         // If user changes, fetch data again
-        mPropertiesLiveData = Transformations.switchMap(mUserIdLiveData, input -> getProperties());
+        mRepoResult = Transformations.switchMap(mUserIdLiveData, input -> getRepoResult());
+        mPropertiesLiveData = Transformations.switchMap(mRepoResult, RepoResult::getData);
+        mLoadState = Transformations.switchMap(mRepoResult, RepoResult::getLoadState);
+        mErrors = Transformations.switchMap(mRepoResult, RepoResult::getNetworkErrors);
     }
 
-    private LiveData<APIResponse<List<Property>>> getProperties(){
-        switch (mPropertyListType){
-            case ALL:
-                return Transformations.switchMap(mFilterAndSortLiveData, new Function<PropertiesViewModel.FilterAndSort, LiveData<APIResponse<List<Property>>>>() {
-                    @Override
-                    public LiveData<APIResponse<List<Property>>> apply(PropertiesViewModel.FilterAndSort input) {
+    private LiveData<RepoResult<Property>> getRepoResult(){
+        return Transformations.switchMap(mUserIdLiveData, input -> {
+            switch (mPropertyListType){
+                case ALL:
+                    return Transformations.switchMap(mFilterAndSortLiveData, filter -> {
                         SortBy sortBy = null;
                         LatLng latLngSort = mSharedPrefs.getLastLocation();
                         String query = null;
@@ -92,12 +97,12 @@ public class PropertiesListViewModel extends AndroidViewModel {
                         Integer filterRadius = null;
                         List<Integer> categories = new ArrayList<>();
                         List<Integer> amenities = new ArrayList<>();
-                        if (input != null){
+                        if (filter != null){
                             // Sort
-                            PropertiesViewModel.SortBy actualSortBy = input.getSortBy();
+                            PropertiesViewModel.SortBy actualSortBy = filter.getSortBy();
                             if (actualSortBy != null) {
                                 PropertiesViewModel.SortOrder sortOrder = actualSortBy.getSortOrder();
-                                switch (input.getSortBy().getSortColumn()) {
+                                switch (filter.getSortBy().getSortColumn()) {
                                     case TIME:
                                         sortBy = sortOrder == PropertiesViewModel.SortOrder.DESC ? SortBy.NEG_TIME : SortBy.TIME;
                                         break;
@@ -110,7 +115,7 @@ public class PropertiesListViewModel extends AndroidViewModel {
                                 }
                             }
 
-                            FilterPropertiesFragment.PropertyFilter propertyFilter = input.getPropertyFilter();
+                            FilterPropertiesFragment.PropertyFilter propertyFilter = filter.getPropertyFilter();
                             if (propertyFilter != null) {
                                 query = propertyFilter.getQuery();
                                 minBed = propertyFilter.getMinBed();
@@ -134,34 +139,48 @@ public class PropertiesListViewModel extends AndroidViewModel {
                                 }
                             }
                         }
-                        return mPropertiesRepository.getProperties(1, LIMIT, sortBy, latLngSort,
+                        return mPropertiesRepository.getPropertiesPaged(sortBy, latLngSort,
                                 query, minBed, maxBed, minBath, maxBath, minPrice,
                                 maxPrice, latLngFilter, filterRadius, null, null,
                                 categories, amenities);
-                    }
-                });
-            case LATEST:
-                return mPropertiesRepository.getLatestProperties(null, 1, LIMIT);
-            case NEARBY:
-                return Transformations.switchMap(mLatLngMutableLiveData, input -> {
-                    return mPropertiesRepository.getProperties(1, LIMIT, SortBy.DISTANCE, input, null, null,
-                            null, null, null, null, null, input,
-                            5, null, null, null, null);
-                });
-            case POPULAR:
-                return mPropertiesRepository.getPopularProperties(null, 1, LIMIT);
-            case FAVORITE:
-                return mPropertiesRepository.getFavoriteProperties(1, LIMIT);
-            case PERSONAL:
-                return mPropertiesRepository.getUserProperties(1, LIMIT);
-            case RECOMMENDED:
-                return mPropertiesRepository.getRecommendedProperties(null, 1, LIMIT);
-        }
-        return null;
+                    });
+                case LATEST:
+                    return mPropertiesRepository.getLatestPropertiesPaged(null);
+                case NEARBY:
+                    return Transformations.switchMap(mLatLngMutableLiveData,
+                            latLng -> mPropertiesRepository.getPropertiesPaged(SortBy.DISTANCE, latLng, null, null,
+                            null, null, null, null, null, latLng,
+                            5, null, null, null, null));
+                case POPULAR:
+                    return mPropertiesRepository.getPopularPropertiesPaged(null);
+                case FAVORITE:
+                    return mPropertiesRepository.getFavoritePropertiesPaged();
+                case PERSONAL:
+                    return mPropertiesRepository.getUserPropertiesPaged();
+                case RECOMMENDED:
+                    return mPropertiesRepository.getRecommendedPropertiesPaged(null);
+            }
+            return null;
+        });
     }
 
-    public LiveData<APIResponse<List<Property>>> getPropertiesLiveData(){
+    public LiveData<PagedList<Property>> getPropertiesLiveData(){
         return mPropertiesLiveData;
+    }
+
+    public LiveData<Integer> getLoadState() {
+        return mLoadState;
+    }
+
+    public LiveData<String> getErrors() {
+        return mErrors;
+    }
+
+    public void invalidateList(){
+        PagedList<Property> value = mPropertiesLiveData.getValue();
+        if (value != null) {
+            value.getDataSource().invalidate();
+        }
     }
 
     public LiveData<APIResponse<FavoriteResponse>> addFavorite(int propertyId) {

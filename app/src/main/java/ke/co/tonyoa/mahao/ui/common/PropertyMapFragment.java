@@ -256,7 +256,7 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
                 });
 
         mPropertyAdapter = new PropertyAdapter(PropertyAdapter.ListType.VERTICAL_PROPERTY,
-                mFragmentPropertyMapBinding.layoutBottomsheetMap.recyclerViewBottomSheetMapProperties.getWidth(), requireContext(),
+                requireContext(),
                 (property, position) -> {
                     if (mPropertyId >= 0) {
                         navigate(PropertyMapFragmentDirections.actionPropertyMapFragmentToSinglePropertyFragment(property));
@@ -299,7 +299,6 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
         mFragmentPropertyMapBinding.layoutBottomsheetMap.recyclerViewBottomSheetMapProperties.setLayoutManager(new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.VERTICAL, false));
         mFragmentPropertyMapBinding.layoutBottomsheetMap.recyclerViewBottomSheetMapProperties.setAdapter(mPropertyAdapter);
-
 
         return mFragmentPropertyMapBinding.getRoot();
     }

@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.ListAdapter;
 import java.util.Objects;
 
 import ke.co.tonyoa.mahao.app.api.responses.Amenity;
+import ke.co.tonyoa.mahao.app.interfaces.ListItemable;
 import ke.co.tonyoa.mahao.app.interfaces.OnItemClickListener;
 import ke.co.tonyoa.mahao.databinding.ItemAmenityBinding;
 
-public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapterPaged.AmenityViewHolder> {
+public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapterPaged.AmenityViewHolder>
+        implements ListItemable<Amenity> {
 
     private final Context mContext;
     private final OnItemClickListener<Amenity> mOnItemClickListener;
@@ -40,7 +42,7 @@ public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapterPaged.Ame
     public AmenityAdapterPaged.AmenityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         return new AmenityAdapterPaged.AmenityViewHolder(mContext, ItemAmenityBinding.inflate(inflater, parent, false),
-                mOnItemClickListener);
+                mOnItemClickListener, this);
     }
 
     @Override
@@ -48,4 +50,8 @@ public class AmenityAdapter extends ListAdapter<Amenity, AmenityAdapterPaged.Ame
         holder.bind(getItem(position));
     }
 
+    @Override
+    public Amenity getListItem(int position) {
+        return getItem(position);
+    }
 }

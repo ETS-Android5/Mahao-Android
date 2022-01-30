@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.location.LocationListener;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -38,12 +37,12 @@ public class HomeViewModel extends AndroidViewModel {
     SharedPrefs mSharedPrefs;
     @Inject
     LocationUpdateListener mLocationUpdateListener;
-    private MutableLiveData<String> mNameLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> mProfilePictureLiveData = new MutableLiveData<>();
-    private MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
-    private LiveData<APIResponse<List<Property>>> mNearbyProperties;
+    private final MutableLiveData<String> mNameLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> mProfilePictureLiveData = new MutableLiveData<>();
+    private final MutableLiveData<LatLng> mLatLngMutableLiveData = new MutableLiveData<>();
+    private final LiveData<APIResponse<List<Property>>> mNearbyProperties;
 
-    private SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(SharedPrefs.KEY_NAMES)){
@@ -67,14 +66,9 @@ public class HomeViewModel extends AndroidViewModel {
         mNameLiveData.postValue(mSharedPrefs.getNames());
         mProfilePictureLiveData.postValue(mSharedPrefs.getProfilePicture());
         mLatLngMutableLiveData.setValue(mSharedPrefs.getLastLocation());
-        mNearbyProperties = Transformations.switchMap(mLatLngMutableLiveData, new Function<LatLng, LiveData<APIResponse<List<Property>>>>() {
-            @Override
-            public LiveData<APIResponse<List<Property>>> apply(LatLng input) {
-                return mPropertiesRepository.getProperties(1, DEFAULT_LIMIT, SortBy.DISTANCE, input, null, null,
-                        null, null, null, null, null, input,
-                        5, null, null, null, null);
-            }
-        });
+        mNearbyProperties = Transformations.switchMap(mLatLngMutableLiveData, input -> mPropertiesRepository.getProperties(1, DEFAULT_LIMIT, SortBy.DISTANCE, input, null, null,
+                null, null, null, null, null, input,
+                5, null, null, null, null));
     }
 
 

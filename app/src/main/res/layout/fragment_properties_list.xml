@@ -20,6 +20,16 @@
             app:layout_constraintRight_toRightOf="parent"
             tools:listitem="@layout/item_vertical_property" />
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/linearProgressIndicator_propertiesList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:indeterminate="true"
+            android:visibility="gone"/>
+
         <LinearLayout
             android:id="@+id/linearLayout_propertiesList_empty"
             android:layout_width="match_parent"
