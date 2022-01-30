@@ -135,7 +135,8 @@ public class ApiManager {
         return new APIResponse<>(api.resetPassword(new ResetPasswordRequest(token, newPassword)).execute());
     }
 
-    public APIResponse<List<User>> getUsers(int skip, int limit) throws IOException {
+    public APIResponse<List<User>> getUsers(int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getUsers(getToken(), skip, limit).execute());
     }
 
@@ -173,11 +174,12 @@ public class ApiManager {
         return new APIResponse<>(api.getUserById(getToken(), userId).execute());
     }
 
-    public APIResponse<List<Property>> getProperties(int skip, int limit, SortBy sortBy, LatLng latLngSort,
+    public APIResponse<List<Property>> getProperties(int page, int limit, SortBy sortBy, LatLng latLngSort,
                                                      String query, Integer minBed, Integer maxBed, Integer minBath,
                                                      Integer maxBath, Float minPrice, Float maxPrice,
                                                      LatLng latLngFilter, Integer filterRadius, Boolean isVerified,
                                                      Boolean isEnabled, List<Integer> categories, List<Integer> amenities) throws IOException {
+        int skip = (page-1)*limit;
         if (categories!=null && categories.size()==0)
             categories = null;
         if (amenities!=null && amenities.size()==0)
@@ -193,27 +195,33 @@ public class ApiManager {
                 amenities==null?null:amenities.toString().replace("[", "").replace("]", "")).execute());
     }
 
-    public APIResponse<List<Property>> getUserProperties(int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getUserProperties(int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getMyProperties(getToken(), skip, limit).execute());
     }
 
-    public APIResponse<List<Property>> getFavoriteProperties(int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getFavoriteProperties(int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getFavoriteProperties(getToken(), skip, limit).execute());
     }
 
-    public APIResponse<List<Property>> getLatestProperties(Integer category, int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getLatestProperties(Integer category, int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getLatestProperties(getToken(), category, skip, limit).execute());
     }
 
-    public APIResponse<List<Property>> getPopularProperties(Integer category, int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getPopularProperties(Integer category, int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getPopularProperties(getToken(), category, skip, limit).execute());
     }
 
-    public APIResponse<List<Property>> getRecommendedProperties(Integer category, int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getRecommendedProperties(Integer category, int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getRecommendedProperties(getToken(), category, skip, limit).execute());
     }
 
-    public APIResponse<List<Property>> getSimilarProperties(int propertyId, Integer category, int skip, int limit) throws IOException {
+    public APIResponse<List<Property>> getSimilarProperties(int propertyId, Integer category, int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getSimilarProperties(getToken(), propertyId, category, skip, limit).execute());
     }
 
@@ -285,7 +293,8 @@ public class ApiManager {
         return new APIResponse<>(api.removePropertyPhoto(getToken(), propertyId, new RemovePropertyPhotoRequest(propertyPhotoId)).execute());
     }
 
-    public APIResponse<List<Amenity>> getAmenities(int skip, int limit) throws IOException {
+    public APIResponse<List<Amenity>> getAmenities(int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getAmenities(getToken(), skip, limit).execute());
     }
 
@@ -307,7 +316,8 @@ public class ApiManager {
         return new APIResponse<>(api.deleteAmenityById(getToken(), amenityId).execute());
     }
 
-    public APIResponse<List<PropertyCategory>> getPropertyCategories(int skip, int limit) throws IOException {
+    public APIResponse<List<PropertyCategory>> getPropertyCategories(int page, int limit) throws IOException {
+        int skip = (page-1)*limit;
         return new APIResponse<>(api.getPropertyCategories(getToken(), skip, limit).execute());
     }
 

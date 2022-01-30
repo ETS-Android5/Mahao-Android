@@ -34,7 +34,7 @@ public class AmenitiesRepository {
         MutableLiveData<APIResponse<List<Amenity>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<Amenity>> response = apiManager.getAmenities(0, 5000);
+                APIResponse<List<Amenity>> response = apiManager.getAmenities(1, 5000);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -35,7 +35,7 @@ public class PropertyCategoriesRepository {
         MutableLiveData<APIResponse<List<PropertyCategory>>> liveData = new MutableLiveData<>();
         ApiManager.execute(() -> {
             try {
-                APIResponse<List<PropertyCategory>> response = apiManager.getPropertyCategories(0, 5000);
+                APIResponse<List<PropertyCategory>> response = apiManager.getPropertyCategories(1, 5000);
                 liveData.postValue(response);
             } catch (IOException e) {
                 e.printStackTrace();

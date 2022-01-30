@@ -84,7 +84,7 @@ public class SinglePropertyViewModel extends AndroidViewModel {
     }
 
     public LiveData<APIResponse<List<Property>>> getSimilarProperties(int propertyId){
-        return mPropertiesRepository.getSimilarProperties(propertyId, null, 0, 10);
+        return mPropertiesRepository.getSimilarProperties(propertyId, null, 1, 10);
     }
 
     public void addFeedback(int propertyId, FeedbackType feedbackType){

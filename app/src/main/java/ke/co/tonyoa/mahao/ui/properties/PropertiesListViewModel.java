@@ -134,28 +134,28 @@ public class PropertiesListViewModel extends AndroidViewModel {
                                 }
                             }
                         }
-                        return mPropertiesRepository.getProperties(0, LIMIT, sortBy, latLngSort,
+                        return mPropertiesRepository.getProperties(1, LIMIT, sortBy, latLngSort,
                                 query, minBed, maxBed, minBath, maxBath, minPrice,
                                 maxPrice, latLngFilter, filterRadius, null, null,
                                 categories, amenities);
                     }
                 });
             case LATEST:
-                return mPropertiesRepository.getLatestProperties(null, 0, LIMIT);
+                return mPropertiesRepository.getLatestProperties(null, 1, LIMIT);
             case NEARBY:
                 return Transformations.switchMap(mLatLngMutableLiveData, input -> {
-                    return mPropertiesRepository.getProperties(0, LIMIT, SortBy.DISTANCE, input, null, null,
+                    return mPropertiesRepository.getProperties(1, LIMIT, SortBy.DISTANCE, input, null, null,
                             null, null, null, null, null, input,
                             5, null, null, null, null);
                 });
             case POPULAR:
-                return mPropertiesRepository.getPopularProperties(null, 0, LIMIT);
+                return mPropertiesRepository.getPopularProperties(null, 1, LIMIT);
             case FAVORITE:
-                return mPropertiesRepository.getFavoriteProperties(0, LIMIT);
+                return mPropertiesRepository.getFavoriteProperties(1, LIMIT);
             case PERSONAL:
-                return mPropertiesRepository.getUserProperties(0, LIMIT);
+                return mPropertiesRepository.getUserProperties(1, LIMIT);
             case RECOMMENDED:
-                return mPropertiesRepository.getRecommendedProperties(null, 0, LIMIT);
+                return mPropertiesRepository.getRecommendedProperties(null, 1, LIMIT);
         }
         return null;
     }

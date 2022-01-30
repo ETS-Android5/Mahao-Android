@@ -39,7 +39,7 @@ public class PropertyMapViewModel extends AndroidViewModel {
         mLastZoom = latLngRadius==null?12:15;
         mProperties = Transformations.switchMap(mLatLngRadiusMutableLiveData, input -> {
             LatLng latLngSort = new LatLng(input.getLat(), input.getLng());
-            return mPropertiesRepository.getProperties(0, 100, SortBy.DISTANCE, latLngSort,
+            return mPropertiesRepository.getProperties(1, 100, SortBy.DISTANCE, latLngSort,
                     null, null, null, null, null, null, null,
                     latLngSort, (int)input.getRadius(), null, null, null, null);
         });

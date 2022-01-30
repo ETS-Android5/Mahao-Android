@@ -127,7 +127,7 @@ public class MainFragment extends BaseFragment implements Serializable {
         });
 
         //Create a ratingDialog that displays after 3 user sessions
-        RatingDialog ratingDialog = getStandardRatingDialogBuilder(requireContext()).session(3).build();
+        RatingDialog ratingDialog = getStandardRatingDialogBuilder(requireContext()).session(8).build();
         ratingDialog.show();
 
         return mFragmentMainBinding.getRoot();
