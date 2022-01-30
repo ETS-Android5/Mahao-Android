@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import ke.co.tonyoa.mahao.R;
-import ke.co.tonyoa.mahao.app.api.responses.Amenity;
 import ke.co.tonyoa.mahao.app.navigation.BaseFragment;
+import ke.co.tonyoa.mahao.app.paging.RepoDataSource;
 import ke.co.tonyoa.mahao.app.utils.ViewUtils;
 import ke.co.tonyoa.mahao.databinding.FragmentAmenitiesListBinding;
 
@@ -27,7 +27,7 @@ public class AmenitiesListFragment extends BaseFragment {
 
     private FragmentAmenitiesListBinding mFragmentAmenitiesListBinding;
     private AmenitiesViewModel mAmenitiesViewModel;
-    private AmenityAdapter mAmenityAdapter;
+    private AmenityAdapterPaged mAmenityAdapterPaged;
 
     public AmenitiesListFragment() {
         // Required empty public constructor
@@ -51,13 +51,13 @@ public class AmenitiesListFragment extends BaseFragment {
         mFragmentAmenitiesListBinding.floatingActionButtonAmenitiesListAdd.setOnClickListener(v->{
             navigate(AmenitiesListFragmentDirections.actionAmenitiesListFragmentToSingleAmenityFragment(null));
         });
-        mAmenityAdapter = new AmenityAdapter(requireContext(), (amenity, position) -> {
+        mAmenityAdapterPaged = new AmenityAdapterPaged(requireContext(), (amenity, position) -> {
             navigate(AmenitiesListFragmentDirections.actionAmenitiesListFragmentToSingleAmenityFragment(amenity));
         });
         mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setLayoutManager(new GridLayoutManager(requireContext(), 3));
-        mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setAdapter(mAmenityAdapter);
+        mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setAdapter(mAmenityAdapterPaged);
         fetchData();
-        mFragmentAmenitiesListBinding.swipeRefreshLayoutAmenities.setOnRefreshListener(this::fetchData);
+        mFragmentAmenitiesListBinding.swipeRefreshLayoutAmenities.setOnRefreshListener(()->mAmenitiesViewModel.invalidateList());
 
         return mFragmentAmenitiesListBinding.getRoot();
     }
@@ -66,33 +66,36 @@ public class AmenitiesListFragment extends BaseFragment {
         LinearLayout loadingView = mFragmentAmenitiesListBinding.linearLayoutAmenitiesListLoading;
         List<RecyclerView> enabledViews = Arrays.asList(mFragmentAmenitiesListBinding.recyclerViewAmenitiesList);
         ViewUtils.load(loadingView, enabledViews, true);
-        mAmenitiesViewModel.getAmenities().observe(getViewLifecycleOwner(), listAPIResponse -> {
-            ViewUtils.load(loadingView, enabledViews, false);
-            int amenitiesCount = 0;
-            if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
-                List<Amenity> amenities = listAPIResponse.body();
-                mAmenityAdapter.submitList(amenities);
-                if (amenities!=null)
-                    amenitiesCount = amenities.size();
+        mAmenitiesViewModel.getAmenities().observe(getViewLifecycleOwner(), userPagedList ->{
+            mAmenityAdapterPaged.submitList(userPagedList);
+            if (userPagedList.getLoadedCount()>0){
+                mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setVisibility(View.VISIBLE);
+                mFragmentAmenitiesListBinding.linearLayoutAmenitiesListEmpty.setVisibility(View.GONE);
             }
             else {
-                Toast.makeText(requireContext(),
-                        (listAPIResponse==null || listAPIResponse.errorMessage(requireContext())==null)?
-                                getString(R.string.unknown_error):
-                                listAPIResponse.errorMessage(requireContext()),
-                        Toast.LENGTH_SHORT).show();
-                amenitiesCount = mAmenityAdapter.getItemCount();
+                mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setVisibility(View.GONE);
+                mFragmentAmenitiesListBinding.linearLayoutAmenitiesListEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+        mAmenitiesViewModel.getLoadState().observe(getViewLifecycleOwner(), loadState->{
+            if (loadState != RepoDataSource.LOADING_ONGOING){
+                mFragmentAmenitiesListBinding.swipeRefreshLayoutAmenities.setRefreshing(false);
+                mFragmentAmenitiesListBinding.linearProgressIndicatorAmenitiesList.setVisibility(View.GONE);
+            }
+            else {
+                mFragmentAmenitiesListBinding.linearProgressIndicatorAmenitiesList.setVisibility(View.VISIBLE);
             }
 
-            if (amenitiesCount>0){
-                mFragmentAmenitiesListBinding.linearLayoutAmenitiesListEmpty.setVisibility(View.GONE);
-                mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setVisibility(View.VISIBLE);
+            // No items loaded, and it is loading
+            ViewUtils.load(loadingView, enabledViews, mAmenityAdapterPaged.getItemCount() == 0 && loadState == RepoDataSource.LOADING_ONGOING);
+            mAmenityAdapterPaged.setLoadState(loadState);
+        });
+        mAmenitiesViewModel.getErrors().observe(getViewLifecycleOwner(), error->{
+            if (error != null) {
+                // Show any errors other than one showing no next page found
+                if (!error.equalsIgnoreCase("Not Found") || mAmenityAdapterPaged.getItemCount() == 0)
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
-            else {
-                mFragmentAmenitiesListBinding.linearLayoutAmenitiesListEmpty.setVisibility(View.VISIBLE);
-                mFragmentAmenitiesListBinding.recyclerViewAmenitiesList.setVisibility(View.GONE);
-            }
-            mFragmentAmenitiesListBinding.swipeRefreshLayoutAmenities.setRefreshing(false);
         });
     }
 

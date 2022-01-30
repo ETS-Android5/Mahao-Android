@@ -25,6 +25,8 @@
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/tab_indicator_selected.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/drawable/tab_selector.xml" value="0.240625" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/activity_main.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_amenities_list.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_categories_list.xml" value="0.221025641025641" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_edit_profile.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_edit_property.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/fragment_filter_properties.xml" value="0.25" />
@@ -54,6 +56,7 @@
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/item_category.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/item_gallery.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/item_horizontal_property.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/item_loading.xml" value="0.1" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/item_vertical_property.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/layout_bottomsheet_map.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/DELL/AndroidStudioProjects/personal/Mahao/app/src/main/res/layout/layout_some_houses.xml" value="0.22447916666666667" />

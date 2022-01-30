@@ -52,17 +52,17 @@ public class UsersRepository {
 
 
     public LiveData<RepoResult<User>> getUsersPaged(){
-        UsersRepoDataSource.UsersRepoDataSourceFactory collectorsRepoDataSourceFactory =
+        UsersRepoDataSource.UsersRepoDataSourceFactory usersRepoDataSourceFactory =
                 new UsersRepoDataSource.UsersRepoDataSourceFactory(mContext, mApiManager);
-        LiveData<PagedList<User>> pagedListLiveData = new LivePagedListBuilder<>(collectorsRepoDataSourceFactory,
+        LiveData<PagedList<User>> pagedListLiveData = new LivePagedListBuilder<>(usersRepoDataSourceFactory,
                 RepoDataSource.getDefaultPagedListConfig())
                 .setFetchExecutor(Executors.newFixedThreadPool(2))
                 .build();
         MutableLiveData<RepoResult<User>> repoResultMutableLiveData = new MutableLiveData<>();
         RepoResult<User> repoResult = new RepoResult<>(pagedListLiveData,
-                Transformations.switchMap(collectorsRepoDataSourceFactory.getUsersRepoDataSource(),
+                Transformations.switchMap(usersRepoDataSourceFactory.getUsersRepoDataSource(),
                         UsersRepoDataSource::getLoadState),
-                Transformations.switchMap(collectorsRepoDataSourceFactory.getUsersRepoDataSource(),
+                Transformations.switchMap(usersRepoDataSourceFactory.getUsersRepoDataSource(),
                         UsersRepoDataSource::getNetworkErrors));
         repoResultMutableLiveData.postValue(repoResult);
         return repoResultMutableLiveData;
