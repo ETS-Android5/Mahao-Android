@@ -438,7 +438,7 @@ public interface RestApi {
      * @param removePropertyPhotoRequest
      * @return
      */
-    @POST("/api/v1/properties/{id}/remove_property_photos")
+    @POST("/api/v1/properties/{id}/remove_property_photo")
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     Call<PropertyPhoto> removePropertyPhoto(
             @Header("Authorization") String token,

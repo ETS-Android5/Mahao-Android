@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ public class SinglePropertyViewModel extends AndroidViewModel {
     @Inject
     SharedPrefs mSharedPrefs;
     private MutableLiveData<Integer> mSelectedPosition=new MutableLiveData<>();
+    private List<PropertyPhoto> mPropertyPhotos;
 
     public SinglePropertyViewModel(@NonNull Application application) {
         super(application);
@@ -97,5 +99,13 @@ public class SinglePropertyViewModel extends AndroidViewModel {
 
     public String getUserId(){
         return mSharedPrefs.getUserId();
+    }
+
+    public List<PropertyPhoto> getPropertyPhotos() {
+        return mPropertyPhotos;
+    }
+
+    public void setPropertyPhotos(List<PropertyPhoto> propertyPhotos) {
+        mPropertyPhotos = propertyPhotos;
     }
 }

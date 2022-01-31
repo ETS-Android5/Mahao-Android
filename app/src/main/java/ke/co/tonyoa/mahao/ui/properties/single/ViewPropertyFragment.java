@@ -212,6 +212,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                         List<PropertyPhoto> currentPropertyPhotos = mPropertyPhotoAdapter.getCurrentList();
                         List<PropertyPhoto> newPropertyPhotos = new ArrayList<>(currentPropertyPhotos);
                         newPropertyPhotos.remove(propertyPhotoAPIResponse.body());
+                        mSinglePropertyViewModel.setPropertyPhotos(newPropertyPhotos);
                         mPropertyPhotoAdapter.submitList(newPropertyPhotos);
                         mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(newPropertyPhotos.size()>0?View.GONE:View.VISIBLE);
                     }
@@ -229,8 +230,10 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
             mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setLayoutManager(new LinearLayoutManager(requireContext(),
                     RecyclerView.HORIZONTAL, false));
             mFragmentViewPropertyBinding.recyclerViewViewPropertyGallery.setAdapter(mPropertyPhotoAdapter);
-            mPropertyPhotoAdapter.submitList(mProperty.getPropertyPhotos());
-            mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(mProperty.getPropertyPhotos().size()>0?View.GONE:View.VISIBLE);
+            List<PropertyPhoto> propertyPhotos = mSinglePropertyViewModel.getPropertyPhotos() == null ?
+                    mProperty.getPropertyPhotos() : mSinglePropertyViewModel.getPropertyPhotos();
+            mPropertyPhotoAdapter.submitList(propertyPhotos);
+            mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery.setVisibility(propertyPhotos.size()>0?View.GONE:View.VISIBLE);
 
             mFragmentViewPropertyBinding.buttonViewPropertyAddImage.setOnClickListener(v->{
                 pickOrTakeImage();
@@ -402,6 +405,7 @@ public class ViewPropertyFragment extends BaseFragment implements PropertyAmenit
                         List<PropertyPhoto> currentPropertyPhotos = mPropertyPhotoAdapter.getCurrentList();
                         List<PropertyPhoto> newPropertyPhotos = new ArrayList<>(currentPropertyPhotos);
                         newPropertyPhotos.addAll(listAPIResponse.body());
+                        mSinglePropertyViewModel.setPropertyPhotos(newPropertyPhotos);
                         mPropertyPhotoAdapter.submitList(newPropertyPhotos);
                         mFragmentViewPropertyBinding.linearLayoutViewPropertyEmptyGallery
                                 .setVisibility(newPropertyPhotos.size()>0?View.GONE:View.VISIBLE);
