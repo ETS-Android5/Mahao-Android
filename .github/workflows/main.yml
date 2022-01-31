@@ -53,10 +53,12 @@ jobs:
           configuration-cache-enabled: true
           arguments: assembleRelease
           
-          
+              
       ## Run unit tests
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: |
+          chmod +x gradlew
+          ./gradlew test
         
         
       ## Run UI Tests
