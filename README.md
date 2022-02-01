@@ -65,9 +65,9 @@ These are the libraries the project depends on:
 - [Smart App Rate](https://github.com/codemybrainsout/smart-app-rate) - Smart app rate dialog for Android which takes user rating into consideration
 ## Demo
 
-![Create Property](./screenshots/create_property.gif) ![View Property](./screenshots/view_property.gif)
-![View Properties list and filter](./screenshots/view_list.gif) ![Search and sort](./screenshots/search_property.gif)
-![View Properties on map](./screenshots/map_property.gif) ![View and edit profile](./screenshots/profile.gif)
+![Create Property](./screenshots/create_property.gif =700x1500) ![View Property](./screenshots/view_property.gif =700x1500)
+![View Properties list and filter](./screenshots/view_list.gif =700x1500) ![Search and sort](./screenshots/search_property.gif =700x1500)
+![View Properties on map](./screenshots/map_property.gif =700x1500) ![View and edit profile](./screenshots/profile.gif =700x1500)
 
 
 ## Authors
