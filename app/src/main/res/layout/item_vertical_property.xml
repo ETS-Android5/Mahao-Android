@@ -63,6 +63,7 @@
                     tools:text="Title of the house that was provided by the owner"/>
 
                 <LinearLayout
+                    android:id="@+id/linearLayout_itemVerticalProperty_likeContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
