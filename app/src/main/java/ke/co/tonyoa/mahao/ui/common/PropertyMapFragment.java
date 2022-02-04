@@ -1,14 +1,21 @@
 package ke.co.tonyoa.mahao.ui.common;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,15 +25,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.os.Handler;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -58,7 +56,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -82,43 +79,39 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
     private PlacesClient mPlacesClient;
     private float[] mCoordinates;
     private int mPropertyId = -1;
-    private List<Marker> mMarkers;
     private PropertyAdapter mPropertyAdapter;
     private final GoogleMap.InfoWindowAdapter mInfoWindowAdapter = new GoogleMap.InfoWindowAdapter() {
         @Nullable
         @Override
         public View getInfoContents(@NonNull Marker marker) {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public View getInfoWindow(@NonNull Marker marker) {
             ItemVerticalPropertyBinding itemVerticalPropertyBinding = ItemVerticalPropertyBinding.inflate(LayoutInflater.from(requireContext()),
                     null, false);
             Property property = (Property) marker.getTag();
+            if (property == null)
+                return null;
             Glide.with(requireContext())
-                    .load(property.getFeatureImage())
-                    .placeholder(R.drawable.ic_home_black_24dp)
-                    .error(R.drawable.ic_home_black_24dp)
-                    .addListener(new RequestListener<Drawable>() {
+                    .asBitmap()
+                    .override(500, 500)
+                    .listener(new RequestListener<Bitmap>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            Log.e("Load fail", "Failed loading image "+e.getMessage());
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                            if (e != null)
+                                e.printStackTrace();
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            Log.e("Resource Ready", "Image resource is ready");
-                            new Handler().postDelayed(() -> {
-                                if (marker.isInfoWindowShown()) {
-                                    marker.showInfoWindow();
-                                }
-                            }, 100);
+                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            if (marker.isInfoWindowShown()) {
+                                marker.hideInfoWindow();
+                                marker.showInfoWindow();
+                            }
                             return false;
                         }
                     })
+                    .load(property.getFeatureImage())
+                    .placeholder(R.drawable.ic_home_black_24dp)
+                    .error(R.drawable.ic_home_black_24dp)
                     .into(itemVerticalPropertyBinding.imageViewItemVerticalPropertyFeature);
 
             itemVerticalPropertyBinding.textViewItemVerticalPropertyLocation.setText(property.getLocationName());
@@ -130,10 +123,16 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
             itemVerticalPropertyBinding.textViewItemVerticalPropertyBeds.setText(requireContext().getString(R.string.d_beds, property.getNumBed()));
             itemVerticalPropertyBinding.textViewItemVerticalPropertyBaths.setText(requireContext().getString(R.string.d_baths, property.getNumBath()));
             itemVerticalPropertyBinding.textViewItemVerticalPropertyAmenities.setText(requireContext().getString(R.string.d_amens, property.getPropertyAmenities().size()));
+            itemVerticalPropertyBinding.linearLayoutItemVerticalPropertyLikeContainer.setVisibility(View.GONE);
             return itemVerticalPropertyBinding.getRoot();
         }
+
+        @Nullable
+        @Override
+        public View getInfoWindow(@NonNull Marker marker) {
+            return null;
+        }
     };
-    private boolean mMarkerClicked;
 
     public PropertyMapFragment() {
         // Required empty public constructor
@@ -306,15 +305,18 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        PropertyMapViewModel.LatLngRadius latLngRadius = mPropertyMapViewModel.getLatLngRadius();
-        LatLng latlng = new LatLng(latLngRadius.getLat(),
-               latLngRadius.getLng());
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,
-                mPropertyMapViewModel.getLastZoom()));
+        mPropertyMapViewModel.getLatLngRadius().observe(getViewLifecycleOwner(), latLngRadius -> {
+            LatLng latlng = new LatLng(latLngRadius.getLat(),
+                    latLngRadius.getLng());
+            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,
+                    mPropertyMapViewModel.getLastZoom()));
+        });
+
         setupCurrentLocation();
 
         mGoogleMap.setOnCameraIdleListener(() -> {
             LatLng latLng = mGoogleMap.getCameraPosition().target;
+            mPropertyMapViewModel.setLastZoom(mGoogleMap.getCameraPosition().zoom);
             mPropertyMapViewModel.setLatLngRadius((float) latLng.latitude, (float) latLng.longitude, (float) (getMapVisibleRadius()/1000));
         });
 
@@ -328,19 +330,7 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
             mFragmentPropertyMapBinding.linearProgressIndicator.setVisibility(View.GONE);
             mFragmentPropertyMapBinding.layoutBottomsheetMap.getRoot().setVisibility(View.VISIBLE);
             if (listAPIResponse!=null && listAPIResponse.isSuccessful()){
-                if (mMarkers!=null){
-                    for (Marker marker:mMarkers){
-                        marker.remove();
-                    }
-                }
                 List<Property> properties = listAPIResponse.body();
-                if (mMarkers != null){
-                    for (Marker marker : mMarkers){
-                        marker.remove();
-                    }
-                    Log.e("Remove Marker", "Removing all the markers");
-                }
-                mMarkers = new ArrayList<>();
                 Property selectedProperty = null;
                 for (Property property:properties){
                     Drawable homeDrawable = ResourcesCompat.getDrawable(getResources(),
@@ -361,7 +351,6 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
                         homeDrawable.setTintList(null);
                     if (marker!=null) {
                         marker.setTag(property);
-                        mMarkers.add(marker);
                     }
                 }
 
@@ -431,8 +420,12 @@ public class PropertyMapFragment extends BaseFragment implements OnMapReadyCallb
                         List<PlaceLikelihood> placeLikelihoods = response.getPlaceLikelihoods();
                         if (placeLikelihoods.size() > 0) {
                             Place place = placeLikelihoods.get(0).getPlace();
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),
-                                    12));
+                            if (place.getLatLng() != null){
+                                mPropertyMapViewModel.setLastZoom(12);
+                                LatLng latLng = place.getLatLng();
+                                mPropertyMapViewModel.setLatLngRadius((float) latLng.latitude,
+                                        (float) latLng.longitude, (float) getMapVisibleRadius());
+                            }
                         }
                     } else {
                         Exception exception = task.getException();

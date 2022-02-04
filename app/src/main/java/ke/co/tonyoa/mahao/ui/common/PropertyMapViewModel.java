@@ -62,10 +62,8 @@ public class PropertyMapViewModel extends AndroidViewModel {
         mLatLngRadiusMutableLiveData.postValue(value);
     }
 
-    public LatLngRadius getLatLngRadius() {
-        LatLngRadius value = mLatLngRadiusMutableLiveData.getValue();
-        return value == null?new LatLngRadius((float) DEFAULT_COORDINATES.latitude,
-                (float) DEFAULT_COORDINATES.longitude, 5):value;
+    public LiveData<LatLngRadius> getLatLngRadius() {
+        return mLatLngRadiusMutableLiveData;
     }
 
     public LiveData<APIResponse<FavoriteResponse>> addFavorite(int propertyId) {
